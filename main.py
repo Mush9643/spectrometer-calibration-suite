@@ -18,6 +18,10 @@ class SpectrumWindow(QMainWindow):
         self.setWindowTitle("Спектр импульсов")
         self.setWindowIcon(QIcon("M-Photoroom.png"))
 
+        # Инициализируем словари для серий
+        self.alfa_series_dict = {}
+        self.beta_series_dict = {}
+
         # Создаем вкладки
         self.tabs = QTabWidget()
         self.setCentralWidget(self.tabs)
@@ -117,7 +121,7 @@ class SpectrumWindow(QMainWindow):
         beta_layout = QVBoxLayout()
         beta_layout.addWidget(self.beta_chart_view)
         self.tab2.setLayout(beta_layout)
-##########################################################################
+    ##########################################################################
     def load_xls_files(self):
         """Загружает список файлов .xls из указанной папки."""
         folder_name = self.folder_input.text()  # Получаем имя папки из поля ввода
@@ -154,16 +158,38 @@ class SpectrumWindow(QMainWindow):
         context_menu.exec(self.file_list.mapToGlobal(pos))  # Показываем меню в точке правого клика
 
     def change_color(self, pos, action_type):
-        """Меняет цвет фона элемента в зависимости от действия."""
+        """Меняет цвет фона элемента в зависимости от действия и отображает/удаляет графики."""
         index = self.file_list.indexAt(pos)
         item = self.file_list.itemFromIndex(index)
 
         if action_type == 'alfa':
             item.setBackground(QColor(144, 238, 144))  # Салатовый для "Загрузить Alfa"
+            self.add_or_remove_chart(item.text(), 'alfa', True)
         elif action_type == 'beta':
             item.setBackground(QColor(173, 216, 230))  # Голубой для "Загрузить Beta"
+            self.add_or_remove_chart(item.text(), 'beta', True)
         elif action_type == 'disable':
             item.setBackground(Qt.GlobalColor.white)  # Обесцвечиваем поле для "Отключить"
+            self.add_or_remove_chart(item.text(), 'alfa', False)
+            self.add_or_remove_chart(item.text(), 'beta', False)
+
+    def add_or_remove_chart(self, file_name, chart_type, add):
+        """Добавляет или удаляет график в зависимости от состояния."""
+        if chart_type == 'alfa' and not hasattr(self, 'alfa_series_dict'):
+            self.alfa_series_dict = {}  # Инициализируем словарь, если его нет
+        elif chart_type == 'beta' and not hasattr(self, 'beta_series_dict'):
+            self.beta_series_dict = {}  # Инициализируем словарь, если его нет
+
+        if add:
+            if chart_type == 'alfa' and file_name not in self.alfa_series_dict:
+                self.load_data_for_chart('alfa', file_name)
+            elif chart_type == 'beta' and file_name not in self.beta_series_dict:
+                self.load_data_for_chart('beta', file_name)
+        else:
+            if chart_type == 'alfa':
+                self.remove_specific_chart('alfa', file_name)
+            elif chart_type == 'beta':
+                self.remove_specific_chart('beta', file_name)
 
     def open_xls_file(self, pos):
         """Открывает выбранный файл .xls при правом клике."""
@@ -179,7 +205,21 @@ class SpectrumWindow(QMainWindow):
             QDesktopServices.openUrl(QUrl.fromLocalFile(file_path))
         else:
             self.show_warning_message(f"Файл '{file_name}' не найден.")
-##########################################################################
+
+    def remove_specific_chart(self, chart_type, file_name):
+        """Удаляет конкретный график, связанный с файлом."""
+        if chart_type == 'alfa':
+            if file_name in self.alfa_series_dict:
+                series_to_remove = self.alfa_series_dict[file_name]
+                self.chart.removeSeries(series_to_remove)
+                del self.alfa_series_dict[file_name]
+        elif chart_type == 'beta':
+            if file_name in self.beta_series_dict:
+                series_to_remove = self.beta_series_dict[file_name]
+                self.beta_chart.removeSeries(series_to_remove)
+                del self.beta_series_dict[file_name]
+
+    ##########################################################################
     def check_color_and_load_data(self, pos):
         """Проверяет цвет фона элемента и загружает данные из Excel в соответствующий график."""
         index = self.file_list.indexAt(pos)
@@ -195,7 +235,7 @@ class SpectrumWindow(QMainWindow):
             self.load_data_for_chart('beta', item.text())
 
     def load_data_for_chart(self, chart_type, file_name):
-        """Загружает данные из файла Excel и отображает на соответствующем графике, заменяя первые три значения импульсов на 0."""
+        """Загружает данные из файла Excel и отображает на соответствующем графике."""
         folder_name = self.folder_input.text()  # Получаем имя папки из поля ввода
         folder_path = os.path.join(os.getcwd(), folder_name)  # Полный путь к папке
         file_path = os.path.join(folder_path, file_name)  # Полный путь к файлу
@@ -218,52 +258,69 @@ class SpectrumWindow(QMainWindow):
 
             # Отображаем данные на графиках
             if chart_type == 'alfa':
-                self.update_alfa_chart(df)
+                self.update_alfa_chart(df, file_name)
             elif chart_type == 'beta':
-                self.update_beta_chart(df)
+                self.update_beta_chart(df, file_name)
 
         except Exception as e:
             self.show_error_message(f"Ошибка при загрузке данных из файла: {str(e)}")
 
-    def update_alfa_chart(self, df):
+    def update_alfa_chart(self, df, file_name):
         """Обновляет график на вкладке Alfa с данными из Excel."""
-        self.series.clear()  # Очищаем текущие данные графика
+        if file_name in self.alfa_series_dict:
+            # Если график уже есть, не добавляем новый
+            return
+
+        alfa_series = QLineSeries()
+        alfa_series.setName(f"Alfa данные ({file_name})")
 
         # Проходим по строкам DataFrame и добавляем точки на график
         for index, row in df.iterrows():
             x = row['Канал']
             y = row['Кол-во импульсов']
-            self.series.append(x, y)
+            alfa_series.append(x, y)
 
-        # Обновляем график
-        self.chart.removeSeries(self.series)
-        self.chart.addSeries(self.series)
-        self.series.attachAxis(self.axis_x)
-        self.series.attachAxis(self.axis_y)
+        # Сохраняем серию в словарь
+        if not hasattr(self, 'alfa_series_dict'):
+            self.alfa_series_dict = {}  # Создаем словарь, если он ещё не существует
+        self.alfa_series_dict[file_name] = alfa_series
 
-        # Настроим оси
+        self.chart.addSeries(alfa_series)
+        alfa_series.attachAxis(self.axis_x)
+        alfa_series.attachAxis(self.axis_y)
+
+        # Обновляем оси
         self.axis_x.setRange(df['Канал'].min(), df['Канал'].max())
         self.axis_y.setRange(df['Кол-во импульсов'].min(), df['Кол-во импульсов'].max())
 
-    def update_beta_chart(self, df):
+    def update_beta_chart(self, df, file_name):
         """Обновляет график на вкладке Beta с данными из Excel."""
-        self.beta_series.clear()  # Очищаем текущие данные графика
+        if file_name in self.beta_series_dict:
+            # Если график уже есть, не добавляем новый
+            return
+
+        beta_series = QLineSeries()
+        beta_series.setName(f"Beta данные ({file_name})")
 
         # Проходим по строкам DataFrame и добавляем точки на график
         for index, row in df.iterrows():
             x = row['Канал']
             y = row['Кол-во импульсов']
-            self.beta_series.append(x, y)
+            beta_series.append(x, y)
 
-        # Обновляем график
-        self.beta_chart.removeSeries(self.beta_series)
-        self.beta_chart.addSeries(self.beta_series)
-        self.beta_series.attachAxis(self.beta_axis_x)
-        self.beta_series.attachAxis(self.beta_axis_y)
+        # Сохраняем серию в словарь
+        if not hasattr(self, 'beta_series_dict'):
+            self.beta_series_dict = {}  # Создаем словарь, если он ещё не существует
+        self.beta_series_dict[file_name] = beta_series
 
-        # Настроим оси
+        self.beta_chart.addSeries(beta_series)
+        beta_series.attachAxis(self.beta_axis_x)
+        beta_series.attachAxis(self.beta_axis_y)
+
+        # Обновляем оси
         self.beta_axis_x.setRange(df['Канал'].min(), df['Канал'].max())
         self.beta_axis_y.setRange(df['Кол-во импульсов'].min(), df['Кол-во импульсов'].max())
+
     ##########################################################################
 
     # Метод для обновления спектра
