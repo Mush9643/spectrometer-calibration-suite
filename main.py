@@ -1,16 +1,18 @@
-# Импорт необходимых библиотек
+################################# 1. Импорт необходимых библиотек #################################
+
 import sys
 from PyQt6.QtCharts import QChart, QLineSeries, QValueAxis, QChartView, QLogValueAxis
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QMessageBox, QDialog, \
     QSplashScreen, QCheckBox, QLineEdit, QTabWidget, QListWidgetItem, QListWidget, QMenu
 from PyQt6.QtGui import QPixmap, QIcon, QPainter, QDesktopServices, QColor
 from PyQt6.QtCore import Qt, QTimer, QUrl
-from modbus import ModbusClient  # Импортируем ModbusClient из файла modbus.py
-from settings_dialog import SettingsDialog  # Импортируем диалоговое окно настроек
-import pandas as pd  # Для работы с Excel
-import math  # Для логарифмического преобразования
+from modbus import ModbusClient
+from settings_dialog import SettingsDialog
+import pandas as pd
+import math
 import os
 
+################################# 2. Инициализация и настройка окна #################################
 class SpectrumWindow(QMainWindow):
     def __init__(self, modbus):
         super().__init__()
@@ -121,7 +123,7 @@ class SpectrumWindow(QMainWindow):
         beta_layout = QVBoxLayout()
         beta_layout.addWidget(self.beta_chart_view)
         self.tab2.setLayout(beta_layout)
-    ##########################################################################
+
     def load_xls_files(self):
         """Загружает список файлов .xls из указанной папки."""
         folder_name = self.folder_input.text()  # Получаем имя папки из поля ввода
@@ -219,7 +221,6 @@ class SpectrumWindow(QMainWindow):
                 self.beta_chart.removeSeries(series_to_remove)
                 del self.beta_series_dict[file_name]
 
-    ##########################################################################
     def check_color_and_load_data(self, pos):
         """Проверяет цвет фона элемента и загружает данные из Excel в соответствующий график."""
         index = self.file_list.indexAt(pos)
@@ -270,9 +271,9 @@ class SpectrumWindow(QMainWindow):
         if file_name in self.alfa_series_dict:
             # Если график уже есть, не добавляем новый
             return
-
+        file_name_split = file_name.split()[1]
         alfa_series = QLineSeries()
-        alfa_series.setName(f"Alfa данные ({file_name})")
+        alfa_series.setName(f"({file_name_split})")
 
         # Проходим по строкам DataFrame и добавляем точки на график
         for index, row in df.iterrows():
@@ -299,8 +300,9 @@ class SpectrumWindow(QMainWindow):
             # Если график уже есть, не добавляем новый
             return
 
+        file_name_split = file_name.split()[1]
         beta_series = QLineSeries()
-        beta_series.setName(f"Beta данные ({file_name})")
+        beta_series.setName(f"({file_name_split})")
 
         # Проходим по строкам DataFrame и добавляем точки на график
         for index, row in df.iterrows():
