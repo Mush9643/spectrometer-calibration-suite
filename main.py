@@ -1,24 +1,30 @@
-################################# 1. Импорт необходимых библиотек #################################
-
 import sys
 from PyQt6.QtCharts import QChart, QLineSeries, QValueAxis, QChartView, QLogValueAxis
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QMessageBox, QDialog, \
-    QSplashScreen, QCheckBox, QLineEdit, QTabWidget, QListWidgetItem, QListWidget, QMenu
+    QSplashScreen, QCheckBox, QLineEdit, QTabWidget, QListWidgetItem, QListWidget, QMenu, QHBoxLayout
 from PyQt6.QtGui import QPixmap, QIcon, QPainter, QDesktopServices, QColor
 from PyQt6.QtCore import Qt, QTimer, QUrl
-from modbus import ModbusClient
-from settings_dialog import SettingsDialog
-import pandas as pd
+from modbus import ModbusClient  # Импортируем ModbusClient из файла modbus.py
+from settings_dialog import SettingsDialog  # Импортируем диалоговое окно настроек
+from spectrum_addition import SpectrumAddition
+import pandas as pd  # Для работы с Excel
 import math
 import os
 
-################################# 2. Инициализация и настройка окна #################################
+##########################################################################
+# Класс основного окна приложения
+##########################################################################
+
 class SpectrumWindow(QMainWindow):
     def __init__(self, modbus):
         super().__init__()
         self.modbus_client = modbus
         self.setWindowTitle("Спектр импульсов")
         self.setWindowIcon(QIcon("M-Photoroom.png"))
+
+        # Словарь для хранения CheckBox
+        self.alfa_checkboxes = {}
+        self.beta_checkboxes = {}
 
         # Инициализируем словари для серий
         self.alfa_series_dict = {}
@@ -60,6 +66,8 @@ class SpectrumWindow(QMainWindow):
         self.chart.setTitle("Спектр импульсов (0-1023)")
         self.series = QLineSeries()
         self.series.setName("Импульсы")
+
+        self.spectrum_addition = SpectrumAddition(self)
         try:
             self.spectrum_values = self.update_spectrum()
         except Exception as e:
@@ -124,16 +132,20 @@ class SpectrumWindow(QMainWindow):
         beta_layout.addWidget(self.beta_chart_view)
         self.tab2.setLayout(beta_layout)
 
+    ##########################################################################
+    # Методы для работы с файлами и контекстным меню
+    ##########################################################################
+
     def load_xls_files(self):
-        """Загружает список файлов .xls из указанной папки."""
+        """Загружает список файлов .xls и .xlsx из указанной папки."""
         folder_name = self.folder_input.text()  # Получаем имя папки из поля ввода
         folder_path = os.path.join(os.getcwd(), folder_name)  # Полный путь к папке
 
         self.file_list.clear()  # Очищаем список перед загрузкой новых файлов
 
         if os.path.exists(folder_path) and os.path.isdir(folder_path):
-            # Получаем список файлов .xls в папке
-            xls_files = [f for f in os.listdir(folder_path) if f.endswith(".xls")]
+            # Получаем список файлов .xls и .xlsx в папке
+            xls_files = [f for f in os.listdir(folder_path) if f.endswith((".xls", ".xlsx"))]
             for file_name in xls_files:
                 item = QListWidgetItem(file_name)
                 self.file_list.addItem(item)
@@ -221,6 +233,10 @@ class SpectrumWindow(QMainWindow):
                 self.beta_chart.removeSeries(series_to_remove)
                 del self.beta_series_dict[file_name]
 
+    ##########################################################################
+    # Методы для работы с графиками и данными
+    ##########################################################################
+
     def check_color_and_load_data(self, pos):
         """Проверяет цвет фона элемента и загружает данные из Excel в соответствующий график."""
         index = self.file_list.indexAt(pos)
@@ -266,67 +282,122 @@ class SpectrumWindow(QMainWindow):
         except Exception as e:
             self.show_error_message(f"Ошибка при загрузке данных из файла: {str(e)}")
 
-    def update_alfa_chart(self, df, file_name):
-        """Обновляет график на вкладке Alfa с данными из Excel."""
-        if file_name in self.alfa_series_dict:
-            # Если график уже есть, не добавляем новый
+    def update_y_axis_range(self):
+        """Пересчитывает диапазон оси Y на основе всех имеющихся серий Alfa."""
+        max_y = max((max((point.y() for point in series.points()), default=0)
+                     for series in self.alfa_series_dict.values()), default=0)
+        self.axis_y.setRange(0, max_y * 1.1)
+
+    def update_beta_y_axis_range(self):
+        """Пересчитывает диапазон оси Y на основе всех имеющихся серий Beta."""
+        max_y = max((max((point.y() for point in series.points()), default=0)
+                     for series in self.beta_series_dict.values()), default=0)
+        self.beta_axis_y.setRange(0, max_y * 1.1)
+
+    def adjust_y_axis_for_series(self, series, state):
+        """Настраивает ось Y для графика Alfa в зависимости от состояния CheckBox."""
+        if series is None or series.count() == 0:
             return
-        file_name_split = file_name.split()[1]
+
+        if state == Qt.CheckState.Checked.value:
+            max_y = max(point.y() for point in series.points()) if series.count() > 0 else 0
+            self.axis_y.setRange(0, max_y * 1.1)
+        else:
+            self.update_y_axis_range()
+
+    def adjust_beta_y_axis_for_series(self, series, state):
+        """Настраивает ось Y для графика Beta в зависимости от состояния CheckBox."""
+        if series is None or series.count() == 0:
+            return
+
+        if state == Qt.CheckState.Checked.value:
+            max_y = max(point.y() for point in series.points()) if series.count() > 0 else 0
+            self.beta_axis_y.setRange(0, max_y * 1.1)
+        else:
+            self.update_beta_y_axis_range()
+
+    def update_alfa_chart(self, df, file_name):
+        """Обновляет график на вкладке Alfa с учетом всех графиков."""
+        if file_name in self.alfa_series_dict:
+            return  # Если график уже есть, не добавляем новый
+
         alfa_series = QLineSeries()
-        alfa_series.setName(f"({file_name_split})")
+        second_word = file_name.split()[1] if len(file_name.split()) > 1 else file_name
+        alfa_series.setName(f"({second_word})")
 
-        # Проходим по строкам DataFrame и добавляем точки на график
-        for index, row in df.iterrows():
-            x = row['Канал']
-            y = row['Кол-во импульсов']
-            alfa_series.append(x, y)
+        # Фильтрация данных: Канал от 200 до 1023
+        df_filtered = df[(df['Канал'] >= 200) & (df['Канал'] <= 1023)]
 
-        # Сохраняем серию в словарь
-        if not hasattr(self, 'alfa_series_dict'):
-            self.alfa_series_dict = {}  # Создаем словарь, если он ещё не существует
+        for _, row in df_filtered.iterrows():
+            alfa_series.append(row['Канал'], row['Кол-во импульсов'])
+
         self.alfa_series_dict[file_name] = alfa_series
-
         self.chart.addSeries(alfa_series)
         alfa_series.attachAxis(self.axis_x)
         alfa_series.attachAxis(self.axis_y)
 
-        # Обновляем оси
-        self.axis_x.setRange(df['Канал'].min(), df['Канал'].max())
-        self.axis_y.setRange(df['Кол-во импульсов'].min(), df['Кол-во импульсов'].max())
+        self.axis_x.setRange(200, 1023)  # Устанавливаем диапазон оси X
+
+        # Обновление CheckBox
+        if file_name in self.alfa_checkboxes:
+            old_checkbox = self.alfa_checkboxes.pop(file_name)
+            old_checkbox.setParent(None)
+            old_checkbox.deleteLater()
+
+        checkbox = QCheckBox(f"Активировать масштаб для {second_word}")
+        checkbox.stateChanged.connect(lambda state, series=alfa_series: self.adjust_y_axis_for_series(series, state))
+        self.alfa_checkboxes[file_name] = checkbox
+
+        layout = self.tab1.layout()
+        if isinstance(layout, QVBoxLayout):
+            layout.addWidget(checkbox)
+
+        self.update_y_axis_range()
 
     def update_beta_chart(self, df, file_name):
-        """Обновляет график на вкладке Beta с данными из Excel."""
+        """Обновляет график на вкладке Beta с учетом всех графиков."""
         if file_name in self.beta_series_dict:
-            # Если график уже есть, не добавляем новый
-            return
+            return  # Если график уже есть, не добавляем новый
 
-        file_name_split = file_name.split()[1]
         beta_series = QLineSeries()
-        beta_series.setName(f"({file_name_split})")
+        second_word = file_name.split()[1] if len(file_name.split()) > 1 else file_name
+        beta_series.setName(f"({second_word})")
 
-        # Проходим по строкам DataFrame и добавляем точки на график
-        for index, row in df.iterrows():
-            x = row['Канал']
-            y = row['Кол-во импульсов']
-            beta_series.append(x, y)
+        for _, row in df.iterrows():
+            beta_series.append(row['Канал'], row['Кол-во импульсов'])
 
-        # Сохраняем серию в словарь
-        if not hasattr(self, 'beta_series_dict'):
-            self.beta_series_dict = {}  # Создаем словарь, если он ещё не существует
         self.beta_series_dict[file_name] = beta_series
-
         self.beta_chart.addSeries(beta_series)
         beta_series.attachAxis(self.beta_axis_x)
         beta_series.attachAxis(self.beta_axis_y)
 
-        # Обновляем оси
         self.beta_axis_x.setRange(df['Канал'].min(), df['Канал'].max())
-        self.beta_axis_y.setRange(df['Кол-во импульсов'].min(), df['Кол-во импульсов'].max())
+
+        # Удаляем старый CheckBox, если он есть
+        if file_name in self.beta_checkboxes:
+            old_checkbox = self.beta_checkboxes.pop(file_name)
+            old_checkbox.setParent(None)
+            old_checkbox.deleteLater()
+
+        # Создаем CheckBox
+        checkbox = QCheckBox(f"Активировать масштаб для {second_word}")
+        checkbox.stateChanged.connect(
+            lambda state, series=beta_series: self.adjust_beta_y_axis_for_series(series, state))
+        self.beta_checkboxes[file_name] = checkbox
+
+        # Добавляем CheckBox в layout вкладки Beta
+        layout = self.tab2.layout()
+        if isinstance(layout, QVBoxLayout):
+            layout.addWidget(checkbox)
+
+        self.update_beta_y_axis_range()
 
     ##########################################################################
+    # Методы для работы с графиками и масштабированием
+    ##########################################################################
 
-    # Метод для обновления спектра
     def update_spectrum(self):
+        """Обновляет спектр импульсов."""
         spectrum_values = self.modbus_client.read_spectrum(
             start_register=0x0100,
             num_registers=1024,
@@ -341,15 +412,15 @@ class SpectrumWindow(QMainWindow):
         self.spectrum_values = spectrum_values
         return spectrum_values
 
-    # Метод для переключения между логарифмическим и линейным масштабом
     def toggle_log_scale(self, state):
+        """Переключает между логарифмическим и линейным масштабом."""
         if state == Qt.CheckState.Checked.value:
             self.apply_log_scale()
         else:
             self.apply_linear_scale()
 
-    # Метод для применения логарифмического масштаба
     def apply_log_scale(self):
+        """Применяет логарифмический масштаб."""
         if not hasattr(self, "original_series"):
             self.original_series = self.series
 
@@ -388,8 +459,8 @@ class SpectrumWindow(QMainWindow):
         self.series = log_series
         self.axis_y = log_axis_y
 
-    # Метод для применения линейного масштаба
     def apply_linear_scale(self):
+        """Применяет линейный масштаб."""
         if not hasattr(self, "original_series"):
             return
 
@@ -413,8 +484,12 @@ class SpectrumWindow(QMainWindow):
         self.series = self.original_series
         self.axis_y = linear_axis_y
 
-    # Метод для экспорта данных в Excel
+    ##########################################################################
+    # Методы для работы с экспортом данных и сообщениями
+    ##########################################################################
+
     def export_to_excel(self):
+        """Экспортирует данные спектра в Excel."""
         try:
             if not hasattr(self, 'spectrum_values') or not self.spectrum_values:
                 self.show_warning_message("Нет данных для экспорта.")
@@ -432,32 +507,34 @@ class SpectrumWindow(QMainWindow):
         except Exception as e:
             self.show_error_message(f"Ошибка при экспорте данных: {str(e)}")
 
-    # Метод для показа информационного сообщения
     def show_info_message(self, message):
+        """Показывает информационное сообщение."""
         msg_box = QMessageBox()
         msg_box.setIcon(QMessageBox.Icon.Information)
         msg_box.setWindowTitle("Информация")
         msg_box.setText(message)
         msg_box.exec()
 
-    # Метод для показа предупреждения
     def show_warning_message(self, message):
+        """Показывает предупреждение."""
         msg_box = QMessageBox()
         msg_box.setIcon(QMessageBox.Icon.Warning)
         msg_box.setWindowTitle("Предупреждение")
         msg_box.setText(message)
         msg_box.exec()
 
-    # Метод для показа сообщения об ошибке
     def show_error_message(self, message):
+        """Показывает сообщение об ошибке."""
         msg_box = QMessageBox()
         msg_box.setIcon(QMessageBox.Icon.Critical)
         msg_box.setWindowTitle("Ошибка")
         msg_box.setText(message)
         msg_box.exec()
 
-
+##########################################################################
 # Основной блок запуска приложения
+##########################################################################
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon("app_icon.png"))
