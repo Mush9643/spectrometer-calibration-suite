@@ -112,7 +112,7 @@ class SpectrumAddition:
 
         if summed_df is not None:
             # Сохраняем результат в новый файл
-            output_file_name = "new spectrum.xlsx"
+            output_file_name = "new Rn.xlsx"
             output_file_path = os.path.join(folder_path, output_file_name)
             try:
                 summed_df.to_excel(output_file_path, index=False)

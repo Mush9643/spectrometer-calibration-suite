@@ -8,7 +8,8 @@ from modbus import ModbusClient  # Импортируем ModbusClient из фа
 from settings_dialog import SettingsDialog  # Импортируем диалоговое окно настроек
 from spectrum_addition import SpectrumAddition
 import pandas as pd  # Для работы с Excel
-import math
+from math_utils import highlight_am241_peak
+from math_utils import highlight_rn_peaks
 import os
 
 ##########################################################################
@@ -21,6 +22,9 @@ class SpectrumWindow(QMainWindow):
         self.modbus_client = modbus
         self.setWindowTitle("Спектр импульсов")
         self.setWindowIcon(QIcon("M-Photoroom.png"))
+
+        # Словарь для хранения точек пиков
+        self.peak_points = {}
 
         # Словарь для хранения CheckBox
         self.alfa_checkboxes = {}
@@ -221,11 +225,18 @@ class SpectrumWindow(QMainWindow):
             self.show_warning_message(f"Файл '{file_name}' не найден.")
 
     def remove_specific_chart(self, chart_type, file_name):
-        """Удаляет конкретный график, связанный с файлом."""
+        """Удаляет конкретный график, связанный с файлом, и его точку."""
         if chart_type == 'alfa':
             if file_name in self.alfa_series_dict:
                 series_to_remove = self.alfa_series_dict[file_name]
                 self.chart.removeSeries(series_to_remove)
+
+                # Удаляем точку, если она существует
+                series_name = series_to_remove.name()
+                if series_name in self.peak_points:
+                    peak_series = self.peak_points.pop(series_name)
+                    self.chart.removeSeries(peak_series)
+
                 del self.alfa_series_dict[file_name]
         elif chart_type == 'beta':
             if file_name in self.beta_series_dict:
@@ -317,10 +328,14 @@ class SpectrumWindow(QMainWindow):
             self.update_beta_y_axis_range()
 
     def update_alfa_chart(self, df, file_name):
-        """Обновляет график на вкладке Alfa с учетом всех графиков."""
+        """
+        Обновляет график на вкладке Alfa с учетом всех графиков.
+        """
+        # Если график уже есть, не добавляем новый
         if file_name in self.alfa_series_dict:
-            return  # Если график уже есть, не добавляем новый
+            return
 
+        # Создаем новую серию данных
         alfa_series = QLineSeries()
         second_word = file_name.split()[1] if len(file_name.split()) > 1 else file_name
         alfa_series.setName(f"({second_word})")
@@ -328,30 +343,40 @@ class SpectrumWindow(QMainWindow):
         # Фильтрация данных: Канал от 200 до 1023
         df_filtered = df[(df['Канал'] >= 200) & (df['Канал'] <= 1023)]
 
+        # Добавляем точки на график
         for _, row in df_filtered.iterrows():
             alfa_series.append(row['Канал'], row['Кол-во импульсов'])
 
+        # Сохраняем серию в словаре
         self.alfa_series_dict[file_name] = alfa_series
         self.chart.addSeries(alfa_series)
         alfa_series.attachAxis(self.axis_x)
         alfa_series.attachAxis(self.axis_y)
 
-        self.axis_x.setRange(200, 1023)  # Устанавливаем диапазон оси X
+        # Вызываем функцию для проверки и отметки пика Am241
+        highlight_am241_peak(self.chart, alfa_series, self.peak_points)
 
-        # Обновление CheckBox
+        # Вызываем функцию для проверки и отметки пиков Rn
+        highlight_rn_peaks(self.chart, alfa_series, self.peak_points)
+
+        # Удаляем старый CheckBox, если он есть
         if file_name in self.alfa_checkboxes:
             old_checkbox = self.alfa_checkboxes.pop(file_name)
             old_checkbox.setParent(None)
             old_checkbox.deleteLater()
 
+        # Создаем CheckBox для управления масштабом
         checkbox = QCheckBox(f"Активировать масштаб для {second_word}")
-        checkbox.stateChanged.connect(lambda state, series=alfa_series: self.adjust_y_axis_for_series(series, state))
+        checkbox.stateChanged.connect(
+            lambda state, series=alfa_series: self.adjust_y_axis_for_series(series, state))
         self.alfa_checkboxes[file_name] = checkbox
 
+        # Добавляем CheckBox в layout вкладки Alfa
         layout = self.tab1.layout()
         if isinstance(layout, QVBoxLayout):
             layout.addWidget(checkbox)
 
+        # Обновляем диапазон оси Y
         self.update_y_axis_range()
 
     def update_beta_chart(self, df, file_name):
