@@ -10,6 +10,7 @@ from spectrum_addition import SpectrumAddition
 import pandas as pd  # Для работы с Excel
 from math_utils import highlight_am241_peak
 from math_utils import highlight_rn_peaks
+from math_utils import add_calibration_button
 import os
 
 ##########################################################################
@@ -105,6 +106,10 @@ class SpectrumWindow(QMainWindow):
         layout = QVBoxLayout()
         layout.addWidget(self.chart_view)
         layout.addWidget(self.log_checkbox)
+
+        # Добавляем кнопку "Калибровка" после создания chart_view
+        add_calibration_button(self)
+
         self.tab1.setLayout(layout)
 
         # Вторая вкладка
