@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import QPushButton, QVBoxLayout, QWidget, QDialog, QLabel, 
 from PyQt6.QtCore import Qt, QPointF
 
 # Константы Era226
-Era226 = [6002.35, 7686.82, 8784.86]
+Era226 = [7686.82, 6002.35, 8784.86]
 
 
 def calculate_linear_regression(x, y):
@@ -141,13 +141,17 @@ def highlight_rn_peaks(chart, series, peak_points):
         a, b = calculate_linear_regression(x_values, Era226)
         print(f"Коэффициенты линейной регрессии для пиков Rn: a = {a:.3f} b {b:.3f}x")
         print(f"Enewa = {a + b * 1023:.3f}")
+
+        # Сохраняем коэффициенты в родительском окне (SpectrumWindow)
+        if hasattr(chart.parent(), 'calibration_coefficients'):
+            chart.parent().calibration_coefficients = (a, b)
     else:
         print("Количество пиков не совпадает с количеством значений Era226 для расчёта регрессии.")
 
 
 class CalibrationDialog(QDialog):
     """
-    Диалоговое окно для калибровки с отображением графика F(t).
+    Диалоговое окно для калибровки с отображением графика F(t) и точек.
     """
 
     def __init__(self, parent=None):
@@ -159,12 +163,15 @@ class CalibrationDialog(QDialog):
         self.parent_window = parent
         self.a, self.b = self.get_calibration_coefficients()
 
+        # Получаем значения x (координаты пиков Rn) и y (Era226)
+        self.x_values, self.y_values = self.get_peak_coordinates()
+
         # Создаем layout для диалога
         layout = QVBoxLayout()
 
         # Создаем график
         self.calibration_chart = QChart()
-        self.calibration_chart.setTitle("График F(t) = a + b * t")
+        self.calibration_chart.setTitle("График F(t) = a + b * t с точками")
 
         # Создаем серию для F(t)
         f_series = QLineSeries()
@@ -174,8 +181,18 @@ class CalibrationDialog(QDialog):
             f_t = self.a + self.b * t  # Формула F(t) = a + b * t
             f_series.append(QPointF(t, f_t))
 
-        # Добавляем серию на график
+        # Добавляем серию F(t) на график
         self.calibration_chart.addSeries(f_series)
+
+        # Создаем серию для точек (x_values, y_values)
+        points_series = QScatterSeries()
+        points_series.setName("Точки (Rn, Era226)")
+        points_series.setMarkerSize(10)
+        for x, y in zip(self.x_values, self.y_values):
+            points_series.append(QPointF(x, y))
+
+        # Добавляем серию точек на график
+        self.calibration_chart.addSeries(points_series)
 
         # Настраиваем оси
         axis_x = QValueAxis()
@@ -185,14 +202,16 @@ class CalibrationDialog(QDialog):
 
         axis_y = QValueAxis()
         axis_y.setTitleText("F(t)")
-        # Устанавливаем диапазон оси Y на основе значений F(t)
-        y_values = [self.a + self.b * t for t in t_range]
-        axis_y.setRange(min(y_values), max(y_values))
+        # Устанавливаем диапазон оси Y на основе значений F(t) и точек
+        all_y_values = [self.a + self.b * t for t in t_range] + list(self.y_values)
+        axis_y.setRange(min(all_y_values) * 0.9, max(all_y_values) * 1.1)  # Добавляем небольшой буфер
 
         self.calibration_chart.addAxis(axis_x, Qt.AlignmentFlag.AlignBottom)
         self.calibration_chart.addAxis(axis_y, Qt.AlignmentFlag.AlignLeft)
         f_series.attachAxis(axis_x)
         f_series.attachAxis(axis_y)
+        points_series.attachAxis(axis_x)
+        points_series.attachAxis(axis_y)
 
         # Создаем виджет для отображения графика
         chart_view = QChartView(self.calibration_chart)
@@ -209,8 +228,6 @@ class CalibrationDialog(QDialog):
         Получает коэффициенты a и b из родительского окна (SpectrumWindow),
         вычисленные в highlight_rn_peaks.
         """
-        # Здесь предполагается, что коэффициенты a и b хранятся в родительском окне
-        # или были вычислены в highlight_rn_peaks и доступны через атрибуты
         if hasattr(self.parent_window, 'calibration_coefficients'):
             return self.parent_window.calibration_coefficients
         else:
@@ -229,6 +246,25 @@ class CalibrationDialog(QDialog):
                 a, b = calculate_linear_regression(x_values, Era226)
                 return a, b
             return 0.0, 0.0  # Значения по умолчанию, если данные отсутствуют
+
+    def get_peak_coordinates(self):
+        """
+        Получает координаты пиков Rn (x) и значения Era226 (y).
+        """
+        x_values = []
+        for series_name, peaks in self.parent_window.peak_points.items():
+            if "Rn" in series_name:
+                if peaks.get("first"):
+                    x_values.append(peaks["first"].points()[0].x())
+                if peaks.get("second"):
+                    x_values.append(peaks["second"].points()[0].x())
+                if peaks.get("third"):
+                    x_values.append(peaks["third"].points()[0].x())
+
+        # Используем Era226 как значения y, предполагая, что они соответствуют пикам по порядку
+        if len(x_values) == len(Era226):
+            return x_values, Era226
+        return [], []  # Пустые списки, если данные отсутствуют
 
 
 def add_calibration_button(window):
