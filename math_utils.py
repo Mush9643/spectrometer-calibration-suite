@@ -1,12 +1,12 @@
 import numpy as np
 from PyQt6.QtCharts import QScatterSeries, QLineSeries, QChart, QValueAxis, QChartView
-from PyQt6.QtGui import QPainter
+from PyQt6.QtGui import QPainter, QColor
 from PyQt6.QtWidgets import QPushButton, QVBoxLayout, QWidget, QDialog, QLabel, QLineEdit, QFormLayout
 from PyQt6.QtCore import Qt, QPointF
 
 # Константы Era226
 Era226 = [7686.82, 6002.35, 8784.86]
-
+P90 = [2700, 4385.6, 5687.5, 6192.35, 6337.7, 8044.6]
 
 def calculate_linear_regression(x, y):
     """
@@ -141,6 +141,8 @@ def highlight_rn_peaks(chart, series, peak_points):
         a, b = calculate_linear_regression(x_values, Era226)
         print(f"Коэффициенты линейной регрессии для пиков Rn: a = {a:.3f} b {b:.3f}x")
         print(f"Enewa = {a + b * 1023:.3f}")
+        for e in P90:
+            print(f"P({e}) = {(e-a)/b:.0f}")
 
         # Сохраняем коэффициенты в родительском окне (SpectrumWindow)
         if hasattr(chart.parent(), 'calibration_coefficients'):
@@ -166,6 +168,9 @@ class CalibrationDialog(QDialog):
         # Получаем значения x (координаты пиков Rn) и y (Era226)
         self.x_values, self.y_values = self.get_peak_coordinates()
 
+        # Получаем координату x пика Am241
+        self.am241_x = self.get_am241_x()
+
         # Создаем layout для диалога
         layout = QVBoxLayout()
 
@@ -184,15 +189,25 @@ class CalibrationDialog(QDialog):
         # Добавляем серию F(t) на график
         self.calibration_chart.addSeries(f_series)
 
-        # Создаем серию для точек (x_values, y_values)
-        points_series = QScatterSeries()
-        points_series.setName("Точки (Rn, Era226)")
-        points_series.setMarkerSize(10)
+        # Создаем серию для точек Rn (зелёные)
+        rn_points_series = QScatterSeries()
+        rn_points_series.setName("Точки (Rn, Era226)")
+        rn_points_series.setMarkerSize(10)
+        rn_points_series.setColor(QColor(0, 255, 0))  # Зелёный цвет для точек Rn
         for x, y in zip(self.x_values, self.y_values):
-            points_series.append(QPointF(x, y))
+            rn_points_series.append(QPointF(x, y))
 
-        # Добавляем серию точек на график
-        self.calibration_chart.addSeries(points_series)
+        # Добавляем серию точек Rn на график
+        self.calibration_chart.addSeries(rn_points_series)
+
+        # Создаем серию для точки Am241 (фиолетовая)
+        if self.am241_x is not None:
+            am241_series = QScatterSeries()
+            am241_series.setName("Am241 Point")
+            am241_series.setMarkerSize(10)
+            am241_series.append(QPointF(self.am241_x, 5485.56))
+            am241_series.setColor(QColor(128, 0, 128))  # Фиолетовый цвет для точки Am241
+            self.calibration_chart.addSeries(am241_series)
 
         # Настраиваем оси
         axis_x = QValueAxis()
@@ -203,15 +218,18 @@ class CalibrationDialog(QDialog):
         axis_y = QValueAxis()
         axis_y.setTitleText("F(t)")
         # Устанавливаем диапазон оси Y на основе значений F(t) и точек
-        all_y_values = [self.a + self.b * t for t in t_range] + list(self.y_values)
+        all_y_values = [self.a + self.b * t for t in t_range] + list(self.y_values) + [5485.56]
         axis_y.setRange(min(all_y_values) * 0.9, max(all_y_values) * 1.1)  # Добавляем небольшой буфер
 
         self.calibration_chart.addAxis(axis_x, Qt.AlignmentFlag.AlignBottom)
         self.calibration_chart.addAxis(axis_y, Qt.AlignmentFlag.AlignLeft)
         f_series.attachAxis(axis_x)
         f_series.attachAxis(axis_y)
-        points_series.attachAxis(axis_x)
-        points_series.attachAxis(axis_y)
+        rn_points_series.attachAxis(axis_x)
+        rn_points_series.attachAxis(axis_y)
+        if self.am241_x is not None:
+            am241_series.attachAxis(axis_x)
+            am241_series.attachAxis(axis_y)
 
         # Создаем виджет для отображения графика
         chart_view = QChartView(self.calibration_chart)
@@ -265,6 +283,15 @@ class CalibrationDialog(QDialog):
         if len(x_values) == len(Era226):
             return x_values, Era226
         return [], []  # Пустые списки, если данные отсутствуют
+
+    def get_am241_x(self):
+        """
+        Получает координату x пика Am241 из peak_points.
+        """
+        for series_name, peak in self.parent_window.peak_points.items():
+            if "Am241" in series_name and peak:
+                return peak.points()[0].x()
+        return None  # Возвращаем None, если пик Am241 не найден
 
 
 def add_calibration_button(window):
