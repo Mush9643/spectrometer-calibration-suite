@@ -24,6 +24,10 @@ class SpectrumWindow(QMainWindow):
         self.setWindowTitle("Спектр импульсов")
         self.setWindowIcon(QIcon("M-Photoroom.png"))
 
+        # Инициализируем серию для точек P90 (вертикальные линии)
+        self.p90_series = {}
+        self.calibration_coefficients = None
+
         # Словарь для хранения точек пиков
         self.peak_points = {}
 
@@ -332,57 +336,97 @@ class SpectrumWindow(QMainWindow):
         else:
             self.update_beta_y_axis_range()
 
+    def highlight_p90_points(self):
+        """Отмечает вертикальными красными линиями позиции P90 на графике Alfa chart."""
+        # Удаляем старые серии, если они существуют
+        for series in list(self.p90_series.values()):
+            self.chart.removeSeries(series)
+        self.p90_series.clear()
+
+        # Координаты x для P90
+        p90_x_values = [221, 391, 523, 574, 589, 762]
+
+        # Находим максимальное значение y для установки высоты линий
+        max_y = max((max((point.y() for point in series.points()), default=1)
+                     for series in self.alfa_series_dict.values()), default=1000)
+
+        # Создаем вертикальные линии для каждой координаты x
+        for x in p90_x_values:
+            line_series = QLineSeries()
+            line_series.setName(f"P90 at x={x}")
+            line_series.setColor(QColor(255, 0, 0))  # Красный цвет
+            line_series.append(x, 0)  # Начало линии
+            line_series.append(x, max_y * 1.1)  # Конец линии (с запасом выше максимума)
+            self.chart.addSeries(line_series)
+            line_series.attachAxis(self.axis_x)
+            line_series.attachAxis(self.axis_y)
+            self.p90_series[x] = line_series
+
     def update_alfa_chart(self, df, file_name):
         """
-        Обновляет график на вкладке Alfa с учетом всех графиков.
+        Обновляет график на вкладке Alfa с учетом всех графиков и добавляет линии P90.
         """
-        # Если график уже есть, не добавляем новый
         if file_name in self.alfa_series_dict:
             return
 
-        # Создаем новую серию данных
         alfa_series = QLineSeries()
         second_word = file_name.split()[1] if len(file_name.split()) > 1 else file_name
         alfa_series.setName(f"({second_word})")
 
-        # Фильтрация данных: Канал от 200 до 1023
         df_filtered = df[(df['Канал'] >= 200) & (df['Канал'] <= 1023)]
-
-        # Добавляем точки на график
         for _, row in df_filtered.iterrows():
             alfa_series.append(row['Канал'], row['Кол-во импульсов'])
 
-        # Сохраняем серию в словаре
         self.alfa_series_dict[file_name] = alfa_series
         self.chart.addSeries(alfa_series)
         alfa_series.attachAxis(self.axis_x)
         alfa_series.attachAxis(self.axis_y)
 
-        # Вызываем функцию для проверки и отметки пика Am241
+        # Вызываем highlight_am241_peak и highlight_rn_peaks с передачей self как parent_window
         highlight_am241_peak(self.chart, alfa_series, self.peak_points)
+        highlight_rn_peaks(self.chart, alfa_series, self.peak_points, self)
 
-        # Вызываем функцию для проверки и отметки пиков Rn
-        highlight_rn_peaks(self.chart, alfa_series, self.peak_points)
+        # Явно сохраняем calibration_coefficients, если они вычислены
+        if "Rn" in file_name and self.calibration_coefficients is None:
+            print("Обновляем calibration_coefficients для файла Rn...")
+            if hasattr(self, 'calibration_coefficients') and self.calibration_coefficients is not None:
+                print(
+                    f"Текущие коэффициенты: intercept={self.calibration_coefficients[0]:.3f}, slope={self.calibration_coefficients[1]:.3f}")
+            else:
+                print("Коэффициенты еще не вычислены, пытаемся обновить...")
+                from math_utils import calculate_calibration_coefficients_fallback
+                intercept, slope = calculate_calibration_coefficients_fallback(self)
+                if intercept != 0.0 or slope != 0.0:
+                    self.calibration_coefficients = (intercept, slope)
+                    print(f"Резервно вычисленные коэффициенты: intercept={intercept:.3f}, slope={slope:.3f}")
 
-        # Удаляем старый CheckBox, если он есть
         if file_name in self.alfa_checkboxes:
             old_checkbox = self.alfa_checkboxes.pop(file_name)
             old_checkbox.setParent(None)
             old_checkbox.deleteLater()
 
-        # Создаем CheckBox для управления масштабом
         checkbox = QCheckBox(f"Активировать масштаб для {second_word}")
         checkbox.stateChanged.connect(
             lambda state, series=alfa_series: self.adjust_y_axis_for_series(series, state))
         self.alfa_checkboxes[file_name] = checkbox
 
-        # Добавляем CheckBox в layout вкладки Alfa
         layout = self.tab1.layout()
         if isinstance(layout, QVBoxLayout):
             layout.addWidget(checkbox)
 
-        # Обновляем диапазон оси Y
         self.update_y_axis_range()
+
+        # Вызываем метод для добавления линий P90
+        self.highlight_p90_points()
+
+    def toggle_log_scale(self, state):
+        """Переключает между логарифмическим и линейным масштабом."""
+        if state == Qt.CheckState.Checked.value:
+            self.apply_log_scale()
+        else:
+            self.apply_linear_scale()
+        # Перерисовываем линии P90 после смены масштаба
+        self.highlight_p90_points()
 
     def update_beta_chart(self, df, file_name):
         """Обновляет график на вкладке Beta с учетом всех графиков."""
