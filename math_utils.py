@@ -8,6 +8,53 @@ from PyQt6.QtCore import Qt, QPointF
 ERA226 = [7686.82, 6002.35, 8784.86]  # Значения энергии для пиков Rn
 P90 = [2700, 4385.6, 5687.5, 6192.35, 6337.7, 8044.6]  # Значения энергии для P90
 
+import numpy as np
+
+
+def calculate_rn_sum(parent_window):
+    """Вычисляет сумму Rn_i в диапазоне от 221 до 522 для серий с 'Rn' в имени, используя np.sum, и выводит результат в консоль."""
+    if not hasattr(parent_window, 'alfa_series_dict') or not parent_window.alfa_series_dict:
+        print("Ошибка: Нет данных для вычисления суммы Rn.")
+        return
+
+    # Фиксированный диапазон каналов: от 221 до 522 (включительно для 221, исключая 523)
+    start_channel = 221
+    end_channel = 523  # Чтобы получить диапазон до 522 (end_channel - 1)
+
+    # Проходим только по сериям, чьи имена содержат 'Rn'
+    total_rn = 0
+    found_rn_series = False
+
+    for series_name, series in parent_window.alfa_series_dict.items():
+        if "Rn" in series_name:
+            found_rn_series = True
+            points = series.points()
+
+            # Собираем все y-значения (Rn_i) для x в диапазоне [221, 522]
+            rn_values = []
+            for point in points:
+                x, y = point.x(), point.y()
+                if start_channel <= x < end_channel:  # Проверяем, попадает ли x в диапазон [221, 522]
+                    rn_values.append(y)
+
+            if rn_values:
+                # Вычисляем сумму с помощью np.sum
+                series_sum = np.sum(rn_values)
+                total_rn += series_sum
+                print(f"Сумма Rn_i для серии {series_name} в диапазоне от 221 до 522: {series_sum}")
+            else:
+                print(f"Не найдено точек в диапазоне от 221 до 522 для серии {series_name}.")
+
+    if found_rn_series:
+        print(f"\nОбщая сумма Rn_i от 221 до 522: {total_rn}")
+        # Сравниваем с заданным значением 146 (для проверки)
+        if total_rn == 146:
+            print("Результат совпадает с ожидаемым значением (146).")
+        else:
+            print(f"Предупреждение: Результат ({total_rn}) не совпадает с ожидаемым значением (146).")
+    else:
+        print("Предупреждение: Не найдено серий с 'Rn' в имени.")
+
 def calculate_linear_regression(x, y):
     """Вычисляет коэффициенты линейной регрессии методом наименьших квадратов."""
     n = len(x)
@@ -117,7 +164,7 @@ def highlight_rn_peaks(chart, series, peak_points, parent_window=None):
         print("Предупреждение: Недостаточно пиков Rn для расчета регрессии.")
 
 def calculate_ra(parent_window):
-    """Вычисляет коэффициент ra"""
+    """Вычисляет сумму Rn_i в диапазоне от ch0 до ch2-1 для серий с 'Rn' в имени, используя np.sum, и выводит результат в консоль."""
     if not hasattr(parent_window, 'alfa_series_dict') or not parent_window.alfa_series_dict:
         print("Ошибка: Нет данных для вычисления ra.")
         return
@@ -129,12 +176,57 @@ def calculate_ra(parent_window):
     # Получаем коэффициенты регрессии a (intercept) и b (slope)
     intercept, slope = parent_window.calibration_coefficients
 
-    # Вычисляем ch для каждого значения энергии из P90
+    # Получаем значения каналов (ch) для P90
+    P90 = [2700, 4385.6, 5687.5, 6192.35, 6337.7, 8044.6]  # Как в вашем коде
     ch_values = [round((e - intercept) / slope) for e in P90]
-    print("Значения ch (P(E)) для P90:")
-    for i, ch in enumerate(ch_values):
-        print(f"ch_{i} = {ch}")  # Выводим ch_0, ch_1, ..., ch_5
 
+    # Проверяем, что есть достаточно значений ch
+    if len(ch_values) < 3:  # Нужны хотя бы ch0 и ch2
+        print("Ошибка: Недостаточно значений каналов для вычисления (требуется минимум 3 значения).")
+        return
+
+    # Используем ch0 и ch2 (предполагаем, что это первые два значения из ch_values)
+    ch0 = ch_values[0]  # Начальный канал (ch_0)
+    ch2 = ch_values[2]  # Конечный канал (ch_2, чтобы получить ch2-1)
+
+    # Проверяем, что ch0 < ch2
+    if ch0 >= ch2:
+        print("Ошибка: ch0 должно быть меньше ch2.")
+        return
+
+    # Проходим только по сериям, чьи имена содержат 'Rn'
+    total_rn = 0
+    found_rn_series = False
+
+    for series_name, series in parent_window.alfa_series_dict.items():
+        if "Rn" in series_name:
+            found_rn_series = True
+            points = series.points()
+
+            # Собираем все y-значения (Rn_i) для x в диапазоне [ch0, ch2-1]
+            rn_values = []
+            for point in points:
+                x, y = point.x(), point.y()
+                if ch0 <= x < ch2:  # Проверяем, попадает ли x в диапазон [ch0, ch2-1]
+                    rn_values.append(y)
+
+            if rn_values:
+                # Вычисляем сумму с помощью np.sum
+                series_sum = np.sum(rn_values)
+                total_rn += series_sum
+                print(f"Сумма Rn_i для серии {series_name} в диапазоне от {ch0} до {ch2 - 1}: {series_sum}")
+            else:
+                print(f"Не найдено точек в диапазоне от {ch0} до {ch2 - 1} для серии {series_name}.")
+
+    if found_rn_series:
+        print(f"\nОбщая сумма Rn_i от ch0={ch0} до ch2-1={ch2 - 1}: {total_rn}")
+        # Сравниваем с заданным значением 146 (для проверки)
+        if total_rn == 146:
+            print("Результат совпадает с ожидаемым значением (146).")
+        else:
+            print(f"Предупреждение: Результат ({total_rn}) не совпадает с ожидаемым значением (146).")
+    else:
+        print("Предупреждение: Не найдено серий с 'Rn' в имени.")
 
 class CalibrationDialog(QDialog):
     """Диалоговое окно калибровки с графиком F(t) и точками пиков."""

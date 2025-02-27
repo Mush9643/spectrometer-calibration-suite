@@ -4,319 +4,267 @@ from PyQt6.QtGui import QPainter, QColor
 from PyQt6.QtWidgets import QPushButton, QVBoxLayout, QWidget, QDialog, QLabel, QLineEdit, QFormLayout
 from PyQt6.QtCore import Qt, QPointF
 
-# Константы Era226
-Era226 = [7686.82, 6002.35, 8784.86]
-P90 = [2700, 4385.6, 5687.5, 6192.35, 6337.7, 8044.6]
+# Константы
+ERA226 = [7686.82, 6002.35, 8784.86]  # Значения энергии для пиков Rn
+P90 = [2700, 4385.6, 5687.5, 6192.35, 6337.7, 8044.6]  # Значения энергии для P90
 
 def calculate_linear_regression(x, y):
-    """
-    Вычисляет коэффициенты линейной регрессии (a, b) методом наименьших квадратов.
-
-    :param x: Список значений независимой переменной (координаты x пиков)
-    :param y: Список значений зависимой переменной (Era226)
-    :return: Кортеж (a, b) — пересечение с осью Y и наклон прямой
-    """
+    """Вычисляет коэффициенты линейной регрессии методом наименьших квадратов."""
     n = len(x)
-    sum_x = sum(x)
-    sum_y = sum(y)
+    if n == 0 or len(y) != n:
+        return 0.0, 0.0
+
+    sum_x, sum_y = sum(x), sum(y)
     sum_xy = sum(xi * yi for xi, yi in zip(x, y))
     sum_x2 = sum(xi * xi for xi in x)
 
-    # Расчёт наклона b
-    b = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x * sum_x)
-    # Расчёт пересечения с осью Y (a)
-    a = (sum_y - b * sum_x) / n
-
-    return a, b
-
+    slope = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x * sum_x)
+    intercept = (sum_y - slope * sum_x) / n
+    return intercept, slope
 
 def highlight_am241_peak(chart, series, peak_points):
-    """
-    Отмечает пик Am241 на графике.
-
-    :param chart: QChart объект, содержащий график
-    :param series: QLineSeries объект, представляющий загружаемый график
-    :param peak_points: Словарь для хранения точек пиков
-    """
-    series_name = series.name()
-    if "Am241" in series_name:
-        points = series.points()
-        if not points:
-            return
-
-        max_point = max(points, key=lambda point: point.y())
-
-        scatter_series = QScatterSeries()
-        scatter_series.setName(f"{series_name} Peak")
-        scatter_series.setMarkerSize(10)
-        scatter_series.append(max_point)
-
-        chart.addSeries(scatter_series)
-        scatter_series.attachAxis(chart.axes(Qt.Orientation.Horizontal)[0])
-        scatter_series.attachAxis(chart.axes(Qt.Orientation.Vertical)[0])
-
-        peak_points[series_name] = scatter_series
-
-        print(f"Пик Am241: x={max_point.x()}, y={max_point.y()}")
-
-
-def highlight_rn_peaks(chart, series, peak_points):
-    """
-    Отмечает три ключевые точки на графике Rn и вычисляет коэффициенты аппроксимации.
-
-    :param chart: QChart объект, содержащий график
-    :param series: QLineSeries объект, представляющий загружаемый график
-    :param peak_points: Словарь для хранения точек пиков
-    """
-    series_name = series.name()
-    if "Rn" not in series_name:
+    """Отмечает пик Am241 на графике как точку максимального значения."""
+    if "Am241" not in series.name():
         return
 
     points = series.points()
     if not points:
         return
 
-    max_point = max(points, key=lambda point: point.y())
+    max_point = max(points, key=lambda p: p.y())
+    scatter_series = QScatterSeries()
+    scatter_series.setName(f"{series.name()} Peak")
+    scatter_series.setMarkerSize(10)
+    scatter_series.append(max_point)
+    chart.addSeries(scatter_series)
+    scatter_series.attachAxis(chart.axes(Qt.Orientation.Horizontal)[0])
+    scatter_series.attachAxis(chart.axes(Qt.Orientation.Vertical)[0])
+    peak_points[series.name()] = scatter_series
+    print(f"Пик Am241: x={max_point.x()}, y={max_point.y()}")
+
+def highlight_rn_peaks(chart, series, peak_points, parent_window=None):
+    """Отмечает три пика Rn, вычисляет линейную регрессию и сохраняет коэффициенты."""
+    if "Rn" not in series.name():
+        return
+
+    points = series.points()
+    if not points:
+        return
+
+    # Поиск трёх пиков
+    max_point = max(points, key=lambda p: p.y())
     max_x, max_y = max_point.x(), max_point.y()
 
-    left_points = [point for point in points if point.x() < max_x - 150]
-    second_max_point = max(left_points, key=lambda point: point.y()) if left_points else None
+    left_points = [p for p in points if p.x() < max_x - 150]
+    second_peak = max(left_points, key=lambda p: p.y()) if left_points else None
 
-    right_points = [point for point in points if point.x() > max_x + 40]
-    third_max_point = max(right_points, key=lambda point: point.y()) if right_points else None
+    right_points = [p for p in points if p.x() > max_x + 40]
+    third_peak = max(right_points, key=lambda p: p.y()) if right_points else None
 
-    def create_scatter_series(point, name_suffix):
-        scatter_series = QScatterSeries()
-        scatter_series.setName(f"{series_name} {name_suffix}")
-        scatter_series.setMarkerSize(10)
-        scatter_series.append(point)
-        return scatter_series
+    def add_peak_series(point, name_suffix):
+        scatter = QScatterSeries()
+        scatter.setName(f"{series.name()} {name_suffix}")
+        scatter.setMarkerSize(10)
+        scatter.append(point)
+        chart.addSeries(scatter)
+        scatter.attachAxis(chart.axes(Qt.Orientation.Horizontal)[0])
+        scatter.attachAxis(chart.axes(Qt.Orientation.Vertical)[0])
+        return scatter
 
-    # Создание серий для пиков
-    first_peak = create_scatter_series(max_point, "First Peak")
-    chart.addSeries(first_peak)
-    first_peak.attachAxis(chart.axes(Qt.Orientation.Horizontal)[0])
-    first_peak.attachAxis(chart.axes(Qt.Orientation.Vertical)[0])
+    peaks = {"first": add_peak_series(max_point, "First Peak")}
+    if second_peak:
+        peaks["second"] = add_peak_series(second_peak, "Second Peak")
+    if third_peak:
+        peaks["third"] = add_peak_series(third_peak, "Third Peak")
 
-    second_peak = None
-    third_peak = None
+    peak_points[series.name()] = peaks
 
-    if second_max_point:
-        second_peak = create_scatter_series(second_max_point, "Second Peak")
-        chart.addSeries(second_peak)
-        second_peak.attachAxis(chart.axes(Qt.Orientation.Horizontal)[0])
-        second_peak.attachAxis(chart.axes(Qt.Orientation.Vertical)[0])
-
-    if third_max_point:
-        third_peak = create_scatter_series(third_max_point, "Third Peak")
-        chart.addSeries(third_peak)
-        third_peak.attachAxis(chart.axes(Qt.Orientation.Horizontal)[0])
-        third_peak.attachAxis(chart.axes(Qt.Orientation.Vertical)[0])
-
-    # Сохранение пиков в словаре
-    peak_points[series_name] = {
-        "first": first_peak,
-        "second": second_peak,
-        "third": third_peak
-    }
-
-    # Вывод информации о пиках
+    # Логи пиков
     print(f"Первый пик Rn: x={max_x}, y={max_y}")
-    if second_max_point:
-        print(f"Второй пик Rn: x={second_max_point.x()}, y={second_max_point.y()}")
-    if third_max_point:
-        print(f"Третий пик Rn: x={third_max_point.x()}, y={third_max_point.y()}")
+    if second_peak:
+        print(f"Второй пик Rn: x={second_peak.x()}, y={second_peak.y()}")
+    if third_peak:
+        print(f"Третий пик Rn: x={third_peak.x()}, y={third_peak.y()}")
 
-    # Расчёт коэффициентов линейной регрессии на основе координат x пиков и значений Era226
-    x_values = []
-    if max_point:
-        x_values.append(max_x)
-    if second_max_point:
-        x_values.append(second_max_point.x())
-    if third_max_point:
-        x_values.append(third_max_point.x())
-
-    # Используем Era226 как значения y, предполагая, что они соответствуют пикам по порядку
-    if len(x_values) == len(Era226):  # Проверяем, что количество пиков совпадает с количеством значений Era226
-        a, b = calculate_linear_regression(x_values, Era226)
-        print(f"Коэффициенты линейной регрессии для пиков Rn: a = {a:.3f} b {b:.3f}x")
-        print(f"Enewa = {a + b * 1023:.3f}")
+    # Расчет регрессии
+    x_values = [peak.points()[0].x() for peak in peaks.values() if peak]
+    if len(x_values) > 0:
+        y_values = ERA226[:len(x_values)]  # Используем только соответствующее количество значений
+        intercept, slope = calculate_linear_regression(x_values, y_values)
+        print(f"Коэффициенты: intercept={intercept:.3f}, slope={slope:.3f}")
+        print(f"Enewa = {intercept + slope * 1023:.3f}")
         for e in P90:
-            print(f"P({e}) = {(e-a)/b:.0f}")
-
-        # Сохраняем коэффициенты в родительском окне (SpectrumWindow)
-        if hasattr(chart.parent(), 'calibration_coefficients'):
-            chart.parent().calibration_coefficients = (a, b)
+            print(f"P({e}) = {(e - intercept) / slope:.0f}")
+        # Сохраняем коэффициенты в parent_window, если он передан
+        if parent_window is not None:
+            if hasattr(parent_window, 'calibration_coefficients'):
+                parent_window.calibration_coefficients = (intercept, slope)
+            else:
+                parent_window.calibration_coefficients = (intercept, slope)
+                print("Создан новый атрибут calibration_coefficients в родительском окне.")
+        else:
+            # Если parent_window не передан, пытаемся использовать chart.parent() с проверкой
+            parent = chart.parent()
+            if parent is not None and hasattr(parent, '__dict__'):
+                if hasattr(parent, 'calibration_coefficients'):
+                    parent.calibration_coefficients = (intercept, slope)
+                else:
+                    parent.calibration_coefficients = (intercept, slope)
+                    print("Создан новый атрибут calibration_coefficients в родительском окне через chart.parent().")
+            else:
+                print("Предупреждение: Не удалось найти родительский объект для сохранения calibration_coefficients.")
     else:
-        print("Количество пиков не совпадает с количеством значений Era226 для расчёта регрессии.")
+        print("Предупреждение: Недостаточно пиков Rn для расчета регрессии.")
+
+def calculate_ra(parent_window):
+    """Вычисляет коэффициент ra"""
+    if not hasattr(parent_window, 'alfa_series_dict') or not parent_window.alfa_series_dict:
+        print("Ошибка: Нет данных для вычисления ra.")
+        return
+
+    if not hasattr(parent_window, 'calibration_coefficients'):
+        print("Ошибка: Коэффициенты калибровки отсутствуют.")
+        return
+
+    # Получаем коэффициенты регрессии a (intercept) и b (slope)
+    intercept, slope = parent_window.calibration_coefficients
+
+    # Вычисляем ch для каждого значения энергии из P90
+    ch_values = [round((e - intercept) / slope) for e in P90]
+    print("Значения ch (P(E)) для P90:")
+    for i, ch in enumerate(ch_values):
+        print(f"ch_{i} = {ch}")  # Выводим ch_0, ch_1, ..., ch_5
 
 
 class CalibrationDialog(QDialog):
-    """
-    Диалоговое окно для калибровки с отображением графика F(t) и точек.
-    """
+    """Диалоговое окно калибровки с графиком F(t) и точками пиков."""
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Калибровка")
-        self.setFixedSize(600, 400)  # Увеличиваем размер для графика
-
-        # Получаем коэффициенты a и b из родительского окна (SpectrumWindow)
+        self.setFixedSize(600, 500)
         self.parent_window = parent
-        self.a, self.b = self.get_calibration_coefficients()
 
-        # Получаем значения x (координаты пиков Rn) и y (Era226)
-        self.x_values, self.y_values = self.get_peak_coordinates()
-
-        # Получаем координату x пика Am241
-        self.am241_x = self.get_am241_x()
-
-        # Создаем layout для диалога
         layout = QVBoxLayout()
 
-        # Создаем график
-        self.calibration_chart = QChart()
-        self.calibration_chart.setTitle("График F(t) = a + b * t с точками")
+        # Получение данных
+        self.intercept, self.slope = self.get_calibration_coefficients()
+        self.x_values, self.y_values = self.get_peak_coordinates()
+        self.am241_x = self.get_am241_x()
 
-        # Создаем серию для F(t)
+        # График
+        chart = QChart()
+        chart.setTitle("F(t) = a + b * t с точками калибровки")
+
+        # Линия F(t)
         f_series = QLineSeries()
-        f_series.setName("F(t)")
-        t_range = np.linspace(400, 900, 100)  # Диапазон t от 400 до 900
+        f_series.setName(f"F(t) = {self.intercept:.2f} + {self.slope:.2f}t")
+        t_range = np.linspace(400, 900, 100)  # Фиксированный диапазон от 400 до 900
         for t in t_range:
-            f_t = self.a + self.b * t  # Формула F(t) = a + b * t
-            f_series.append(QPointF(t, f_t))
+            f_series.append(t, self.intercept + self.slope * t)
+        chart.addSeries(f_series)
 
-        # Добавляем серию F(t) на график
-        self.calibration_chart.addSeries(f_series)
-
-        # Создаем серию для точек Rn (зелёные)
-        rn_points_series = QScatterSeries()
-        rn_points_series.setName("Точки (Rn, Era226)")
-        rn_points_series.setMarkerSize(10)
-        rn_points_series.setColor(QColor(0, 255, 0))  # Зелёный цвет для точек Rn
+        # Точки Rn
+        rn_series = QScatterSeries()
+        rn_series.setName("Rn (Era226)")
+        rn_series.setMarkerSize(10)
+        rn_series.setColor(QColor(0, 255, 0))
         for x, y in zip(self.x_values, self.y_values):
-            rn_points_series.append(QPointF(x, y))
+            rn_series.append(x, y)
+        chart.addSeries(rn_series)
 
-        # Добавляем серию точек Rn на график
-        self.calibration_chart.addSeries(rn_points_series)
-
-        # Создаем серию для точки Am241 (фиолетовая)
+        # Точка Am241
         if self.am241_x is not None:
             am241_series = QScatterSeries()
-            am241_series.setName("Am241 Point")
+            am241_series.setName("Am241 (5485.56)")
             am241_series.setMarkerSize(10)
-            am241_series.append(QPointF(self.am241_x, 5485.56))
-            am241_series.setColor(QColor(128, 0, 128))  # Фиолетовый цвет для точки Am241
-            self.calibration_chart.addSeries(am241_series)
+            am241_series.setColor(QColor(128, 0, 128))
+            am241_series.append(self.am241_x, 5485.56)
+            chart.addSeries(am241_series)
+            # Проверка, попадает ли точка в видимый диапазон
+            if self.am241_x < 400 or self.am241_x > 900:
+                print(f"Предупреждение: Точка Am241 (x={self.am241_x}) вне диапазона 400–900")
+        else:
+            print("Ошибка: Координата x для Am241 не найдена")
 
-        # Настраиваем оси
+        # Оси
         axis_x = QValueAxis()
-        axis_x.setTitleText("t")
-        axis_x.setRange(400, 900)
-        axis_x.setTickCount(6)  # Устанавливаем количество делений (5 интервалов + начало)
+        axis_x.setTitleText("t (каналы)")
+        axis_x.setRange(400, 900)  # Фиксированный диапазон по X
 
         axis_y = QValueAxis()
-        axis_y.setTitleText("F(t)")
-        # Устанавливаем диапазон оси Y на основе значений F(t) и точек
-        all_y_values = [self.a + self.b * t for t in t_range] + list(self.y_values) + [5485.56]
-        axis_y.setRange(min(all_y_values) * 0.9, max(all_y_values) * 1.1)  # Добавляем небольшой буфер
+        axis_y.setTitleText("Энергия (кэВ)")
+        # Диапазон Y на основе F(t) и точек
+        all_y = [self.intercept + self.slope * t for t in t_range] + self.y_values
+        if self.am241_x is not None:
+            all_y.append(5485.56)
+        axis_y.setRange(min(all_y) * 0.9, max(all_y) * 1.1)
 
-        self.calibration_chart.addAxis(axis_x, Qt.AlignmentFlag.AlignBottom)
-        self.calibration_chart.addAxis(axis_y, Qt.AlignmentFlag.AlignLeft)
+        chart.addAxis(axis_x, Qt.AlignmentFlag.AlignBottom)
+        chart.addAxis(axis_y, Qt.AlignmentFlag.AlignLeft)
         f_series.attachAxis(axis_x)
         f_series.attachAxis(axis_y)
-        rn_points_series.attachAxis(axis_x)
-        rn_points_series.attachAxis(axis_y)
+        rn_series.attachAxis(axis_x)
+        rn_series.attachAxis(axis_y)
         if self.am241_x is not None:
             am241_series.attachAxis(axis_x)
             am241_series.attachAxis(axis_y)
 
-        # Создаем виджет для отображения графика
-        chart_view = QChartView(self.calibration_chart)
+        chart_view = QChartView(chart)
         chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
-
-        # Добавляем график в layout
         layout.addWidget(chart_view)
 
-        # Устанавливаем layout для диалога
+        # Информационная панель
+        info_layout = QFormLayout()
+        info_layout.addRow("Intercept (a):", QLabel(f"{self.intercept:.2f}"))
+        info_layout.addRow("Slope (b):", QLabel(f"{self.slope:.2f}"))
+        info_layout.addRow("Enewa (t=1023):", QLabel(f"{self.intercept + self.slope * 1023:.2f}"))
+        if self.am241_x is not None:
+            info_layout.addRow("Am241 x:", QLabel(f"{self.am241_x:.2f}"))
+        else:
+            info_layout.addRow("Am241 x:", QLabel("Не найден"))
+        layout.addLayout(info_layout)
+
+        # Вычисляем и выводим ra при открытии диалога
+        calculate_ra(self.parent_window)
+
         self.setLayout(layout)
 
     def get_calibration_coefficients(self):
-        """
-        Получает коэффициенты a и b из родительского окна (SpectrumWindow),
-        вычисленные в highlight_rn_peaks.
-        """
+        """Получает или вычисляет коэффициенты регрессии."""
         if hasattr(self.parent_window, 'calibration_coefficients'):
             return self.parent_window.calibration_coefficients
-        else:
-            # Если коэффициенты не сохранены, вычисляем их заново (упрощённый подход)
-            x_values = []
-            for series_name, peaks in self.parent_window.peak_points.items():
-                if "Rn" in series_name:
-                    if peaks.get("first"):
-                        x_values.append(peaks["first"].points()[0].x())
-                    if peaks.get("second"):
-                        x_values.append(peaks["second"].points()[0].x())
-                    if peaks.get("third"):
-                        x_values.append(peaks["third"].points()[0].x())
-
-            if len(x_values) == len(Era226):
-                a, b = calculate_linear_regression(x_values, Era226)
-                return a, b
-            return 0.0, 0.0  # Значения по умолчанию, если данные отсутствуют
+        x_values, _ = self.get_peak_coordinates()
+        if x_values:
+            return calculate_linear_regression(x_values, ERA226[:len(x_values)])
+        return 0.0, 0.0
 
     def get_peak_coordinates(self):
-        """
-        Получает координаты пиков Rn (x) и значения Era226 (y).
-        """
+        """Извлекает координаты пиков Rn и соответствующие значения Era226."""
         x_values = []
         for series_name, peaks in self.parent_window.peak_points.items():
             if "Rn" in series_name:
-                if peaks.get("first"):
-                    x_values.append(peaks["first"].points()[0].x())
-                if peaks.get("second"):
-                    x_values.append(peaks["second"].points()[0].x())
-                if peaks.get("third"):
-                    x_values.append(peaks["third"].points()[0].x())
-
-        # Используем Era226 как значения y, предполагая, что они соответствуют пикам по порядку
-        if len(x_values) == len(Era226):
-            return x_values, Era226
-        return [], []  # Пустые списки, если данные отсутствуют
+                for peak_name in ["first", "second", "third"]:
+                    if peak := peaks.get(peak_name):
+                        x_values.append(peak.points()[0].x())
+        return x_values, ERA226[:len(x_values)]
 
     def get_am241_x(self):
-        """
-        Получает координату x пика Am241 из peak_points.
-        """
+        """Получает координату x пика Am241."""
         for series_name, peak in self.parent_window.peak_points.items():
             if "Am241" in series_name and peak:
                 return peak.points()[0].x()
-        return None  # Возвращаем None, если пик Am241 не найден
-
+        return None
 
 def add_calibration_button(window):
-    """
-    Добавляет кнопку "Калибровка" на вкладку "Alfa chart" и связывает её с диалоговым окном.
-
-    :param window: Экземпляр класса SpectrumWindow
-    """
-    # Создаём кнопку
-    calibration_button = QPushButton("Калибровка")
-    calibration_button.clicked.connect(lambda: CalibrationDialog(window).exec())
-
-    # Получаем layout вкладки "Alfa chart"
-    layout = window.tab1.layout()
-    if isinstance(layout, QVBoxLayout):
-        # Если layout существует, добавляем кнопку в конец
-        layout.addWidget(calibration_button)
+    """Добавляет кнопку калибровки на вкладку Alfa chart."""
+    button = QPushButton("Калибровка")
+    button.clicked.connect(lambda: CalibrationDialog(window).exec())
+    if layout := window.tab1.layout():
+        layout.addWidget(button)
     else:
-        # Если layout ещё не создан, создаём его
-        new_layout = QVBoxLayout()
-        if hasattr(window, 'chart_view'):
-            new_layout.addWidget(window.chart_view)
-        else:
-            print("Предупреждение: chart_view не найден. Используем только кнопку.")
-        if hasattr(window, 'log_checkbox'):
-            new_layout.addWidget(window.log_checkbox)
-        new_layout.addWidget(calibration_button)
-        window.tab1.setLayout(new_layout)
+        layout = QVBoxLayout()
+        layout.addWidget(window.chart_view if hasattr(window, 'chart_view') else QWidget())
+        layout.addWidget(window.log_checkbox if hasattr(window, 'log_checkbox') else QWidget())
+        layout.addWidget(button)
+        window.tab1.setLayout(layout)
