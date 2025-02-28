@@ -24,6 +24,9 @@ class SpectrumWindow(QMainWindow):
         self.setWindowTitle("Спектр импульсов")
         self.setWindowIcon(QIcon("M-Photoroom.png"))
 
+        # Словарь для хранения массивов данных Alfa
+        self.alfa_data_arrays = {}
+
         # Инициализируем серию для точек P90 (вертикальные линии)
         self.p90_series = {}
         self.calibration_coefficients = None
@@ -192,6 +195,7 @@ class SpectrumWindow(QMainWindow):
         if action_type == 'alfa':
             item.setBackground(QColor(144, 238, 144))  # Салатовый для "Загрузить Alfa"
             self.add_or_remove_chart(item.text(), 'alfa', True)
+            self.save_alfa_data(item.text())  # Сохраняем данные
         elif action_type == 'beta':
             item.setBackground(QColor(173, 216, 230))  # Голубой для "Загрузить Beta"
             self.add_or_remove_chart(item.text(), 'beta', True)
@@ -199,6 +203,35 @@ class SpectrumWindow(QMainWindow):
             item.setBackground(Qt.GlobalColor.white)  # Обесцвечиваем поле для "Отключить"
             self.add_or_remove_chart(item.text(), 'alfa', False)
             self.add_or_remove_chart(item.text(), 'beta', False)
+            if item.text() in self.alfa_data_arrays:
+                del self.alfa_data_arrays[item.text()]
+
+    def save_alfa_data(self, file_name):
+        """Сохраняет вторую строку из файла .xls в alfa_data_arrays."""
+        folder_name = self.folder_input.text()
+        folder_path = os.path.join(os.getcwd(), folder_name)
+        file_path = os.path.join(folder_path, file_name)
+
+        if not os.path.exists(file_path):
+            self.show_warning_message(f"Файл '{file_name}' не найден.")
+            return
+
+        try:
+            df = pd.read_excel(file_path)
+            if 'Канал' not in df.columns or 'Кол-во импульсов' not in df.columns:
+                self.show_warning_message(f"Неверный формат данных в файле '{file_name}'.")
+                return
+            # Берем только вторую строку (индекс 1)
+            if len(df) < 2:
+                self.show_warning_message(f"В файле '{file_name}' менее 2 строк.")
+                return
+            second_row = df.iloc[0]  # Вторая строка
+            channel = int(second_row['Канал'])
+            impulses = second_row['Кол-во импульсов']
+            self.alfa_data_arrays[file_name] = [channel, impulses]  # Сохраняем как список [Канал, Кол-во импульсов]
+            print(f"Вторая строка из файла '{file_name}' сохранена: Канал={channel}, Импульсы={impulses}")
+        except Exception as e:
+            self.show_error_message(f"Ошибка при сохранении данных из файла: {str(e)}")
 
     def add_or_remove_chart(self, file_name, chart_type, add):
         """Добавляет или удаляет график в зависимости от состояния."""

@@ -8,6 +8,20 @@ from PyQt6.QtCore import Qt, QPointF
 ERA226 = [7686.82, 6002.35, 8784.86]  # Значения энергии для пиков Rn
 P90 = [2700, 4385.6, 5687.5, 6192.35, 6337.7, 8044.6]  # Значения энергии для P90
 
+def print_alfa_data_arrays(parent_window):
+    """Выводит в консоль данные второй строки всех сохранённых массивов Alfa."""
+    if not hasattr(parent_window, 'alfa_data_arrays') or not parent_window.alfa_data_arrays:
+        print("Нет сохранённых данных Alfa для вывода.")
+        return
+
+    print("\n=== Сохранённые данные Alfa (вторая строка) ===")
+    print("Файл              | Канал | Кол-во импульсов")
+    print("---------------------------------------------")
+    for file_name, data in parent_window.alfa_data_arrays.items():
+        channel, impulses = data  # Распаковываем список
+        print(f"{file_name:17s} | {channel:5d} | {impulses}")
+    print("=============================================\n")
+
 def calculate_linear_regression(x, y):
     """Вычисляет коэффициенты линейной регрессии методом наименьших квадратов."""
     n = len(x)
@@ -41,7 +55,6 @@ def highlight_am241_peak(chart, series, peak_points):
     scatter_series.attachAxis(chart.axes(Qt.Orientation.Vertical)[0])
     peak_points[series.name()] = scatter_series
     print(f"Пик Am241: x={max_point.x()}, y={max_point.y()}")
-
 
 def highlight_rn_peaks(chart, series, peak_points, parent_window=None):
     """Отмечает три пика Rn, вычисляет линейную регрессию, сохраняет коэффициенты и вычисляет ra."""
@@ -215,6 +228,8 @@ class CalibrationDialog(QDialog):
         self.setWindowTitle("Калибровка")
         self.setFixedSize(600, 500)
         self.parent_window = parent
+
+        print_alfa_data_arrays(self.parent_window)
 
         layout = QVBoxLayout()
 

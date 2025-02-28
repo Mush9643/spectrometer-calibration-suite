@@ -42,8 +42,9 @@ def highlight_am241_peak(chart, series, peak_points):
     peak_points[series.name()] = scatter_series
     print(f"Пик Am241: x={max_point.x()}, y={max_point.y()}")
 
+
 def highlight_rn_peaks(chart, series, peak_points, parent_window=None):
-    """Отмечает три пика Rn, вычисляет линейную регрессию и сохраняет коэффициенты."""
+    """Отмечает три пика Rn, вычисляет линейную регрессию, сохраняет коэффициенты и вычисляет ra."""
     if "Rn" not in series.name():
         return
 
@@ -95,6 +96,7 @@ def highlight_rn_peaks(chart, series, peak_points, parent_window=None):
         print(f"Enewa = {intercept + slope * 1023:.3f}")
         for e in P90:
             print(f"P({e}) = {(e - intercept) / slope:.0f}")
+
         # Сохраняем коэффициенты в parent_window, если он передан
         if parent_window is not None:
             if hasattr(parent_window, 'calibration_coefficients'):
@@ -113,11 +115,15 @@ def highlight_rn_peaks(chart, series, peak_points, parent_window=None):
                     print("Создан новый атрибут calibration_coefficients в родительском окне через chart.parent().")
             else:
                 print("Предупреждение: Не удалось найти родительский объект для сохранения calibration_coefficients.")
+
+        # Вызываем calculate_ra для вычисления ra на основе текущих данных
+        if parent_window:
+            calculate_ra(parent_window)
     else:
         print("Предупреждение: Недостаточно пиков Rn для расчета регрессии.")
 
 def calculate_ra(parent_window):
-    """Вычисляет сумму Rn_i в диапазоне от ch0 до ch2-1 для серий с 'Rn' в имени, используя np.sum, и выводит результат в консоль."""
+    """Вычисляет ra как отношение суммы Rn_i в диапазоне от ch0 до ch2-1 к сумме Rn_i в диапазоне от ch2 до ch3-1."""
     if not hasattr(parent_window, 'alfa_series_dict') or not parent_window.alfa_series_dict:
         print("Ошибка: Нет данных для вычисления ra.")
         return
@@ -133,22 +139,24 @@ def calculate_ra(parent_window):
     P90 = [2700, 4385.6, 5687.5, 6192.35, 6337.7, 8044.6]  # Как в вашем коде
     ch_values = [round((e - intercept) / slope) for e in P90]
 
-    # Проверяем, что есть достаточно значений ch
-    if len(ch_values) < 3:  # Нужны хотя бы ch0 и ch2
-        print("Ошибка: Недостаточно значений каналов для вычисления (требуется минимум 3 значения).")
+    # Проверяем, что есть достаточно значений ch (нужны ch0, ch2, ch3)
+    if len(ch_values) < 4:
+        print("Ошибка: Недостаточно значений каналов для вычисления ra (требуется минимум 4 значения).")
         return
 
-    # Используем ch0 и ch2 (предполагаем, что это первые два значения из ch_values)
-    ch0 = ch_values[0]  # Начальный канал (ch_0)
-    ch2 = ch_values[2]  # Конечный канал (ch_2, чтобы получить ch2-1)
+    # Используем ch0, ch2, ch3 из ch_values
+    ch0 = ch_values[0]  # Начальный канал для числителя
+    ch2 = ch_values[2]  # Конечный канал для числителя (ch2-1) и начальный для знаменателя
+    ch3 = ch_values[3]  # Конечный канал для знаменателя (ch3-1)
 
-    # Проверяем, что ch0 < ch2
-    if ch0 >= ch2:
-        print("Ошибка: ch0 должно быть меньше ch2.")
+    # Проверяем, что каналы в правильном порядке
+    if ch0 >= ch2 or ch2 >= ch3:
+        print("Ошибка: Каналы должны быть в порядке ch0 < ch2 < ch3.")
         return
 
     # Проходим только по сериям, чьи имена содержат 'Rn'
-    total_rn = 0
+    numerator_sum = 0
+    denominator_sum = 0
     found_rn_series = False
 
     for series_name, series in parent_window.alfa_series_dict.items():
@@ -156,28 +164,46 @@ def calculate_ra(parent_window):
             found_rn_series = True
             points = series.points()
 
-            # Собираем все y-значения (Rn_i) для x в диапазоне [ch0, ch2-1]
-            rn_values = []
+            # Собираем все y-значения (Rn_i) для числителя (ch0 до ch2-1)
+            rn_numerator_values = []
             for point in points:
                 x, y = point.x(), point.y()
-                if ch0 <= x < ch2:  # Проверяем, попадает ли x в диапазон [ch0, ch2-1]
-                    rn_values.append(y)
+                if ch0 <= x < ch2:  # Проверяем диапазон [ch0, ch2-1]
+                    rn_numerator_values.append(y)
 
-            if rn_values:
-                # Вычисляем сумму с помощью np.sum
-                series_sum = np.sum(rn_values)
-                total_rn += series_sum
-                print(f"Сумма Rn_i для серии {series_name} в диапазоне от {ch0} до {ch2 - 1}: {series_sum}")
+            # Собираем все y-значения (Rn_i) для знаменателя (ch2 до ch3-1)
+            rn_denominator_values = []
+            for point in points:
+                x, y = point.x(), point.y()
+                if ch2 <= x < ch3:  # Проверяем диапазон [ch2, ch3-1]
+                    rn_denominator_values.append(y)
+
+            if rn_numerator_values:
+                numerator_sum += np.sum(rn_numerator_values)
+                print(f"Сумма Rn_i для числителя серии {series_name} в диапазоне от {ch0} до {ch2 - 1}: {np.sum(rn_numerator_values)}")
             else:
                 print(f"Не найдено точек в диапазоне от {ch0} до {ch2 - 1} для серии {series_name}.")
 
+            if rn_denominator_values:
+                denominator_sum += np.sum(rn_denominator_values)
+                print(f"Сумма Rn_i для знаменателя серии {series_name} в диапазоне от {ch2} до {ch3 - 1}: {np.sum(rn_denominator_values)}")
+            else:
+                print(f"Не найдено точек в диапазоне от {ch2} до {ch3 - 1} для серии {series_name}.")
+
     if found_rn_series:
-        print(f"\nОбщая сумма Rn_i от ch0={ch0} до ch2-1={ch2 - 1}: {total_rn}")
-        # Сравниваем с заданным значением 146 (для проверки)
-        if total_rn == 146:
-            print("Результат совпадает с ожидаемым значением (146).")
+        if denominator_sum == 0:
+            print("Ошибка: Знаменатель ra равен 0, вычисление невозможно.")
+            return
+
+        # Вычисляем ra
+        ra = numerator_sum / denominator_sum
+        print(f"\nЗначение ra: {ra:.3f}")
+        # Сохраняем ra в parent_window для дальнейшего использования, если нужно
+        if hasattr(parent_window, 'ra_value'):
+            parent_window.ra_value = ra
         else:
-            print(f"Предупреждение: Результат ({total_rn}) не совпадает с ожидаемым значением (146).")
+            parent_window.ra_value = ra
+            print("Создан новый атрибут ra_value в родительском окне.")
     else:
         print("Предупреждение: Не найдено серий с 'Rn' в имени.")
 
