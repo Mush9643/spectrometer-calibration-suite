@@ -1,5 +1,5 @@
 import sys
-from PyQt6.QtCharts import QChart, QLineSeries, QValueAxis, QChartView, QLogValueAxis
+from PyQt6.QtCharts import QChart, QLineSeries, QValueAxis, QChartView, QLogValueAxis, QAbstractSeries
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QMessageBox, QDialog, \
     QSplashScreen, QCheckBox, QLineEdit, QTabWidget, QListWidgetItem, QListWidget, QMenu, QHBoxLayout
 from PyQt6.QtGui import QPixmap, QIcon, QPainter, QDesktopServices, QColor
@@ -192,19 +192,39 @@ class SpectrumWindow(QMainWindow):
         index = self.file_list.indexAt(pos)
         item = self.file_list.itemFromIndex(index)
 
+        if item is None:
+            return  # Защита от некорректного индекса
+
         if action_type == 'alfa':
             item.setBackground(QColor(144, 238, 144))  # Салатовый для "Загрузить Alfa"
             self.add_or_remove_chart(item.text(), 'alfa', True)
-            self.save_alfa_data(item.text())  # Сохраняем данные
         elif action_type == 'beta':
             item.setBackground(QColor(173, 216, 230))  # Голубой для "Загрузить Beta"
             self.add_or_remove_chart(item.text(), 'beta', True)
         elif action_type == 'disable':
             item.setBackground(Qt.GlobalColor.white)  # Обесцвечиваем поле для "Отключить"
-            self.add_or_remove_chart(item.text(), 'alfa', False)
-            self.add_or_remove_chart(item.text(), 'beta', False)
-            if item.text() in self.alfa_data_arrays:
-                del self.alfa_data_arrays[item.text()]
+            file_name = item.text()
+            # Удаляем график и все связанные данные для обоих типов
+            self.add_or_remove_chart(file_name, 'alfa', False)
+            self.add_or_remove_chart(file_name, 'beta', False)
+            # Очищаем пики и другие зависимости, связанные с Rn
+            self.cleanup_rn_data(file_name)
+
+    def cleanup_rn_data(self, file_name):
+        """Очищает все данные, связанные с графиком Rn."""
+        # Удаляем пики из peak_points, если они существуют
+        if file_name in self.peak_points:
+            peak_series = self.peak_points.pop(file_name, None)
+            if peak_series and isinstance(peak_series, dict):
+                for peak in peak_series.values():
+                    if peak and self.chart.series().contains(peak):
+                        self.chart.removeSeries(peak)
+            elif peak_series and self.chart.series().contains(peak_series):
+                self.chart.removeSeries(peak_series)
+
+        # Пересчитываем линии P90, если график Rn был удален
+        if "Rn" in file_name:
+            self.highlight_p90_points()  # Обновляем линии P90, если они зависят от Rn
 
     def save_alfa_data(self, file_name):
         """Сохраняет вторую строку из файла .xls в alfa_data_arrays."""
@@ -267,24 +287,31 @@ class SpectrumWindow(QMainWindow):
             self.show_warning_message(f"Файл '{file_name}' не найден.")
 
     def remove_specific_chart(self, chart_type, file_name):
-        """Удаляет конкретный график, связанный с файлом, и его точку."""
-        if chart_type == 'alfa':
-            if file_name in self.alfa_series_dict:
-                series_to_remove = self.alfa_series_dict[file_name]
-                self.chart.removeSeries(series_to_remove)
+        try:
+            if chart_type == 'alfa':
+                if file_name in self.alfa_series_dict:
+                    series_to_remove = self.alfa_series_dict[file_name]
+                    self.chart.removeSeries(series_to_remove)
 
-                # Удаляем точку, если она существует
-                series_name = series_to_remove.name()
-                if series_name in self.peak_points:
-                    peak_series = self.peak_points.pop(series_name)
-                    self.chart.removeSeries(peak_series)
+                    # Удаляем точку/пики, если они существуют
+                    series_name = series_to_remove.name()
+                    if series_name in self.peak_points:
+                        peak_data = self.peak_points.pop(series_name)
+                        if isinstance(peak_data, dict):  # Для Rn пиков (словарь)
+                            for peak_series in peak_data.values():
+                                if isinstance(peak_series, QAbstractSeries):
+                                    self.chart.removeSeries(peak_series)
+                        elif isinstance(peak_data, QAbstractSeries):  # Для Am241 пика
+                            self.chart.removeSeries(peak_data)
 
-                del self.alfa_series_dict[file_name]
-        elif chart_type == 'beta':
-            if file_name in self.beta_series_dict:
-                series_to_remove = self.beta_series_dict[file_name]
-                self.beta_chart.removeSeries(series_to_remove)
-                del self.beta_series_dict[file_name]
+                    del self.alfa_series_dict[file_name]
+            elif chart_type == 'beta':
+                if file_name in self.beta_series_dict:
+                    series_to_remove = self.beta_series_dict[file_name]
+                    self.beta_chart.removeSeries(series_to_remove)
+                    del self.beta_series_dict[file_name]
+        except Exception as e:
+            self.show_error_message(f"Ошибка при удалении графика: {str(e)}")
 
     ##########################################################################
     # Методы для работы с графиками и данными

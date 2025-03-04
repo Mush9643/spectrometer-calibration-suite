@@ -8,6 +8,20 @@ from PyQt6.QtCore import Qt, QPointF
 ERA226 = [7686.82, 6002.35, 8784.86]  # Значения энергии для пиков Rn
 P90 = [2700, 4385.6, 5687.5, 6192.35, 6337.7, 8044.6]  # Значения энергии для P90
 
+def print_alfa_data_arrays(parent_window):
+    """Выводит в консоль данные второй строки всех сохранённых массивов Alfa."""
+    if not hasattr(parent_window, 'alfa_data_arrays') or not parent_window.alfa_data_arrays:
+        print("Нет сохранённых данных Alfa для вывода.")
+        return
+
+    print("\n=== Сохранённые данные Alfa (вторая строка) ===")
+    print("Файл              | Канал | Кол-во импульсов")
+    print("---------------------------------------------")
+    for file_name, data in parent_window.alfa_data_arrays.items():
+        channel, impulses = data  # Распаковываем список
+        print(f"{file_name:17s} | {channel:5d} | {impulses}")
+    print("=============================================\n")
+
 def calculate_linear_regression(x, y):
     """Вычисляет коэффициенты линейной регрессии методом наименьших квадратов."""
     n = len(x)
@@ -42,9 +56,8 @@ def highlight_am241_peak(chart, series, peak_points):
     peak_points[series.name()] = scatter_series
     print(f"Пик Am241: x={max_point.x()}, y={max_point.y()}")
 
-
 def highlight_rn_peaks(chart, series, peak_points, parent_window=None):
-    """Отмечает три пика Rn, вычисляет линейную регрессию, сохраняет коэффициенты и вычисляет ra."""
+    """Отмечает три пика Rn, вычисляет линейную регрессию, сохраняет коэффициенты и вычисляет ra, am_rate и k1p9."""
     if "Rn" not in series.name():
         return
 
@@ -105,7 +118,6 @@ def highlight_rn_peaks(chart, series, peak_points, parent_window=None):
                 parent_window.calibration_coefficients = (intercept, slope)
                 print("Создан новый атрибут calibration_coefficients в родительском окне.")
         else:
-            # Если parent_window не передан, пытаемся использовать chart.parent() с проверкой
             parent = chart.parent()
             if parent is not None and hasattr(parent, '__dict__'):
                 if hasattr(parent, 'calibration_coefficients'):
@@ -116,9 +128,11 @@ def highlight_rn_peaks(chart, series, peak_points, parent_window=None):
             else:
                 print("Предупреждение: Не удалось найти родительский объект для сохранения calibration_coefficients.")
 
-        # Вызываем calculate_ra для вычисления ra на основе текущих данных
+        # Вызываем calculate_ra, calculate_am_rate и calculate_k1p9 для вычисления ra, am_rate и k1p9
         if parent_window:
             calculate_ra(parent_window)
+            calculate_am_rate(parent_window)
+            calculate_k1p9(parent_window)
     else:
         print("Предупреждение: Недостаточно пиков Rn для расчета регрессии.")
 
@@ -207,6 +221,111 @@ def calculate_ra(parent_window):
     else:
         print("Предупреждение: Не найдено серий с 'Rn' в имени.")
 
+def calculate_am_rate(parent_window):
+    """Вычисляет am_rate как отношение суммы M2_i в диапазоне от ch0 до ceil(ch2)-1 к M_0 из второй строки файла Am241."""
+    if not hasattr(parent_window, 'alfa_data_arrays') or not parent_window.alfa_data_arrays:
+        print("Ошибка: Нет данных в alfa_data_arrays для вычисления am_rate.")
+        return
+
+    if not hasattr(parent_window, 'alfa_series_dict') or not parent_window.alfa_series_dict:
+        print("Ошибка: Нет данных в alfa_series_dict для вычисления am_rate.")
+        return
+
+    if not hasattr(parent_window, 'calibration_coefficients'):
+        print("Ошибка: Коэффициенты калибровки отсутствуют.")
+        return
+
+    # Получаем коэффициенты регрессии
+    intercept, slope = parent_window.calibration_coefficients
+
+     # Как в вашем коде
+    ch_values = [round((e - intercept) / slope) for e in P90]
+
+    # Проверяем, что есть достаточно значений ch (нужны ch0, ch2)
+    if len(ch_values) < 3:
+        print("Ошибка: Недостаточно значений каналов для вычисления am_rate (требуется минимум 3 значения).")
+        return
+
+    # Используем ch0 и ch2 из ch_values
+    ch0 = ch_values[0]  # Начальный канал для числителя
+    ch2 = ch_values[2]  # Конечный канал для числителя (до ceil(ch2)-1)
+
+    # Вычисляем ceil(ch2) - 1
+    ch2_ceil = int(np.ceil(ch2)) - 1
+
+    # Проверяем, что каналы в правильном порядке
+    if ch0 >= ch2_ceil:
+        print("Ошибка: Каналы должны быть в порядке ch0 < ceil(ch2)-1.")
+        return
+
+    # Числитель: суммируем M2_i (импульсы из графиков с "Am241")
+    numerator_sum = 0
+    found_am241_series = False
+
+    for series_name, series in parent_window.alfa_series_dict.items():
+        if "Am241" in series_name:
+            found_am241_series = True
+            points = series.points()
+            points_dict = {p.x(): p.y() for p in points}  # Оптимизация доступа к точкам
+            numerator_sum += sum(y for x, y in points_dict.items() if ch0 <= x <= ch2_ceil)
+            print(f"Сумма M2_i для серии {series_name} в диапазоне от {ch0} до {ch2_ceil}: {numerator_sum}")
+
+    if not found_am241_series:
+        print("Предупреждение: Не найдено серий с 'Am241' в имени.")
+        return
+
+    # Знаменатель: M_0 из второй строки файла с "Am241" в alfa_data_arrays
+    denominator_m0 = 0
+    found_am241_file = False
+
+    for file_name, data in parent_window.alfa_data_arrays.items():
+        if "Am241" in file_name:
+            found_am241_file = True
+            _, impulses = data  # Извлекаем Кол-во импульсов из второй строки
+            denominator_m0 = impulses
+            print(f"M_0 из файла {file_name} (вторая строка): {denominator_m0}")
+            break  # Берем первое совпадение, если несколько файлов
+
+    if not found_am241_file:
+        print("Предупреждение: Не найдено файлов с 'Am241' в имени в alfa_data_arrays.")
+        return
+
+    if denominator_m0 == 0:
+        print("Ошибка: Знаменатель M_0 равен 0, вычисление невозможно.")
+        return
+
+    # Вычисляем am_rate
+    am_rate = numerator_sum / denominator_m0
+    print(f"\nЗначение am_rate: {am_rate:.3f}")
+
+    # Сохраняем am_rate в parent_window для дальнейшего использования
+    if hasattr(parent_window, 'am_rate_value'):
+        parent_window.am_rate_value = am_rate
+    else:
+        parent_window.am_rate_value = am_rate
+        print("Создан новый атрибут am_rate_value в родительском окне.")
+
+def calculate_k1p9(parent_window):
+    """Вычисляет k1p9 как (am_rate / 852)^(-1)."""
+    if not hasattr(parent_window, 'am_rate_value'):
+        print("Ошибка: Значение am_rate отсутствует для вычисления k1p9.")
+        return
+
+    am_rate = parent_window.am_rate_value
+    if am_rate == 0:
+        print("Ошибка: am_rate равен 0, вычисление k1p9 невозможно.")
+        return
+
+    k1p9 = (am_rate / 852) ** (-1)
+    print(f"Значение k1p9: {k1p9:.3f}")
+
+    # Сохраняем k1p9 в parent_window для дальнейшего использования
+    if hasattr(parent_window, 'k1p9_value'):
+        parent_window.k1p9_value = k1p9
+    else:
+        parent_window.k1p9_value = k1p9
+        print("Создан новый атрибут k1p9_value в родительском окне.")
+
 class CalibrationDialog(QDialog):
     """Диалоговое окно калибровки с графиком F(t) и точками пиков."""
 
@@ -215,6 +334,9 @@ class CalibrationDialog(QDialog):
         self.setWindowTitle("Калибровка")
         self.setFixedSize(600, 500)
         self.parent_window = parent
+
+        # Выводим данные массивов и значения ra/am_rate
+        print_alfa_data_arrays(self.parent_window)
 
         layout = QVBoxLayout()
 
@@ -230,7 +352,7 @@ class CalibrationDialog(QDialog):
         # Линия F(t)
         f_series = QLineSeries()
         f_series.setName(f"F(t) = {self.intercept:.2f} + {self.slope:.2f}t")
-        t_range = np.linspace(400, 900, 100)  # Фиксированный диапазон от 400 до 900
+        t_range = np.linspace(400, 900, 100)
         for t in t_range:
             f_series.append(t, self.intercept + self.slope * t)
         chart.addSeries(f_series)
@@ -252,7 +374,6 @@ class CalibrationDialog(QDialog):
             am241_series.setColor(QColor(128, 0, 128))
             am241_series.append(self.am241_x, 5485.56)
             chart.addSeries(am241_series)
-            # Проверка, попадает ли точка в видимый диапазон
             if self.am241_x < 400 or self.am241_x > 900:
                 print(f"Предупреждение: Точка Am241 (x={self.am241_x}) вне диапазона 400–900")
         else:
@@ -261,11 +382,10 @@ class CalibrationDialog(QDialog):
         # Оси
         axis_x = QValueAxis()
         axis_x.setTitleText("t (каналы)")
-        axis_x.setRange(400, 900)  # Фиксированный диапазон по X
+        axis_x.setRange(400, 900)
 
         axis_y = QValueAxis()
         axis_y.setTitleText("Энергия (кэВ)")
-        # Диапазон Y на основе F(t) и точек
         all_y = [self.intercept + self.slope * t for t in t_range] + self.y_values
         if self.am241_x is not None:
             all_y.append(5485.56)
@@ -294,10 +414,21 @@ class CalibrationDialog(QDialog):
             info_layout.addRow("Am241 x:", QLabel(f"{self.am241_x:.2f}"))
         else:
             info_layout.addRow("Am241 x:", QLabel("Не найден"))
+
+        # Добавляем ra и am_rate, если они существуют
+        if hasattr(self.parent_window, 'ra_value'):
+            info_layout.addRow("ra:", QLabel(f"{self.parent_window.ra_value:.3f}"))
+        if hasattr(self.parent_window, 'am_rate_value'):
+            info_layout.addRow("am_rate:", QLabel(f"{self.parent_window.am_rate_value:.3f}"))
+        if hasattr(self.parent_window, 'k1p9_value'):
+            info_layout.addRow("k1p9:", QLabel(f"{self.parent_window.k1p9_value:.3f}"))
+
         layout.addLayout(info_layout)
 
-        # Вычисляем и выводим ra при открытии диалога
+        # Вычисляем и выводим ra и am_rate
         calculate_ra(self.parent_window)
+        calculate_am_rate(self.parent_window)
+        calculate_k1p9(self.parent_window)
 
         self.setLayout(layout)
 
