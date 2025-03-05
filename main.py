@@ -438,6 +438,9 @@ class SpectrumWindow(QMainWindow):
             alfa_series.append(row['Канал'], row['Кол-во импульсов'])
 
         self.alfa_series_dict[file_name] = alfa_series
+        if not hasattr(self, "original_alfa_series"):
+            self.original_alfa_series = {}
+        self.original_alfa_series[file_name] = alfa_series  # Сохраняем оригинальную серию
         self.chart.addSeries(alfa_series)
         alfa_series.attachAxis(self.axis_x)
         alfa_series.attachAxis(self.axis_y)
@@ -477,15 +480,6 @@ class SpectrumWindow(QMainWindow):
         self.update_y_axis_range()
 
         # Вызываем метод для добавления линий P90
-        self.highlight_p90_points()
-
-    def toggle_log_scale(self, state):
-        """Переключает между логарифмическим и линейным масштабом."""
-        if state == Qt.CheckState.Checked.value:
-            self.apply_log_scale()
-        else:
-            self.apply_linear_scale()
-        # Перерисовываем линии P90 после смены масштаба
         self.highlight_p90_points()
 
     def update_beta_chart(self, df, file_name):
@@ -547,76 +541,139 @@ class SpectrumWindow(QMainWindow):
         return spectrum_values
 
     def toggle_log_scale(self, state):
-        """Переключает между логарифмическим и линейным масштабом."""
+        """Переключает между логарифмическим и линейным масштабом для всех серий Alfa."""
         if state == Qt.CheckState.Checked.value:
             self.apply_log_scale()
         else:
             self.apply_linear_scale()
+        # Перерисовываем линии P90 после смены масштаба
+        self.highlight_p90_points()
 
     def apply_log_scale(self):
-        """Применяет логарифмический масштаб."""
-        if not hasattr(self, "original_series"):
-            self.original_series = self.series
+        """Применяет логарифмический масштаб ко всем сериям Alfa с улучшенной обработкой данных."""
+        if not hasattr(self, "original_alfa_series"):
+            self.original_alfa_series = self.alfa_series_dict.copy()
 
+        # Создаем логарифмическую ось Y
         log_axis_y = QLogValueAxis()
         log_axis_y.setTitleText("Значение импульса (логарифмический масштаб)")
+        log_axis_y.setBase(10.0)
+        log_axis_y.setMinorTickCount(9)  # Увеличиваем количество делений для точности
 
-        points = self.original_series.points()
-        if not points:
-            log_axis_y.setRange(1, 10)
-            return
-
-        y_values = [point.y() for point in points]
-        log_y_values = y_values.copy()
-        if len(log_y_values) >= 2:
-            log_y_values[0] = max(log_y_values[0], 1)
-            log_y_values[1] = max(log_y_values[1], 1)
-
-        log_y_values = [y for y in log_y_values if y > 0]
-
-        if log_y_values:
-            log_axis_y.setRange(min(log_y_values), max(log_y_values))
-        else:
-            log_axis_y.setRange(1, 10)
-
-        log_series = QLineSeries()
-        for i, y in enumerate(log_y_values):
-            log_series.append(i, y)
-
+        # Удаляем старую ось Y
         self.chart.removeAxis(self.axis_y)
+
+        # Удаляем все текущие серии из графика
+        for series in self.alfa_series_dict.values():
+            self.chart.removeSeries(series)
+
+        # Создаем новые логарифмические серии
+        new_series_dict = {}
+        global_min_y = float('inf')
+        global_max_y = float('-inf')
+
+        # Находим минимальное ненулевое значение во всех сериях
+        min_non_zero = float('inf')
+        for original_series in self.original_alfa_series.values():
+            y_values = [point.y() for point in original_series.points() if point.y() > 0]
+            if y_values:
+                min_non_zero = min(min_non_zero, min(y_values))
+
+        # Если минимальное ненулевое значение найдено, используем его как основу для порога
+        threshold = max(1e-6, min_non_zero * 0.1) if min_non_zero != float('inf') else 1e-6
+
+        for file_name, original_series in self.original_alfa_series.items():
+            log_series = QLineSeries()
+            log_series.setName(original_series.name())
+
+            # Обрабатываем данные для логарифмического масштаба
+            for point in original_series.points():
+                x, y = point.x(), point.y()
+                # Используем динамический порог для малых значений
+                y_log = max(y, threshold)
+                log_series.append(x, y_log)
+                global_min_y = min(global_min_y, y_log)
+                global_max_y = max(global_max_y, y_log)
+
+            new_series_dict[file_name] = log_series
+            self.chart.addSeries(log_series)
+            log_series.attachAxis(self.axis_x)
+
+        # Устанавливаем диапазон логарифмической оси
+        if global_min_y == float('inf') or global_max_y == float('-inf'):
+            log_axis_y.setRange(threshold, 1000)  # Устанавливаем разумный диапазон по умолчанию
+        else:
+            # Убедимся, что минимальное значение не слишком близко к нулю
+            adjusted_min = max(threshold, global_min_y)
+            log_axis_y.setRange(adjusted_min, global_max_y * 1.5)  # Добавляем запас сверху
+
+        # Добавляем новую ось и привязываем серии
         self.chart.addAxis(log_axis_y, Qt.AlignmentFlag.AlignLeft)
+        for series in new_series_dict.values():
+            series.attachAxis(log_axis_y)
 
-        self.chart.removeSeries(self.series)
-        self.chart.addSeries(log_series)
-        log_series.attachAxis(log_axis_y)
-
-        self.series = log_series
+        # Обновляем словари и текущую ось
+        self.alfa_series_dict = new_series_dict
         self.axis_y = log_axis_y
 
+        # Перерисовываем пики
+        self.reapply_peaks()
+
     def apply_linear_scale(self):
-        """Применяет линейный масштаб."""
-        if not hasattr(self, "original_series"):
+        """Применяет линейный масштаб ко всем сериям Alfa."""
+        if not hasattr(self, "original_alfa_series"):
             return
 
+        # Создаем линейную ось Y
         linear_axis_y = QValueAxis()
         linear_axis_y.setTitleText("Значение импульса")
 
-        points = self.original_series.points()
-        if points:
-            y_values = [point.y() for point in points]
-            linear_axis_y.setRange(min(y_values), max(y_values))
-        else:
-            linear_axis_y.setRange(0, 1)
-
+        # Удаляем старую ось Y
         self.chart.removeAxis(self.axis_y)
+
+        # Удаляем все текущие серии
+        for series in self.alfa_series_dict.values():
+            self.chart.removeSeries(series)
+
+        # Восстанавливаем оригинальные серии
+        self.alfa_series_dict = self.original_alfa_series.copy()
+        global_max_y = float('-inf')
+
+        for series in self.alfa_series_dict.values():
+            self.chart.addSeries(series)
+            series.attachAxis(self.axis_x)
+            y_values = [point.y() for point in series.points()]
+            if y_values:
+                global_max_y = max(global_max_y, max(y_values))
+
+        # Устанавливаем диапазон линейной оси
+        linear_axis_y.setRange(0, global_max_y * 1.1 if global_max_y > 0 else 1)
         self.chart.addAxis(linear_axis_y, Qt.AlignmentFlag.AlignLeft)
+        for series in self.alfa_series_dict.values():
+            series.attachAxis(linear_axis_y)
 
-        self.chart.removeSeries(self.series)
-        self.chart.addSeries(self.original_series)
-        self.original_series.attachAxis(linear_axis_y)
-
-        self.series = self.original_series
+        # Обновляем текущую ось
         self.axis_y = linear_axis_y
+
+        # Перерисовываем пики
+        self.reapply_peaks()
+
+    def reapply_peaks(self):
+        """Перерисовывает пики после смены масштаба."""
+        # Удаляем старые пики
+        for peak_data in self.peak_points.values():
+            if isinstance(peak_data, dict):
+                for peak_series in peak_data.values():
+                    if peak_series in self.chart.series():
+                        self.chart.removeSeries(peak_series)
+            elif peak_data in self.chart.series():
+                self.chart.removeSeries(peak_data)
+
+        # Переприменяем пики для всех серий
+        self.peak_points.clear()
+        for series in self.alfa_series_dict.values():
+            highlight_am241_peak(self.chart, series, self.peak_points)
+            highlight_rn_peaks(self.chart, series, self.peak_points, self)
 
     ##########################################################################
     # Методы для работы с экспортом данных и сообщениями
