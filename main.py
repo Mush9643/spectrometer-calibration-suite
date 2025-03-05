@@ -26,6 +26,7 @@ class SpectrumWindow(QMainWindow):
 
         # Словарь для хранения массивов данных Alfa
         self.alfa_data_arrays = {}
+        self.first_impulse_values = {}
 
         # Инициализируем серию для точек P90 (вертикальные линии)
         self.p90_series = {}
@@ -195,6 +196,16 @@ class SpectrumWindow(QMainWindow):
         if item is None:
             return  # Защита от некорректного индекса
 
+        file_name = item.text()
+        folder_name = self.folder_input.text()
+        folder_path = os.path.join(os.getcwd(), folder_name)
+        file_path = os.path.join(folder_path, file_name)
+
+        impulse_value = self.read_first_impulse_value(file_path)
+
+        if impulse_value is not None:
+            print(f"Значение 'Кол-во импульсов' для файла '{file_name}' (первая строка): {impulse_value}")
+
         if action_type == 'alfa':
             item.setBackground(QColor(144, 238, 144))  # Салатовый для "Загрузить Alfa"
             self.add_or_remove_chart(item.text(), 'alfa', True)
@@ -209,6 +220,27 @@ class SpectrumWindow(QMainWindow):
             self.add_or_remove_chart(file_name, 'beta', False)
             # Очищаем пики и другие зависимости, связанные с Rn
             self.cleanup_rn_data(file_name)
+
+    def read_first_impulse_value(self, file_path):
+        """Читает значение 'Кол-во импульсов' из первой строки файла Excel."""
+        if not os.path.exists(file_path):
+            self.show_warning_message(f"Файл '{os.path.basename(file_path)}' не найден.")
+            return None
+
+        try:
+            df = pd.read_excel(file_path)
+            if 'Кол-во импульсов' not in df.columns:
+                self.show_warning_message(
+                    f"Столбец 'Кол-во импульсов' не найден в файле '{os.path.basename(file_path)}'.")
+                return None
+
+            # Берем значение из первой строки столбца 'Кол-во импульсов'
+            first_impulse = df.iloc[0]['Кол-во импульсов']
+            return first_impulse
+
+        except Exception as e:
+            self.show_error_message(f"Ошибка при чтении данных из файла: {str(e)}")
+            return None
 
     def cleanup_rn_data(self, file_name):
         """Очищает все данные, связанные с графиком Rn."""
@@ -550,7 +582,7 @@ class SpectrumWindow(QMainWindow):
         self.highlight_p90_points()
 
     def apply_log_scale(self):
-        """Применяет логарифмический масштаб ко всем сериям Alfa с улучшенной обработкой данных."""
+        """Применяет логарифмический масштаб ко всем сериям Alfa с началом оси Y от 1."""
         if not hasattr(self, "original_alfa_series"):
             self.original_alfa_series = self.alfa_series_dict.copy()
 
@@ -569,43 +601,30 @@ class SpectrumWindow(QMainWindow):
 
         # Создаем новые логарифмические серии
         new_series_dict = {}
-        global_min_y = float('inf')
         global_max_y = float('-inf')
 
-        # Находим минимальное ненулевое значение во всех сериях
-        min_non_zero = float('inf')
-        for original_series in self.original_alfa_series.values():
-            y_values = [point.y() for point in original_series.points() if point.y() > 0]
-            if y_values:
-                min_non_zero = min(min_non_zero, min(y_values))
+        # Минимальное значение для логарифма (ниже 1 не допускаем)
+        min_y_threshold = 1.0
 
-        # Если минимальное ненулевое значение найдено, используем его как основу для порога
-        threshold = max(1e-6, min_non_zero * 0.1) if min_non_zero != float('inf') else 1e-6
-
+        # Обрабатываем данные для каждой серии
         for file_name, original_series in self.original_alfa_series.items():
             log_series = QLineSeries()
             log_series.setName(original_series.name())
 
-            # Обрабатываем данные для логарифмического масштаба
+            # Преобразуем данные для логарифмического масштаба
             for point in original_series.points():
                 x, y = point.x(), point.y()
-                # Используем динамический порог для малых значений
-                y_log = max(y, threshold)
+                # Устанавливаем минимальное значение y как 1 для корректного отображения
+                y_log = max(y, min_y_threshold)
                 log_series.append(x, y_log)
-                global_min_y = min(global_min_y, y_log)
                 global_max_y = max(global_max_y, y_log)
 
             new_series_dict[file_name] = log_series
             self.chart.addSeries(log_series)
             log_series.attachAxis(self.axis_x)
 
-        # Устанавливаем диапазон логарифмической оси
-        if global_min_y == float('inf') or global_max_y == float('-inf'):
-            log_axis_y.setRange(threshold, 1000)  # Устанавливаем разумный диапазон по умолчанию
-        else:
-            # Убедимся, что минимальное значение не слишком близко к нулю
-            adjusted_min = max(threshold, global_min_y)
-            log_axis_y.setRange(adjusted_min, global_max_y * 1.5)  # Добавляем запас сверху
+        # Устанавливаем диапазон логарифмической оси, начиная с 1
+        log_axis_y.setRange(min_y_threshold, global_max_y * 1.5)  # Фиксируем минимум на 1
 
         # Добавляем новую ось и привязываем серии
         self.chart.addAxis(log_axis_y, Qt.AlignmentFlag.AlignLeft)
