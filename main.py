@@ -120,7 +120,7 @@ class SpectrumWindow(QMainWindow):
 
         self.tab1.setLayout(layout)
 
-        # Вторая вкладка
+        # Вторая вкладка (Beta chart)
         self.tab2 = QWidget()
         self.tabs.addTab(self.tab2, "Beta chart")
 
@@ -145,8 +145,12 @@ class SpectrumWindow(QMainWindow):
         self.beta_chart_view = QChartView(self.beta_chart)
         self.beta_chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
 
+        self.beta_log_checkbox = QCheckBox("Логарифмический масштаб")
+        self.beta_log_checkbox.stateChanged.connect(self.toggle_beta_log_scale)
+
         beta_layout = QVBoxLayout()
         beta_layout.addWidget(self.beta_chart_view)
+        beta_layout.addWidget(self.beta_log_checkbox)  # Добавляем CheckBox в layout
         self.tab2.setLayout(beta_layout)
 
     ##########################################################################
@@ -527,11 +531,12 @@ class SpectrumWindow(QMainWindow):
             beta_series.append(row['Канал'], row['Кол-во импульсов'])
 
         self.beta_series_dict[file_name] = beta_series
+        if not hasattr(self, "original_beta_series"):
+            self.original_beta_series = {}
+        self.original_beta_series[file_name] = beta_series  # Сохраняем оригинальную серию
         self.beta_chart.addSeries(beta_series)
         beta_series.attachAxis(self.beta_axis_x)
         beta_series.attachAxis(self.beta_axis_y)
-
-        self.beta_axis_x.setRange(df['Канал'].min(), df['Канал'].max())
 
         # Удаляем старый CheckBox, если он есть
         if file_name in self.beta_checkboxes:
@@ -580,6 +585,13 @@ class SpectrumWindow(QMainWindow):
             self.apply_linear_scale()
         # Перерисовываем линии P90 после смены масштаба
         self.highlight_p90_points()
+
+    def toggle_beta_log_scale(self, state):
+        """Переключает между логарифмическим и линейным масштабом для всех серий Beta."""
+        if state == Qt.CheckState.Checked.value:
+            self.apply_beta_log_scale()
+        else:
+            self.apply_beta_linear_scale()
 
     def apply_log_scale(self):
         """Применяет логарифмический масштаб ко всем сериям Alfa с началом оси Y от 1."""
@@ -676,6 +688,96 @@ class SpectrumWindow(QMainWindow):
 
         # Перерисовываем пики
         self.reapply_peaks()
+
+    def apply_beta_log_scale(self):
+        """Применяет логарифмический масштаб ко всем сериям Beta с началом оси Y от 1."""
+        if not hasattr(self, "original_beta_series"):
+            self.original_beta_series = self.beta_series_dict.copy()
+
+        # Создаем логарифмическую ось Y
+        beta_log_axis_y = QLogValueAxis()
+        beta_log_axis_y.setTitleText("Значение импульса (логарифмический масштаб)")
+        beta_log_axis_y.setBase(10.0)
+        beta_log_axis_y.setMinorTickCount(9)  # Увеличиваем количество делений для точности
+
+        # Удаляем старую ось Y
+        self.beta_chart.removeAxis(self.beta_axis_y)
+
+        # Удаляем все текущие серии из графика
+        for series in self.beta_series_dict.values():
+            self.beta_chart.removeSeries(series)
+
+        # Создаем новые логарифмические серии
+        new_series_dict = {}
+        global_max_y = float('-inf')
+
+        # Минимальное значение для логарифма (ниже 1 не допускаем)
+        min_y_threshold = 1.0
+
+        # Обрабатываем данные для каждой серии
+        for file_name, original_series in self.original_beta_series.items():
+            log_series = QLineSeries()
+            log_series.setName(original_series.name())
+
+            # Преобразуем данные для логарифмического масштаба
+            for point in original_series.points():
+                x, y = point.x(), point.y()
+                # Устанавливаем минимальное значение y как 1 для корректного отображения
+                y_log = max(y, min_y_threshold)
+                log_series.append(x, y_log)
+                global_max_y = max(global_max_y, y_log)
+
+            new_series_dict[file_name] = log_series
+            self.beta_chart.addSeries(log_series)
+            log_series.attachAxis(self.beta_axis_x)
+
+        # Устанавливаем диапазон логарифмической оси, начиная с 1
+        beta_log_axis_y.setRange(min_y_threshold, global_max_y * 1.5)  # Фиксируем минимум на 1
+
+        # Добавляем новую ось и привязываем серии
+        self.beta_chart.addAxis(beta_log_axis_y, Qt.AlignmentFlag.AlignLeft)
+        for series in new_series_dict.values():
+            series.attachAxis(beta_log_axis_y)
+
+        # Обновляем словари и текущую ось
+        self.beta_series_dict = new_series_dict
+        self.beta_axis_y = beta_log_axis_y
+
+    def apply_beta_linear_scale(self):
+        """Применяет линейный масштаб ко всем сериям Beta."""
+        if not hasattr(self, "original_beta_series"):
+            return
+
+        # Создаем линейную ось Y
+        beta_linear_axis_y = QValueAxis()
+        beta_linear_axis_y.setTitleText("Значение")
+
+        # Удаляем старую ось Y
+        self.beta_chart.removeAxis(self.beta_axis_y)
+
+        # Удаляем все текущие серии
+        for series in self.beta_series_dict.values():
+            self.beta_chart.removeSeries(series)
+
+        # Восстанавливаем оригинальные серии
+        self.beta_series_dict = self.original_beta_series.copy()
+        global_max_y = float('-inf')
+
+        for series in self.beta_series_dict.values():
+            self.beta_chart.addSeries(series)
+            series.attachAxis(self.beta_axis_x)
+            y_values = [point.y() for point in series.points()]
+            if y_values:
+                global_max_y = max(global_max_y, max(y_values))
+
+        # Устанавливаем диапазон линейной оси
+        beta_linear_axis_y.setRange(0, global_max_y * 1.1 if global_max_y > 0 else 1)
+        self.beta_chart.addAxis(beta_linear_axis_y, Qt.AlignmentFlag.AlignLeft)
+        for series in self.beta_series_dict.values():
+            series.attachAxis(beta_linear_axis_y)
+
+        # Обновляем текущую ось
+        self.beta_axis_y = beta_linear_axis_y
 
     def reapply_peaks(self):
         """Перерисовывает пики после смены масштаба."""
