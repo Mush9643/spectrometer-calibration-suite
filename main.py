@@ -11,6 +11,7 @@ import pandas as pd  # Для работы с Excel
 from math_utils import highlight_am241_peak
 from math_utils import highlight_rn_peaks
 from math_utils import add_calibration_button
+from Beta_math import add_beta_calibration_button
 import os
 
 ##########################################################################
@@ -165,8 +166,12 @@ class SpectrumWindow(QMainWindow):
 
         beta_layout = QVBoxLayout()
         beta_layout.addWidget(self.beta_chart_view)
-        beta_layout.addWidget(self.beta_log_checkbox)  # Добавляем CheckBox в layout
+        beta_layout.addWidget(self.beta_log_checkbox)
+
         self.tab2.setLayout(beta_layout)
+
+        # Добавляем кнопку калибровки
+        add_beta_calibration_button(self)
 
     ##########################################################################
     # Методы для работы с файлами и контекстным меню
