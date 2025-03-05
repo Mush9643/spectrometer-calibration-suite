@@ -24,6 +24,21 @@ class SpectrumWindow(QMainWindow):
         self.setWindowTitle("Спектр импульсов")
         self.setWindowIcon(QIcon("M-Photoroom.png"))
 
+        # Словарь для хранения использованных цветов для Alfa и Beta
+        self.used_alfa_colors = {}  # Ключ — имя файла, значение — QColor
+        self.used_beta_colors = {}  # Ключ — имя файла, значение — QColor
+        # Список уникальных цветов (RGB)
+        self.available_colors = [
+
+            QColor(255, 206, 86),  # Жёлтый
+            QColor(75, 192, 192),  # Бирюзовый
+            QColor(153, 102, 255),  # Фиолетовый
+            QColor(255, 159, 64),  # Оранжевый
+            QColor(0, 128, 0),  # Зелёный
+            QColor(128, 0, 128),  # Пурпурный
+            QColor(255, 165, 0),  # Золотой
+            QColor(0, 191, 255)]  # Глубокий голубой
+
         # Словарь для хранения массивов данных Alfa
         self.alfa_data_arrays = {}
         self.first_impulse_values = {}
@@ -340,11 +355,20 @@ class SpectrumWindow(QMainWindow):
                         elif isinstance(peak_data, QAbstractSeries):  # Для Am241 пика
                             self.chart.removeSeries(peak_data)
 
+                    # Освобождаем цвет для повторного использования
+                    if file_name in self.used_alfa_colors:
+                        del self.used_alfa_colors[file_name]
+
                     del self.alfa_series_dict[file_name]
             elif chart_type == 'beta':
                 if file_name in self.beta_series_dict:
                     series_to_remove = self.beta_series_dict[file_name]
                     self.beta_chart.removeSeries(series_to_remove)
+
+                    # Освобождаем цвет для повторного использования
+                    if file_name in self.used_beta_colors:
+                        del self.used_beta_colors[file_name]
+
                     del self.beta_series_dict[file_name]
         except Exception as e:
             self.show_error_message(f"Ошибка при удалении графика: {str(e)}")
@@ -473,10 +497,14 @@ class SpectrumWindow(QMainWindow):
         for _, row in df_filtered.iterrows():
             alfa_series.append(row['Канал'], row['Кол-во импульсов'])
 
+        color = self.get_unique_color(file_name, 'alfa')
+        alfa_series.setColor(color)
+
         self.alfa_series_dict[file_name] = alfa_series
         if not hasattr(self, "original_alfa_series"):
             self.original_alfa_series = {}
-        self.original_alfa_series[file_name] = alfa_series  # Сохраняем оригинальную серию
+        # Сохраняем серию и её цвет как кортеж (серия, цвет)
+        self.original_alfa_series[file_name] = (alfa_series, color)
         self.chart.addSeries(alfa_series)
         alfa_series.attachAxis(self.axis_x)
         alfa_series.attachAxis(self.axis_y)
@@ -530,13 +558,18 @@ class SpectrumWindow(QMainWindow):
         for _, row in df.iterrows():
             beta_series.append(row['Канал'], row['Кол-во импульсов'])
 
-        self.beta_series_dict[file_name] = beta_series
-        if not hasattr(self, "original_beta_series"):
-            self.original_beta_series = {}
-        self.original_beta_series[file_name] = beta_series  # Сохраняем оригинальную серию
-        self.beta_chart.addSeries(beta_series)
-        beta_series.attachAxis(self.beta_axis_x)
-        beta_series.attachAxis(self.beta_axis_y)
+            # Выбираем уникальный цвет для серии
+            color = self.get_unique_color(file_name, 'beta')
+            beta_series.setColor(color)
+
+            self.beta_series_dict[file_name] = beta_series
+            if not hasattr(self, "original_beta_series"):
+                self.original_beta_series = {}
+            # Сохраняем серию и её цвет как кортеж (серия, цвет)
+            self.original_beta_series[file_name] = (beta_series, color)
+            self.beta_chart.addSeries(beta_series)
+            beta_series.attachAxis(self.beta_axis_x)
+            beta_series.attachAxis(self.beta_axis_y)
 
         # Удаляем старый CheckBox, если он есть
         if file_name in self.beta_checkboxes:
@@ -556,6 +589,32 @@ class SpectrumWindow(QMainWindow):
             layout.addWidget(checkbox)
 
         self.update_beta_y_axis_range()
+
+    def get_unique_color(self, file_name, chart_type):
+        """Выбирает уникальный цвет для новой серии, избегая повторений."""
+        if chart_type == 'alfa':
+            used_colors = self.used_alfa_colors
+            available_colors = self.available_colors.copy()
+        else:  # 'beta'
+            used_colors = self.used_beta_colors
+            available_colors = self.available_colors.copy()
+
+        # Удаляем уже использованные цвета из доступных
+        for color in used_colors.values():
+            if color in available_colors:
+                available_colors.remove(color)
+
+        if not available_colors:  # Если все цвета использованы, сбрасываем или генерируем новые
+            available_colors = self.available_colors.copy()  # Сбрасываем к начальному набору
+            # Можно также генерировать случайные цвета:
+            # import random
+            # r, g, b = random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
+            # return QColor(r, g, b)
+
+        # Выбираем первый доступный цвет
+        color = available_colors[0]
+        used_colors[file_name] = color  # Сохраняем цвет для этого файла
+        return color
 
     ##########################################################################
     # Методы для работы с графиками и масштабированием
@@ -596,7 +655,7 @@ class SpectrumWindow(QMainWindow):
     def apply_log_scale(self):
         """Применяет логарифмический масштаб ко всем сериям Alfa с началом оси Y от 1."""
         if not hasattr(self, "original_alfa_series"):
-            self.original_alfa_series = self.alfa_series_dict.copy()
+            self.original_alfa_series = {}
 
         # Создаем логарифмическую ось Y
         log_axis_y = QLogValueAxis()
@@ -619,9 +678,10 @@ class SpectrumWindow(QMainWindow):
         min_y_threshold = 1.0
 
         # Обрабатываем данные для каждой серии
-        for file_name, original_series in self.original_alfa_series.items():
+        for file_name, (original_series, color) in self.original_alfa_series.items():
             log_series = QLineSeries()
             log_series.setName(original_series.name())
+            log_series.setColor(color)  # Сохраняем цвет оригинальной серии
 
             # Преобразуем данные для логарифмического масштаба
             for point in original_series.points():
@@ -666,14 +726,16 @@ class SpectrumWindow(QMainWindow):
         for series in self.alfa_series_dict.values():
             self.chart.removeSeries(series)
 
-        # Восстанавливаем оригинальные серии
-        self.alfa_series_dict = self.original_alfa_series.copy()
+        # Восстанавливаем оригинальные серии с их цветами
+        self.alfa_series_dict = {}
         global_max_y = float('-inf')
 
-        for series in self.alfa_series_dict.values():
-            self.chart.addSeries(series)
-            series.attachAxis(self.axis_x)
-            y_values = [point.y() for point in series.points()]
+        for file_name, (original_series, color) in self.original_alfa_series.items():
+            original_series.setColor(color)  # Убеждаемся, что цвет сохранён
+            self.alfa_series_dict[file_name] = original_series
+            self.chart.addSeries(original_series)
+            original_series.attachAxis(self.axis_x)
+            y_values = [point.y() for point in original_series.points()]
             if y_values:
                 global_max_y = max(global_max_y, max(y_values))
 
@@ -692,7 +754,7 @@ class SpectrumWindow(QMainWindow):
     def apply_beta_log_scale(self):
         """Применяет логарифмический масштаб ко всем сериям Beta с началом оси Y от 1."""
         if not hasattr(self, "original_beta_series"):
-            self.original_beta_series = self.beta_series_dict.copy()
+            self.original_beta_series = {}
 
         # Создаем логарифмическую ось Y
         beta_log_axis_y = QLogValueAxis()
@@ -715,9 +777,10 @@ class SpectrumWindow(QMainWindow):
         min_y_threshold = 1.0
 
         # Обрабатываем данные для каждой серии
-        for file_name, original_series in self.original_beta_series.items():
+        for file_name, (original_series, color) in self.original_beta_series.items():
             log_series = QLineSeries()
             log_series.setName(original_series.name())
+            log_series.setColor(color)  # Сохраняем цвет оригинальной серии
 
             # Преобразуем данные для логарифмического масштаба
             for point in original_series.points():
@@ -759,14 +822,16 @@ class SpectrumWindow(QMainWindow):
         for series in self.beta_series_dict.values():
             self.beta_chart.removeSeries(series)
 
-        # Восстанавливаем оригинальные серии
-        self.beta_series_dict = self.original_beta_series.copy()
+        # Восстанавливаем оригинальные серии с их цветами
+        self.beta_series_dict = {}
         global_max_y = float('-inf')
 
-        for series in self.beta_series_dict.values():
-            self.beta_chart.addSeries(series)
-            series.attachAxis(self.beta_axis_x)
-            y_values = [point.y() for point in series.points()]
+        for file_name, (original_series, color) in self.original_beta_series.items():
+            original_series.setColor(color)  # Убеждаемся, что цвет сохранён
+            self.beta_series_dict[file_name] = original_series
+            self.beta_chart.addSeries(original_series)
+            original_series.attachAxis(self.beta_axis_x)
+            y_values = [point.y() for point in original_series.points()]
             if y_values:
                 global_max_y = max(global_max_y, max(y_values))
 
