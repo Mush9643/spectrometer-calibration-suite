@@ -377,6 +377,8 @@ class SpectrumWindow(QMainWindow):
                         del self.used_beta_colors[file_name]
 
                     del self.beta_series_dict[file_name]
+                    # Обновляем состояние кнопки после удаления графика
+                    update_calibration_button_state(self)
         except Exception as e:
             self.show_error_message(f"Ошибка при удалении графика: {str(e)}")
 
