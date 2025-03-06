@@ -13,7 +13,7 @@ from math_utils import highlight_rn_peaks
 from math_utils import add_calibration_button
 from Beta_math import add_beta_calibration_button
 from Beta_math import update_calibration_button_state
-from fon_math import process_fon_data
+from fon_math import process_fon_data, process_isotope_data
 import os
 
 ##########################################################################
@@ -24,6 +24,10 @@ class SpectrumWindow(QMainWindow):
     def __init__(self, modbus):
         super().__init__()
         self.fon_processed = False
+        self.am241_data = []  # Массив для данных Am241
+        self.c14_data = []  # Массив для данных C14
+        self.cs137_data = []  # Массив для данных Cs137
+        self.sry90_data = []  # Массив для данных SrY90
         self.modbus_client = modbus
         self.setWindowTitle("Спектр импульсов")
         self.setWindowIcon(QIcon("M-Photoroom.png"))
@@ -410,31 +414,31 @@ class SpectrumWindow(QMainWindow):
 
     def load_data_for_chart(self, chart_type, file_name):
         """Загружает данные из файла Excel и отображает на соответствующем графике."""
-        folder_name = self.folder_input.text()  # Получаем имя папки из поля ввода
-        folder_path = os.path.join(os.getcwd(), folder_name)  # Полный путь к папке
-        file_path = os.path.join(folder_path, file_name)  # Полный путь к файлу
+        folder_name = self.folder_input.text()
+        folder_path = os.path.join(os.getcwd(), folder_name)
+        file_path = os.path.join(folder_path, file_name)
 
         if not os.path.exists(file_path):
             self.show_warning_message(f"Файл '{file_name}' не найден.")
             return
 
         try:
-            # Чтение данных из Excel
             df = pd.read_excel(file_path)
 
-            # Проверяем структуру данных
             if 'Канал' not in df.columns or 'Кол-во импульсов' not in df.columns:
                 self.show_warning_message(f"Неверный формат данных в файле '{file_name}'.")
                 return
 
-            # Заменяем первые три значения импульсов на 0
-            df.loc[0:2, 'Кол-во импульсов'] = 0  # Заменяем первые 3 строки на 0 в колонке 'Кол-во импульсов'
+            # Сохраняем оригинальные данные перед обнулением
+            original_data = df['Кол-во импульсов'].tolist()  # Явно преобразуем в список
 
-            # Отображаем данные на графиках
+            # Обнуляем первые три значения только для отображения
+            df.loc[0:2, 'Кол-во импульсов'] = 0
+
             if chart_type == 'alfa':
-                self.update_alfa_chart(df, file_name)
+                self.update_alfa_chart(df, file_name, original_data)
             elif chart_type == 'beta':
-                self.update_beta_chart(df, file_name)
+                self.update_beta_chart(df, file_name, original_data)
 
         except Exception as e:
             self.show_error_message(f"Ошибка при загрузке данных из файла: {str(e)}")
@@ -499,9 +503,9 @@ class SpectrumWindow(QMainWindow):
             line_series.attachAxis(self.axis_y)
             self.p90_series[x] = line_series
 
-    def update_alfa_chart(self, df, file_name):
+    def update_alfa_chart(self, df, file_name, original_data):
         """
-        Обновляет график на вкладке Alfa с учетом всех графиков и добавляет линии P90.
+        Обновляет график на вкладке Alfa с учетом всех графиков.
         """
         if file_name in self.alfa_series_dict:
             return
@@ -520,29 +524,14 @@ class SpectrumWindow(QMainWindow):
         self.alfa_series_dict[file_name] = alfa_series
         if not hasattr(self, "original_alfa_series"):
             self.original_alfa_series = {}
-        # Сохраняем серию и её цвет как кортеж (серия, цвет)
         self.original_alfa_series[file_name] = (alfa_series, color)
+
         self.chart.addSeries(alfa_series)
         alfa_series.attachAxis(self.axis_x)
         alfa_series.attachAxis(self.axis_y)
 
-        # Вызываем highlight_am241_peak и highlight_rn_peaks с передачей self как parent_window
         highlight_am241_peak(self.chart, alfa_series, self.peak_points)
         highlight_rn_peaks(self.chart, alfa_series, self.peak_points, self)
-
-        # Явно сохраняем calibration_coefficients, если они вычислены
-        if "Rn" in file_name and self.calibration_coefficients is None:
-            print("Обновляем calibration_coefficients для файла Rn...")
-            if hasattr(self, 'calibration_coefficients') and self.calibration_coefficients is not None:
-                print(
-                    f"Текущие коэффициенты: intercept={self.calibration_coefficients[0]:.3f}, slope={self.calibration_coefficients[1]:.3f}")
-            else:
-                print("Коэффициенты еще не вычислены, пытаемся обновить...")
-                from math_utils import calculate_calibration_coefficients_fallback
-                intercept, slope = calculate_calibration_coefficients_fallback(self)
-                if intercept != 0.0 or slope != 0.0:
-                    self.calibration_coefficients = (intercept, slope)
-                    print(f"Резервно вычисленные коэффициенты: intercept={intercept:.3f}, slope={slope:.3f}")
 
         if file_name in self.alfa_checkboxes:
             old_checkbox = self.alfa_checkboxes.pop(file_name)
@@ -559,82 +548,69 @@ class SpectrumWindow(QMainWindow):
             layout.addWidget(checkbox)
 
         self.update_y_axis_range()
-
-        # Вызываем метод для добавления линий P90
         self.highlight_p90_points()
 
-    def update_beta_chart(self, df, file_name):
+    def update_beta_chart(self, df, file_name, original_data):
         """
         Обновляет график на вкладке Beta с учетом всех графиков.
-
-        Args:
-            df (pandas.DataFrame): Данные из Excel-файла.
-            file_name (str): Имя файла, по которому строится график.
         """
-        # Если график уже есть, не добавляем новый
         if file_name in self.beta_series_dict:
             return
 
-        # Извлекаем второе слово из имени файла для названия серии
-        second_word = file_name.split()[1] if len(file_name.split()) > 1 else file_name
+        # Явное преобразование second_word в строку и отладочный вывод
+        second_word = str(file_name.split()[1] if len(file_name.split()) > 1 else file_name)
         series_name = f"({second_word})"
+        print(f"Debug: second_word = {second_word}, type = {type(second_word)}")
+        print(f"Debug: series_name = {series_name}, type = {type(series_name)}")
 
-        # Проверяем, является ли график фоновым, до его добавления
+        # Проверяем условие с явным приведением к строке
         if "фона" in series_name.lower():
-            # Создаем временную серию для передачи в process_fon_data
             beta_series = QLineSeries()
             beta_series.setName(series_name)
             for _, row in df.iterrows():
                 beta_series.append(row['Канал'], row['Кол-во импульсов'])
-            # Временно добавляем серию в beta_series_dict для process_fon_data
             self.beta_series_dict[file_name] = beta_series
-            process_fon_data(self)  # Удаляет серию и выводит данные
-            return  # Прерываем выполнение, чтобы не добавлять чекбокс и не обновлять ось
+            print(f"Debug: Calling process_fon_data with original_data = {original_data[:5]}...")  # Отладка
+            process_fon_data(self, original_data, file_name)
+            return
 
-        # Если это не фоновый график, продолжаем как обычно
         beta_series = QLineSeries()
         beta_series.setName(series_name)
 
-        # Заполняем серию данными из DataFrame
+        # Используем обнулённые данные для отображения
         for _, row in df.iterrows():
             beta_series.append(row['Канал'], row['Кол-во импульсов'])
 
-        # Выбираем уникальный цвет для серии
+        # Передаём оригинальные данные для изотопов
+        process_isotope_data(self, original_data, file_name)
+
         color = self.get_unique_color(file_name, 'beta')
         beta_series.setColor(color)
 
-        # Сохраняем серию в словари
         self.beta_series_dict[file_name] = beta_series
         if not hasattr(self, "original_beta_series"):
             self.original_beta_series = {}
         self.original_beta_series[file_name] = (beta_series, color)
 
-        # Добавляем серию на график и привязываем оси
         self.beta_chart.addSeries(beta_series)
         beta_series.attachAxis(self.beta_axis_x)
         beta_series.attachAxis(self.beta_axis_y)
 
-        # Удаляем старый CheckBox, если он есть
         if file_name in self.beta_checkboxes:
             old_checkbox = self.beta_checkboxes.pop(file_name)
             old_checkbox.setParent(None)
             old_checkbox.deleteLater()
 
-        # Создаем CheckBox
         checkbox = QCheckBox(f"Активировать масштаб для {second_word}")
         checkbox.stateChanged.connect(
             lambda state, series=beta_series: self.adjust_beta_y_axis_for_series(series, state))
         self.beta_checkboxes[file_name] = checkbox
 
-        # Добавляем CheckBox в layout вкладки Beta
         layout = self.tab2.layout()
         if isinstance(layout, QVBoxLayout):
             layout.addWidget(checkbox)
 
-        # Обновляем диапазон оси Y
         self.update_beta_y_axis_range()
-
-        # Обновляем состояние кнопки калибровки
         update_calibration_button_state(self)
 
     def get_unique_color(self, file_name, chart_type):
