@@ -13,7 +13,7 @@ from math_utils import highlight_rn_peaks
 from math_utils import add_calibration_button
 from Beta_math import add_beta_calibration_button
 from Beta_math import update_calibration_button_state
-
+from fon_math import process_fon_data
 import os
 
 ##########################################################################
@@ -23,6 +23,7 @@ import os
 class SpectrumWindow(QMainWindow):
     def __init__(self, modbus):
         super().__init__()
+        self.fon_processed = False
         self.modbus_client = modbus
         self.setWindowTitle("Спектр импульсов")
         self.setWindowIcon(QIcon("M-Photoroom.png"))
@@ -231,6 +232,7 @@ class SpectrumWindow(QMainWindow):
 
         if impulse_value is not None:
             print(f"Значение 'Кол-во импульсов' для файла '{file_name}' (первая строка): {impulse_value}")
+            self.first_impulse_values[file_name] = impulse_value # Сохраняем значение
 
         if action_type == 'alfa':
             item.setBackground(QColor(144, 238, 144))  # Салатовый для "Загрузить Alfa"
@@ -562,29 +564,55 @@ class SpectrumWindow(QMainWindow):
         self.highlight_p90_points()
 
     def update_beta_chart(self, df, file_name):
-        """Обновляет график на вкладке Beta с учетом всех графиков."""
+        """
+        Обновляет график на вкладке Beta с учетом всех графиков.
+
+        Args:
+            df (pandas.DataFrame): Данные из Excel-файла.
+            file_name (str): Имя файла, по которому строится график.
+        """
+        # Если график уже есть, не добавляем новый
         if file_name in self.beta_series_dict:
-            return  # Если график уже есть, не добавляем новый
+            return
 
-        beta_series = QLineSeries()
+        # Извлекаем второе слово из имени файла для названия серии
         second_word = file_name.split()[1] if len(file_name.split()) > 1 else file_name
-        beta_series.setName(f"({second_word})")
+        series_name = f"({second_word})"
 
+        # Проверяем, является ли график фоновым, до его добавления
+        if "фона" in series_name.lower():
+            # Создаем временную серию для передачи в process_fon_data
+            beta_series = QLineSeries()
+            beta_series.setName(series_name)
+            for _, row in df.iterrows():
+                beta_series.append(row['Канал'], row['Кол-во импульсов'])
+            # Временно добавляем серию в beta_series_dict для process_fon_data
+            self.beta_series_dict[file_name] = beta_series
+            process_fon_data(self)  # Удаляет серию и выводит данные
+            return  # Прерываем выполнение, чтобы не добавлять чекбокс и не обновлять ось
+
+        # Если это не фоновый график, продолжаем как обычно
+        beta_series = QLineSeries()
+        beta_series.setName(series_name)
+
+        # Заполняем серию данными из DataFrame
         for _, row in df.iterrows():
             beta_series.append(row['Канал'], row['Кол-во импульсов'])
 
-            # Выбираем уникальный цвет для серии
-            color = self.get_unique_color(file_name, 'beta')
-            beta_series.setColor(color)
+        # Выбираем уникальный цвет для серии
+        color = self.get_unique_color(file_name, 'beta')
+        beta_series.setColor(color)
 
-            self.beta_series_dict[file_name] = beta_series
-            if not hasattr(self, "original_beta_series"):
-                self.original_beta_series = {}
-            # Сохраняем серию и её цвет как кортеж (серия, цвет)
-            self.original_beta_series[file_name] = (beta_series, color)
-            self.beta_chart.addSeries(beta_series)
-            beta_series.attachAxis(self.beta_axis_x)
-            beta_series.attachAxis(self.beta_axis_y)
+        # Сохраняем серию в словари
+        self.beta_series_dict[file_name] = beta_series
+        if not hasattr(self, "original_beta_series"):
+            self.original_beta_series = {}
+        self.original_beta_series[file_name] = (beta_series, color)
+
+        # Добавляем серию на график и привязываем оси
+        self.beta_chart.addSeries(beta_series)
+        beta_series.attachAxis(self.beta_axis_x)
+        beta_series.attachAxis(self.beta_axis_y)
 
         # Удаляем старый CheckBox, если он есть
         if file_name in self.beta_checkboxes:
@@ -603,10 +631,11 @@ class SpectrumWindow(QMainWindow):
         if isinstance(layout, QVBoxLayout):
             layout.addWidget(checkbox)
 
+        # Обновляем диапазон оси Y
         self.update_beta_y_axis_range()
 
-        self.beta_series_dict[file_name] = beta_series
-        update_calibration_button_state(self) # Обновляем состояние кнопки
+        # Обновляем состояние кнопки калибровки
+        update_calibration_button_state(self)
 
     def get_unique_color(self, file_name, chart_type):
         """Выбирает уникальный цвет для новой серии, избегая повторений."""

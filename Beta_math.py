@@ -1,5 +1,5 @@
-from PyQt6.QtWidgets import QPushButton, QVBoxLayout, QDialog, QDialogButtonBox
-from PyQt6.QtCharts import QChart, QChartView, QValueAxis, QLineSeries
+from PyQt6.QtWidgets import QPushButton, QVBoxLayout, QDialog, QDialogButtonBox, QCheckBox
+from PyQt6.QtCharts import QChart, QChartView, QValueAxis, QLineSeries, QLogValueAxis
 from PyQt6.QtGui import QPainter
 from PyQt6.QtCore import Qt
 
@@ -13,10 +13,8 @@ def add_beta_calibration_button(parent):
     """
     calibration_button = QPushButton("Калибровка")
     calibration_button.clicked.connect(lambda: show_calibration_dialog(parent))
-
-    # Изначально кнопка отключена
     calibration_button.setEnabled(False)
-    parent.beta_calibration_button = calibration_button  # Сохраняем ссылку в объекте parent
+    parent.beta_calibration_button = calibration_button
 
     beta_layout = parent.tab2.layout()
     if beta_layout is None:
@@ -27,7 +25,6 @@ def add_beta_calibration_button(parent):
     else:
         raise ValueError("Layout вкладки Beta не является QVBoxLayout")
 
-    # Проверяем состояние при инициализации
     update_calibration_button_state(parent)
 
 
@@ -45,9 +42,7 @@ def update_calibration_button_state(parent):
     has_am241 = any("Am241" in name for name in series_names)
     has_sry90 = any("SrY90" in name for name in series_names)
 
-    # Активируем или отключаем кнопку в зависимости от наличия необходимых графиков
     parent.beta_calibration_button.setEnabled(has_am241 and has_sry90)
-    # Добавляем подсказку для удобства
     if not has_am241 and not has_sry90:
         parent.beta_calibration_button.setToolTip("Требуются графики Am241 и SrY90")
     elif not has_am241:
@@ -59,34 +54,38 @@ def update_calibration_button_state(parent):
 
 
 def show_calibration_dialog(parent):
-    """
-    Открывает диалоговое окно с графиком для калибровки Beta.
-
-    Args:
-        parent: Экземпляр SpectrumWindow, передаваемый как родительский объект.
-    """
     dialog = QDialog(parent)
     dialog.setWindowTitle("Калибровка Beta")
     dialog.resize(600, 400)
 
     calibration_chart = QChart()
-    calibration_chart.setTitle("График калибровки Beta (Am241 и SrY90)")
+    calibration_chart.setTitle("График калибровки Beta (Am241 и SrY90, нормализованный)")
 
+    max_y_value = 1
     for file_name, series in parent.beta_series_dict.items():
         if "Am241" in series.name() or "SrY90" in series.name():
             calibration_series = QLineSeries()
             calibration_series.setName(series.name())
+            normalization_value = parent.first_impulse_values.get(file_name, 1.0)
+            if normalization_value == 0:
+                normalization_value = 1.0
+            print(f"Нормализация для {file_name}: пока не делим на {normalization_value}")
             for point in series.points():
-                calibration_series.append(point.x(), point.y())
+                if point.x() <= 500:
+                    normalized_y = point.y()
+                    normalized_y = max(normalized_y, 1.0)
+                    calibration_series.append(point.x(), normalized_y)
+                    max_y_value = max(max_y_value, normalized_y)
             calibration_chart.addSeries(calibration_series)
 
     axis_x = QValueAxis()
     axis_x.setTitleText("Канал")
-    axis_x.setRange(0, 1023)
+    axis_x.setRange(0, 500)
+
+    # Изначально линейная ось Y
     axis_y = QValueAxis()
-    axis_y.setTitleText("Значение")
-    max_y = max([point.y() for s in calibration_chart.series() for point in s.points()] or [100])
-    axis_y.setRange(0, max_y * 1.1)
+    axis_y.setTitleText("Нормализованное значение")
+    axis_y.setRange(1, max_y_value * 1.1)
 
     calibration_chart.addAxis(axis_x, Qt.AlignmentFlag.AlignBottom)
     calibration_chart.addAxis(axis_y, Qt.AlignmentFlag.AlignLeft)
@@ -97,12 +96,38 @@ def show_calibration_dialog(parent):
     chart_view = QChartView(calibration_chart)
     chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
 
+    # Чекбокс для переключения масштаба
+    log_checkbox = QCheckBox("Логарифмический масштаб")
+
+    def toggle_log_scale(state):
+        nonlocal axis_y
+        if state == Qt.CheckState.Checked.value:
+            new_axis_y = QLogValueAxis()
+            new_axis_y.setTitleText("Нормализованное значение (лог)")
+            new_axis_y.setBase(10.0)
+            new_axis_y.setRange(1, max_y_value * 1.1)
+            new_axis_y.setMinorTickCount(9)
+        else:
+            new_axis_y = QValueAxis()
+            new_axis_y.setTitleText("Нормализованное значение")
+            new_axis_y.setRange(1, max_y_value * 1.1)
+
+        calibration_chart.removeAxis(axis_y)
+        calibration_chart.addAxis(new_axis_y, Qt.AlignmentFlag.AlignLeft)
+        for series in calibration_chart.series():
+            series.detachAxis(axis_y)
+            series.attachAxis(new_axis_y)
+        axis_y = new_axis_y
+
+    log_checkbox.stateChanged.connect(toggle_log_scale)
+
     button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
     button_box.accepted.connect(dialog.accept)
     button_box.rejected.connect(dialog.reject)
 
     layout = QVBoxLayout()
     layout.addWidget(chart_view)
+    layout.addWidget(log_checkbox)
     layout.addWidget(button_box)
     dialog.setLayout(layout)
 
