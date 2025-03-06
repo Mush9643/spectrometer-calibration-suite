@@ -12,6 +12,8 @@ from math_utils import highlight_am241_peak
 from math_utils import highlight_rn_peaks
 from math_utils import add_calibration_button
 from Beta_math import add_beta_calibration_button
+from Beta_math import update_calibration_button_state
+
 import os
 
 ##########################################################################
@@ -378,6 +380,12 @@ class SpectrumWindow(QMainWindow):
         except Exception as e:
             self.show_error_message(f"Ошибка при удалении графика: {str(e)}")
 
+        if chart_type == 'beta' and file_name in self.beta_series_dict:
+            series_to_remove = self.beta_series_dict[file_name]
+            self.beta_chart.removeSeries(series_to_remove)
+            del self.beta_series_dict[file_name]
+            update_calibration_button_state(self)  # Обновляем состояние кнопки
+
     ##########################################################################
     # Методы для работы с графиками и данными
     ##########################################################################
@@ -594,6 +602,9 @@ class SpectrumWindow(QMainWindow):
             layout.addWidget(checkbox)
 
         self.update_beta_y_axis_range()
+
+        self.beta_series_dict[file_name] = beta_series
+        update_calibration_button_state(self) # Обновляем состояние кнопки
 
     def get_unique_color(self, file_name, chart_type):
         """Выбирает уникальный цвет для новой серии, избегая повторений."""
