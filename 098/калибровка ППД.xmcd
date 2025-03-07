@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?validation-md5-digest 5e69a1288a740ef46c742cbe4acac7a1?>
+<?validation-md5-digest 7fb632589342a43657494c3b6a6f95d2?>
 <worksheet version="3.0.3" xmlns="http://schemas.mathsoft.com/worksheet30" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ws="http://schemas.mathsoft.com/worksheet30" xmlns:ml="http://schemas.mathsoft.com/math30" xmlns:u="http://schemas.mathsoft.com/units10" xmlns:p="http://schemas.mathsoft.com/provenance10">
 	<pointReleaseData/>
 	<metadata>
@@ -13,9 +13,9 @@
 			<revisedBy>Михаил</revisedBy>
 		</userData>
 		<identityInfo>
-			<revision>25</revision>
+			<revision>26</revision>
 			<documentID>440E62A1-5BE6-44BD-B7B6-1A9D93A86AC4</documentID>
-			<versionID>6B1D9C9E-996A-42C4-9520-91B001FD5411</versionID>
+			<versionID>CCB9BF20-F0AF-46B5-9221-6FA10950BEC3</versionID>
 			<parentVersionID>00000000-0000-0000-0000-000000000000</parentVersionID>
 			<branchID>00000000-0000-0000-0000-000000000000</branchID>
 		</identityInfo>
@@ -193,10 +193,10 @@
 		<region region-id="2371" left="498" top="105" width="47.25" height="12.75" align-x="507" align-y="114" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="440E62A1-5BE6-44BD-B7B6-1A9D93A86AC4" version-id="513517DB-5498-4DE1-BD80-3AE3E8235A55" branch-id="00000000-0000-0000-0000-000000000000" revision-num="261769572" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 12.2023\085\калибровка ППД.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="440E62A1-5BE6-44BD-B7B6-1A9D93A86AC4" version-id="513517DB-5498-4DE1-BD80-3AE3E8235A55" branch-id="00000000-0000-0000-0000-000000000000" revision-num="261678292" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 12.2023\085\калибровка ППД.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="440E62A1-5BE6-44BD-B7B6-1A9D93A86AC4" version-id="D82DFA88-7F62-4DC3-9E50-E1AF6C0AE3D1" branch-id="00000000-0000-0000-0000-000000000000" revision-num="261768212" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 12.2023\087\калибровка ППД.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="440E62A1-5BE6-44BD-B7B6-1A9D93A86AC4" version-id="D82DFA88-7F62-4DC3-9E50-E1AF6C0AE3D1" branch-id="00000000-0000-0000-0000-000000000000" revision-num="261679492" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 12.2023\087\калибровка ППД.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -240,10 +240,10 @@
 		<region region-id="2372" left="498" top="123" width="22.5" height="18" align-x="510" align-y="132" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="E81480C1-D7A7-4C68-A634-57779F9618B9" version-id="EB7F27A4-302E-400D-83E5-6D75702A3FFC" branch-id="00000000-0000-0000-0000-000000000000" revision-num="261768292" is-modified="true" region-id="0" href="D:\D-MoiDok\Аэрозолей детектор\Прокачки альфа бета 18 08 2020\все прокачки 0004 28 11 2020\все прокачки 0004.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="E81480C1-D7A7-4C68-A634-57779F9618B9" version-id="EB7F27A4-302E-400D-83E5-6D75702A3FFC" branch-id="00000000-0000-0000-0000-000000000000" revision-num="261678972" is-modified="true" region-id="0" href="D:\D-MoiDok\Аэрозолей детектор\Прокачки альфа бета 18 08 2020\все прокачки 0004 28 11 2020\все прокачки 0004.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="440E62A1-5BE6-44BD-B7B6-1A9D93A86AC4" version-id="D82DFA88-7F62-4DC3-9E50-E1AF6C0AE3D1" branch-id="00000000-0000-0000-0000-000000000000" revision-num="261768212" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 12.2023\087\калибровка ППД.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="440E62A1-5BE6-44BD-B7B6-1A9D93A86AC4" version-id="D82DFA88-7F62-4DC3-9E50-E1AF6C0AE3D1" branch-id="00000000-0000-0000-0000-000000000000" revision-num="261679492" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 12.2023\087\калибровка ППД.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -636,10 +636,10 @@
 		<region region-id="2280" left="60" top="927" width="152.25" height="18" align-x="83.25" align-y="936" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="F80DBEF8-D192-4AC5-9DDC-EE1CE3CB79F9" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802380" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050024\калибровка 050024.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="F80DBEF8-D192-4AC5-9DDC-EE1CE3CB79F9" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475580" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050024\калибровка 050024.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="F80DBEF8-D192-4AC5-9DDC-EE1CE3CB79F9" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802820" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050024\калибровка 050024.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="F80DBEF8-D192-4AC5-9DDC-EE1CE3CB79F9" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19474660" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050024\калибровка 050024.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -685,10 +685,10 @@
 		<region region-id="2282" left="60" top="951" width="159.75" height="18" align-x="81.75" align-y="960" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="F80DBEF8-D192-4AC5-9DDC-EE1CE3CB79F9" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802980" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050024\калибровка 050024.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="F80DBEF8-D192-4AC5-9DDC-EE1CE3CB79F9" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475500" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050024\калибровка 050024.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="F80DBEF8-D192-4AC5-9DDC-EE1CE3CB79F9" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802860" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050024\калибровка 050024.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="F80DBEF8-D192-4AC5-9DDC-EE1CE3CB79F9" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19474700" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050024\калибровка 050024.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -729,10 +729,10 @@
 		<region region-id="2283" left="144" top="1005" width="93" height="18" align-x="180" align-y="1014" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="E9714D21-55CC-4CCC-8198-0111753EAA36" version-id="71F20445-33C9-41E1-B52E-BE135457944A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802460" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\калибровка альфа детектора\перекалибровка УДА-100 альфа.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="E9714D21-55CC-4CCC-8198-0111753EAA36" version-id="71F20445-33C9-41E1-B52E-BE135457944A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475620" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\калибровка альфа детектора\перекалибровка УДА-100 альфа.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="E9714D21-55CC-4CCC-8198-0111753EAA36" version-id="71F20445-33C9-41E1-B52E-BE135457944A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802700" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\калибровка альфа детектора\перекалибровка УДА-100 альфа.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="E9714D21-55CC-4CCC-8198-0111753EAA36" version-id="71F20445-33C9-41E1-B52E-BE135457944A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19474540" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\калибровка альфа детектора\перекалибровка УДА-100 альфа.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -980,10 +980,10 @@
 									<ml:real>5687.5</ml:real>
 								</ml:apply>
 								<ml:provenance expr-id="1">
-									<originRef doc-id="DFDCFC48-5D14-4E40-934E-65FCB3CB5645" version-id="F7AF3587-86D4-4AA4-A84C-DFA8ECEB8CE4" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802780" is-modified="false" region-id="2000" href="C:\Users\shuu\Desktop\ДАИ 07.2023\074\калибровка_074.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+									<originRef doc-id="DFDCFC48-5D14-4E40-934E-65FCB3CB5645" version-id="F7AF3587-86D4-4AA4-A84C-DFA8ECEB8CE4" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475260" is-modified="false" region-id="2000" href="C:\Users\shuu\Desktop\ДАИ 07.2023\074\калибровка_074.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 										<hash/>
 									</originRef>
-									<parentRef doc-id="DFDCFC48-5D14-4E40-934E-65FCB3CB5645" version-id="F7AF3587-86D4-4AA4-A84C-DFA8ECEB8CE4" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311803460" is-modified="false" region-id="2000" href="C:\Users\shuu\Desktop\ДАИ 07.2023\074\калибровка_074.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+									<parentRef doc-id="DFDCFC48-5D14-4E40-934E-65FCB3CB5645" version-id="F7AF3587-86D4-4AA4-A84C-DFA8ECEB8CE4" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475620" is-modified="false" region-id="2000" href="C:\Users\shuu\Desktop\ДАИ 07.2023\074\калибровка_074.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 										<hash/>
 									</parentRef>
 									<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -1245,10 +1245,10 @@
 		<region region-id="2307" left="48" top="2150.25" width="124.5" height="33.75" align-x="73.5" align-y="2172" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="FFF707A9-8BEB-4543-BAE0-55D7B720D286" version-id="EFF26A3D-FA6A-48CE-988B-7A0E45A61B10" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311803020" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 07.2023\065\калибровка 0065.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="FFF707A9-8BEB-4543-BAE0-55D7B720D286" version-id="EFF26A3D-FA6A-48CE-988B-7A0E45A61B10" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475140" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 07.2023\065\калибровка 0065.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="FFF707A9-8BEB-4543-BAE0-55D7B720D286" version-id="EFF26A3D-FA6A-48CE-988B-7A0E45A61B10" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311803500" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 07.2023\065\калибровка 0065.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="FFF707A9-8BEB-4543-BAE0-55D7B720D286" version-id="EFF26A3D-FA6A-48CE-988B-7A0E45A61B10" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475100" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 07.2023\065\калибровка 0065.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -1405,13 +1405,13 @@
 				<p style="Normal" margin-left="inherit" margin-right="inherit" text-indent="inherit" text-align="inherit" list-style-type="inherit" tabs="inherit">Скорости счета в бета канале от различных изотопов:</p>
 			</text>
 		</region>
-		<region region-id="2320" left="768" top="2749.5" width="196.5" height="43.5" align-x="795.75" align-y="2772" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
+		<region region-id="2387" left="768" top="2749.5" width="196.5" height="43.5" align-x="795.75" align-y="2772" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802900" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19474460" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311803180" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19474980" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -1479,10 +1479,10 @@
 		<region region-id="2321" left="42" top="2755.5" width="189.75" height="43.5" align-x="72.75" align-y="2778" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311803060" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475180" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802300" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19474540" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -1550,10 +1550,10 @@
 		<region region-id="2322" left="252" top="2755.5" width="189" height="43.5" align-x="276" align-y="2778" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311803500" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475500" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311803420" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19474820" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -1621,10 +1621,10 @@
 		<region region-id="2323" left="486" top="2755.5" width="235.5" height="43.5" align-x="514.5" align-y="2778" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311803300" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19474420" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802900" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19474580" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -1689,7 +1689,7 @@
 				</element-image-map>
 			</rendering>
 		</region>
-		<region region-id="2324" left="72" top="2841" width="306" height="18" align-x="87.75" align-y="2850" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
+		<region region-id="2386" left="66" top="2829" width="306" height="18" align-x="81.75" align-y="2838" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:define xmlns:ml="http://schemas.mathsoft.com/math30">
 					<ml:id xml:space="preserve">cs</ml:id>
@@ -1908,10 +1908,10 @@
 		<region region-id="2334" left="546" top="3150.75" width="72.75" height="29.25" align-x="568.5" align-y="3168" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311803020" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475660" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802540" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475380" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -1941,10 +1941,10 @@
 			<math optimize="false" disable-calc="false">
 				<ml:eval placeholderMultiplicationStyle="default" xmlns:ml="http://schemas.mathsoft.com/math30">
 					<ml:provenance expr-id="1">
-						<originRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802860" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+						<originRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19474620" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 							<hash/>
 						</originRef>
-						<parentRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802580" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+						<parentRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19474580" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 							<hash/>
 						</parentRef>
 						<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -1975,10 +1975,10 @@
 		<region region-id="2337" left="552" top="3261" width="132.75" height="18" align-x="570.75" align-y="3270" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311803300" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475340" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802860" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19474620" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2014,10 +2014,10 @@
 		<region region-id="2338" left="552" top="3285" width="136.5" height="18" align-x="569.25" align-y="3294" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802340" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475500" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802740" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475460" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2053,10 +2053,10 @@
 		<region region-id="2339" left="552" top="3315" width="84.75" height="18" align-x="588.75" align-y="3324" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802500" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475340" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802860" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="9D36E599-E79B-470C-B2B4-1BD5D33647AF" version-id="9820488A-5590-44A2-9CD4-234739D0F35C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19474620" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\010005 второй собранный\Калибровка\калибровка по бете.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2184,10 +2184,10 @@
 		<region region-id="2349" left="84" top="3452.25" width="113.25" height="33.75" align-x="108.75" align-y="3474" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="FFF707A9-8BEB-4543-BAE0-55D7B720D286" version-id="EFF26A3D-FA6A-48CE-988B-7A0E45A61B10" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311803500" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 07.2023\065\калибровка 0065.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="FFF707A9-8BEB-4543-BAE0-55D7B720D286" version-id="EFF26A3D-FA6A-48CE-988B-7A0E45A61B10" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475540" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 07.2023\065\калибровка 0065.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="FFF707A9-8BEB-4543-BAE0-55D7B720D286" version-id="EFF26A3D-FA6A-48CE-988B-7A0E45A61B10" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802860" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 07.2023\065\калибровка 0065.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="FFF707A9-8BEB-4543-BAE0-55D7B720D286" version-id="EFF26A3D-FA6A-48CE-988B-7A0E45A61B10" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19474620" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 07.2023\065\калибровка 0065.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2240,10 +2240,10 @@
 		<region region-id="2352" left="84" top="3535.5" width="126" height="111.75" align-x="109.5" align-y="3594" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="E48BFD8B-8435-490A-B02B-D217DBB2AB0E" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802820" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050019\калибровка 050019 после резистора_.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="E48BFD8B-8435-490A-B02B-D217DBB2AB0E" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475020" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050019\калибровка 050019 после резистора_.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="2A0041DA-9D87-4C9A-9975-DDD16638A35D" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311803540" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050026\калибровка 050026.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="2A0041DA-9D87-4C9A-9975-DDD16638A35D" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19474780" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050026\калибровка 050026.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2305,10 +2305,10 @@
 		<region region-id="2354" left="84" top="3675" width="189" height="12.75" align-x="109.5" align-y="3684" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="9639A030-26EA-4494-95BB-49A7BF256D7A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802300" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050018\калибровка 050018.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="9639A030-26EA-4494-95BB-49A7BF256D7A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19474500" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050018\калибровка 050018.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="4420FC24-EBB1-4303-8CE3-F5B851DD0A76" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802580" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050029\калибровка 050029.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="4420FC24-EBB1-4303-8CE3-F5B851DD0A76" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475500" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050029\калибровка 050029.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2340,10 +2340,10 @@
 		<region region-id="2355" left="84" top="3717" width="221.25" height="138.75" align-x="159.75" align-y="3726" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="EFFFDE83-6224-485F-8D21-6B7560FCD05F" version-id="56D02D11-FBE0-49C3-8031-8BEAADDE1D2E" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802860" is-modified="false" region-id="0" href="C:\Program Files (x86)\Mathcad\Mathcad 15\Resource Center\en\qsheet\Techniques\charstr7.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="EFFFDE83-6224-485F-8D21-6B7560FCD05F" version-id="56D02D11-FBE0-49C3-8031-8BEAADDE1D2E" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19474420" is-modified="false" region-id="0" href="C:\Program Files (x86)\Mathcad\Mathcad 15\Resource Center\en\qsheet\Techniques\charstr7.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="2A0041DA-9D87-4C9A-9975-DDD16638A35D" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311803540" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050026\калибровка 050026.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="2A0041DA-9D87-4C9A-9975-DDD16638A35D" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475460" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050026\калибровка 050026.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2456,10 +2456,10 @@
 		<region region-id="2357" left="96" top="3915" width="237.75" height="12.75" align-x="112.5" align-y="3924" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="F805D024-DF96-4ADD-AB9B-3069A4BAB52C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802500" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050020\калибровка 050020 после резистора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="F805D024-DF96-4ADD-AB9B-3069A4BAB52C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475540" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050020\калибровка 050020 после резистора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="2A0041DA-9D87-4C9A-9975-DDD16638A35D" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311803020" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050026\калибровка 050026.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="2A0041DA-9D87-4C9A-9975-DDD16638A35D" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19474820" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050026\калибровка 050026.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2485,10 +2485,10 @@
 		<region region-id="2358" left="96" top="3939" width="330.75" height="18" align-x="112.5" align-y="3948" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="F805D024-DF96-4ADD-AB9B-3069A4BAB52C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311803060" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050020\калибровка 050020 после резистора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="F805D024-DF96-4ADD-AB9B-3069A4BAB52C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475020" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050020\калибровка 050020 после резистора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="2A0041DA-9D87-4C9A-9975-DDD16638A35D" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311802940" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050026\калибровка 050026.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="2A0041DA-9D87-4C9A-9975-DDD16638A35D" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475340" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050026\калибровка 050026.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2537,10 +2537,10 @@
 			<math optimize="false" disable-calc="false">
 				<ml:eval placeholderMultiplicationStyle="default" xmlns:ml="http://schemas.mathsoft.com/math30">
 					<ml:provenance expr-id="1">
-						<originRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="F805D024-DF96-4ADD-AB9B-3069A4BAB52C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311803300" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050020\калибровка 050020 после резистора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+						<originRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="F805D024-DF96-4ADD-AB9B-3069A4BAB52C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19474980" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050020\калибровка 050020 после резистора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 							<hash/>
 						</originRef>
-						<parentRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="2A0041DA-9D87-4C9A-9975-DDD16638A35D" branch-id="00000000-0000-0000-0000-000000000000" revision-num="311803500" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050026\калибровка 050026.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+						<parentRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="2A0041DA-9D87-4C9A-9975-DDD16638A35D" branch-id="00000000-0000-0000-0000-000000000000" revision-num="19475500" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050026\калибровка 050026.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 							<hash/>
 						</parentRef>
 						<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -4082,22 +4082,22 @@ MtpoSCQl0TI5Gby2dZDvY7IEZKme50xqxuPGIrKSLyEnvlY1YuK5/FKZ1AGMxWw1cCY6JqXH
 gnuG/F05ayqnc28Bo1N6IOYpknm3dKB9nQUZ9J0sJT4D5mICKErFQYzex4Q+7HO09kx9BPcu
 nx4tEf5iAlgXDhNgYBJUvw3GkCHEROT/Y47FMGIirP+j8ML33FswlJjCKOz7f4xKcogTmlCz
 AAAAAElFTkSuQmCC</item>
-		<item item-id="41" content-encoding="gzip">H4sIAAAAAAAA/+xXTWgTURCeTZo0v23T1qj9M9ZYtdGKSz1YikTTHgRrINGCJ2mSpV1Jum2y
-gr2FehGsUlDEo4KI4Mmbx1pEENS2N6EXFc+t3kSwcebNZrupovUPkXbCvJ958828N3n73jwf
-AEjISWSPaNuwrNLzitIMRDKyK5eOp84raV1IIIHci6CoXXZ+AihWyQ9mseeQg1gVnfLUY6yq
-ZX9UaLuMvlu21QJkXGjdnoQ8nEWHjHB52YDHJwOqRL2I8rNpb40sPPkBR2hm7thgsn/8hK7k
-JGHdh+y0ClAT6oSqSxlPKMOqNuoQA92EzmhpllUJ2RFzxc7CyNhx7SIv8CRyNQoS5pIHkO+j
-3hLGKGcHuIF+Z7E/4+Vxp5vDaANbQDTqTU/HdD2vpi7oCs+vB2gpVqrvaa/oN5Qj18iRa9jC
-kWu0RC4o33yCQ41bOWJB1N4mmsVgha3tYnE+DFpMy6U0ChMP1NESUbwqoUn14vJeIGIZ62ns
-38U5l0qkjarxrBLLqsqoLjASCNO8KFEiZn4u8PrOw6Y3sIaOgh1WSm5wWmSSiebplK2tlMgj
-U2mT/iv6jLxi4U3aWJQADX86hKAfRrHOw8Tao+C7FASH+c3TWTAJh6X2wGLgehH8g08dTRXK
-ryanbl1blPA0hhnjIImhd/KriLLwU76J6sEmWdezXtxl6cc666Vf8f8n6Xf88xUIQP8J3bB0
-89KZv3kWbAxyYPr1tgZAjfB+8FTsDLNNHdSCFHILy7qMZgZUsXtqDbTdwKgWPOV8j5CXS5U7
-dJqdPKdiADPaEPIIngVZ/IWgD8thrGWhdGng5RmqP17p7C7j3y29N219+Iu2e6k4PfXsUHo+
-cO8q3A7PORbK2ZBrTay+FT+Q6BsTeToypoWAl20F/ysSs2ziRJQScZvEyXBSyatD2XN9amEs
-OzRxSssorB8XoGYGGJul5et3QqvxTmjjd0LrDs5621A7xO+Etp38TgjRzmlneyExgWgcpF0s
-aBX2w4aR3WwkjKIONhLew0Y6yMhexnSYRvZZjHSuYiMGdj9jI4Q9wKoRE9tlGTxoGaT+FwAA
-AP//AwB9gSbKgg0AAA==</item>
+		<item item-id="41" content-encoding="gzip">H4sIAAAAAAAA/+xXTUwTURCebWlpaQsUsCp/VqxVqWLc4EFCTLVwMBGbtEriydB2A2taFsqa
+yK3Ri4kYSTSeNSHGxJM3j0iMiYkKnrmg8cQB9GZMpM682S5bNIp/MYZOM+9n3nwz703fvjfP
+CwASchK5RrRtWFbpeUVpASIZ2ZVLx1MXlbQuJJBA7kVQ1C47PwEUquSHc9hzyAGsCk556glW
+1bIvKrRdRt8t2+oAMi60bk9CHs6jQ0a4PGygxisDqkQ9iPKxaU+tLDz5AEdoZu7YYLJ//JSu
+5CRh3YvstApQE+qFqksZTyjDqjbqEAPdhM5oaZZVCdkxc8XOiZGxk9plXuBp5GoUJMwlDyA/
+QL0VjFHODnAb/c5hf9bD4043h9EGNr9oNJieTuh6Xk1d0hWeXw/QUqzU0NNR1m8sRa6JI9e4
+jSPXZIlcQL7zFIeatnPEAqi9QzQLgTJbO8XivBi0mJZLaRQmHqinJaJ4XUKT6sXlvUTEKtbT
+2J/BOReLpI2q8awSy6rKqC4wEgjTvChRImZh3r9071HzG9hAx8EOa0U3OC0yyUTzdErW1ork
+kalYof+KPiOvWbhCW4sSoOFPhyD0wyjWeZjceBR8lwLgML95OguuwFGpw7/ov1UA3+AzR7NV
+d2l5eWbw5qKEpzHMGgdJDL2TX0WUEz/lm6gBbJJ1PZvFXZN+rLNZ+hX/f5J+xz9fgQD0n9AN
+SzcvnfmVs2BrkAPTr7e1AGqE90NN2c4w29RBLUght7Ksy2hmQBW7p85A2w2MasFTzvcYebVY
+vkOn2ckLKgYwow0ij+BZkMVfEPqwHMZaFkpXB16do/rj9c7uEv7dynvT1oe/aLuXirNTz4+k
+F/z3b8Dd0LzjdSkbcm2I1bfiBxJ9YyJPR8a0EPCyLeN/RWKWzZyIUiJukzgZTip5dSh7oU+d
+GMsOTZ7RMgrrxwWohQHGZmn9+p3QZrwT2vmd0LaLs9521A7yO6F9N78TgrRzOtheUEwgGgdp
+DwvahP2QYWQvGwmhKMxGQvvYSJiM7GdM2DRywGKkcx0bMbAHGRsh7CFWjZjYLsvgYcsg9b8A
+AAD//wMAYYRagIINAAA=</item>
 		<item item-id="42">iVBORw0KGgoAAAANSUhEUgAAAMUAAAGmCAYAAADML0CwAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAABKxSURBVHhe7Z3Ldeu4EgAdlRaORiun
 oq3z0N5hKIGbxGTAYYsAwQ9Ii0RT3aCrzqnz3sgaXXOAuhRpAf5oAGCEyyg+Pj4Qd1uK2yj+
@@ -4254,20 +4254,20 @@ gpEQ3o1XAW3GQNayE5RGMHhFKteUDIUFg/dVx6r2MX/wmVOsTRFA9qKPDgrTeQbDYLwugxEU
 hjGt7ZXQuPWB9y2NCHZ1BtOgLJaQJIozCeKUcp5gdEwkeyGWYNeMK4Vr6FowM71+5icnJBJl
 ODeo/Zmx5f30su7ez5rOS+xgH592jFCCzjOYINyLCCYINyKC1YKeiuflo1pkvPVmRDBBuI15
 /h/hx6BC7AvrWwAAAABJRU5ErkJggg==</item>
-		<item item-id="47" content-encoding="gzip">H4sIAAAAAAAA/2xUQU8TURCet9vdbZfSYhWQLrSAgKJS4BVQOaEhxkSQCNHEi2RpV6gRi8ti
-ODb8B89e/AnGu/Fm/DFejTH1ezO0IPE1szNv5pvvzczua5aIFGQL4rNt45mO3m1Gu43mW4fM
-WoBk6s2a+FLsu2dg+7WNnddRLWEPbXK+had7uHfwoHks7jWIB8dmF7gOGYX8zBL9An4od7Y3
-K5cRbZFlc3WF7uH3kyRu7BwlkWLEMiRP51dqefyfvcMEqSSOooAdGtJ7wKarh74StRxPf4Re
-cdOivYzotC8606MtHPIe83GVs0QVmkP74Mlq9zvRid/L8QTVOyo1j/gCLaEL7fwAezYvUfRo
-K2seudSnPzxGJEeXOPS5D60qVSWeX4EPbWUua9PZgwKcV9g8KXDR/dr/hnh6QHu/UVz/oE79
-gR64ylz1QTRrb1FMLzBXdn0aNPQNpBYZ2hoIBFo8Bx2WSopcyZw5Z4T5W/0l4R8pS1IJbVjr
-pvtRYS912MeEfWRcgGNd4DXhHjvjJpqQLr1JGfHElOjJ6zLqqQ72Bu+/dPc0LYmTN2U803Dd
-kvFMM/Ft2UzwZkbAbkXYZ2ZFV+bklcxiAMpexCsB87ycNNs9SUtypSoD0AvSV9X0VaM9okXp
-q9rNWJKJoGXXeU7PaJW2acfUcUcCM51R3eVbkq/r7d04PNjbftWM98PEk/drLhu7V8MklGkV
-qXMhsGySK/sUUmLb7PzwuHH4kHnkgg5DXqpTrKw2f2HDGxe9beNd+4+3Q+4lcViL9KrNoeAU
-WFZ9pALVNpaCgaSysmC0gLGUrYJU27hSJtaG4ajAaq0A7arAZgKPMTDSnfwMMDi6rHxgOL0H
-GE7PGmqT3mswJivHGBh5gzFgqTf/5Gg/ihu18I1MJM11P4LUqYGfOdz8bfin47ywsuc3fwEA
-AP//AwAdQho+IgUAAA==</item>
+		<item item-id="47" content-encoding="gzip">H4sIAAAAAAAA/2xUz08TURCet9vdbZfSYhWQFlpAQFEp8AqonJAQYiJIhGjiRbK0K9SIxWUx
+HBv+B89e/BOMd+PN+Md4NcbU7820BYmvmX3zZr755sfua5qIFGQH4rNu45kM322H+/XGW4fM
+WoCkao2q2BJse2Bgh9WtvddhNWYLbXO8had7fHC02jgV8wbEg2G7C9yEjEJ+pol+AT+UOT+b
+lUlJURZZNiu5bvKHcRzV907iUDFyGZKliyuxPP7P2WGCRByFYYENGtJ7xKqrh74SNR1Pf8S+
+4iZl91KyJ33ZUz3aQpL3mI+rnCUq0xzaB09au9+Jzvxe9seo3lGJefgXaAldaOcH2NNZ8aJH
+W1nziKU+/eExPBm6wq7PfWhVqQrx/HKctJm6qk1nqzkYr7F6luOi+7X/Df7kgPZ+o7j+QZ34
+g33gOnPVBtGsvUMRvcBc2fRp0NDXEZpnaHOgIND8BeiwVJLnSuZMnhHmb/YXhX+kJEFFtGFt
+mu5Hhb3YYR8T9pFxAY51gTeEe+ycm2hCuvQmZcQTU7JP3pRRT3Wwt/j8pXumaQmcvC3jmYbp
+joxnmonvymGCDzMCdsvCPjMre3lOXsksBqDsRbwSMM9LptluJi3B5YoMQC9IXxXTV5UOiBal
+r0o3YkkmgpZd5zk9ozXapT1Txz1xzHRGdZ9vSbamd/ej4Ohg91UjOgxiT96vuWxsXgviQKaV
+b3/MJoovqPmmn0KKrJuTH5zWj9eZRy7oMOSlamNltfgLG966bG0Z68Z/rB1yL46CaqjXbHYV
+2sCS6iNVUC2jKSgIKikLShMYS9mqkGgZU8L4WlAcVbCaK0C7qmAzgccYKMlOfAoYpC4pHxgO
+7wGGw9OG2oT3GoyJyjAGStZgDFjqzT45OQyjejV4IxNJct2PIDWq42eSm78Nvz3OSyt98fAX
+AAD//wMA+yW1dyIFAAA=</item>
 		<item item-id="48">iVBORw0KGgoAAAANSUhEUgAAAtkAAAEpCAYAAABGNz4aAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAADF9SURBVHhe7Z3RmauwsmZ3FvM6zzcE
 Z3AyOBE4iZuEA5g4nIyD8VBAtcuyJBAIENRa9dEIqVRgCol/s2n3vzcAAAAAAFQFkQ0AAAAA
@@ -5632,34 +5632,34 @@ cqiY6R2NPnaUo8vuM7kG3M2Z8QVbP++yRdF+bfsU/Cn/SCQ+F19aoV4BdQT35aBCg8d/7ohR
 jgV9Mjc/h4CCaD4DgyJH/8WBxkrhxMKoiqiGH0+AorvhKLDyX6/zd+F/+8f0icTnIIvcHNyX
 IRIHIEeT5XEMv3N8Qzxgp/g31j+JxMcji9wCzD+cTRwDFrqFM773/yz08ZzAJxKJxGcgi1wi
 kUgkvhZZ5BKJRCLxpXg+/wcZext8qgeB4AAAAABJRU5ErkJggg==</item>
-		<item item-id="77" content-encoding="gzip">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</item>
+		<item item-id="77" content-encoding="gzip">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</item>
 		<item item-id="78">iVBORw0KGgoAAAANSUhEUgAAAdcAAAGmCAYAAAAu+s6lAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAACeoSURBVHhe7d1Rdqo8F4DhjsoLR8OV
 U/HWeXjfYTiBTuKfAT+bJBLCDoQSzrdj32etrNMiIKLlPaitXz0AAKiKuALACb6+vhgNj6OI
