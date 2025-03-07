@@ -108,9 +108,12 @@ def highlight_rn_peaks(chart, series, peak_points, parent_window=None):
         print(f"Коэффициенты: intercept={intercept:.3f}, slope={slope:.3f}")
         print(f"Enewa = {intercept + slope * 1023:.3f}")
         for e in P90:
-            print(f"P({e}) = {(e - intercept) / slope:.0f}")
+            p_value = round((e - intercept) / slope)
+            print(f"P({e}) = {p_value}")
+            if e == 2700 and parent_window is not None:
+                parent_window.beta_p2700 = p_value  # Сохраняем P(2700) для бета-канала
 
-        # Сохраняем коэффициенты в parent_window, если он передан
+        # Сохраняем коэффициенты в parent_window
         if parent_window is not None:
             if hasattr(parent_window, 'calibration_coefficients'):
                 parent_window.calibration_coefficients = (intercept, slope)
@@ -128,7 +131,7 @@ def highlight_rn_peaks(chart, series, peak_points, parent_window=None):
             else:
                 print("Предупреждение: Не удалось найти родительский объект для сохранения calibration_coefficients.")
 
-        # Вызываем calculate_ra, calculate_am_rate и calculate_k1p9 для вычисления ra, am_rate и k1p9
+        # Вызываем calculate_ra, calculate_am_rate и calculate_k1p9
         if parent_window:
             calculate_ra(parent_window)
             calculate_am_rate(parent_window)
