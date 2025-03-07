@@ -28,6 +28,8 @@ class SpectrumWindow(QMainWindow):
         self.c14_data = []  # Массив для данных C14
         self.cs137_data = []  # Массив для данных Cs137
         self.sry90_data = []  # Массив для данных SrY90
+        self.rad_data = []  # Массив для данных Rad
+        self.fon_data = []  # Массив для данных фона
         self.modbus_client = modbus
         self.setWindowTitle("Спектр импульсов")
         self.setWindowIcon(QIcon("M-Photoroom.png"))
@@ -235,7 +237,7 @@ class SpectrumWindow(QMainWindow):
         impulse_value = self.read_first_impulse_value(file_path)
 
         if impulse_value is not None:
-            print(f"Значение 'Кол-во импульсов' для файла '{file_name}' (первая строка): {impulse_value}")
+
             self.first_impulse_values[file_name] = impulse_value # Сохраняем значение
 
         if action_type == 'alfa':
@@ -313,7 +315,7 @@ class SpectrumWindow(QMainWindow):
             channel = int(second_row['Канал'])
             impulses = second_row['Кол-во импульсов']
             self.alfa_data_arrays[file_name] = [channel, impulses]  # Сохраняем как список [Канал, Кол-во импульсов]
-            print(f"Вторая строка из файла '{file_name}' сохранена: Канал={channel}, Импульсы={impulses}")
+
         except Exception as e:
             self.show_error_message(f"Ошибка при сохранении данных из файла: {str(e)}")
 
@@ -414,31 +416,54 @@ class SpectrumWindow(QMainWindow):
 
     def load_data_for_chart(self, chart_type, file_name):
         """Загружает данные из файла Excel и отображает на соответствующем графике."""
-        folder_name = self.folder_input.text()
-        folder_path = os.path.join(os.getcwd(), folder_name)
-        file_path = os.path.join(folder_path, file_name)
+        folder_name = self.folder_input.text()  # Получаем имя папки из поля ввода
+        folder_path = os.path.join(os.getcwd(), folder_name)  # Полный путь к папке
+        file_path = os.path.join(folder_path, file_name)  # Полный путь к файлу
 
         if not os.path.exists(file_path):
             self.show_warning_message(f"Файл '{file_name}' не найден.")
             return
 
         try:
+            # Чтение данных из Excel
             df = pd.read_excel(file_path)
 
+            # Проверяем структуру данных
             if 'Канал' not in df.columns or 'Кол-во импульсов' not in df.columns:
                 self.show_warning_message(f"Неверный формат данных в файле '{file_name}'.")
                 return
 
-            # Сохраняем оригинальные данные перед обнулением
-            original_data = df['Кол-во импульсов'].tolist()  # Явно преобразуем в список
+            # Сохраняем оригинальные значения столбца 'Кол-во импульсов'
+            original_impulses = df['Кол-во импульсов'].tolist()
 
-            # Обнуляем первые три значения только для отображения
-            df.loc[0:2, 'Кол-во импульсов'] = 0
+            # Распределяем оригинальные данные по массивам в зависимости от имени файла
+            file_name_lower = file_name.lower()  # Приводим имя файла к нижнему регистру для проверки
+            if "rad" in file_name_lower:
+                self.rad_data = original_impulses
 
+            elif "am241" in file_name_lower:
+                self.am241_data = original_impulses
+
+            elif "c14" in file_name_lower:
+                self.c14_data = original_impulses
+
+            elif "sry90" in file_name_lower:
+                self.sry90_data = original_impulses
+
+            elif "cs137" in file_name_lower:
+                self.cs137_data = original_impulses
+
+            elif "фона" in file_name_lower:
+                self.fon_data = original_impulses
+
+            # Заменяем первые три значения импульсов на 0 в копии данных для графика
+            df.loc[0:2, 'Кол-во импульсов'] = 0  # Заменяем первые 3 строки на 0 в колонке 'Кол-во импульсов'
+
+            # Отображаем данные на графиках
             if chart_type == 'alfa':
-                self.update_alfa_chart(df, file_name, original_data)
+                self.update_alfa_chart(df, file_name, original_impulses)  # Передаём original_impulses
             elif chart_type == 'beta':
-                self.update_beta_chart(df, file_name, original_data)
+                self.update_beta_chart(df, file_name, original_impulses)  # Передаём original_impulses
 
         except Exception as e:
             self.show_error_message(f"Ошибка при загрузке данных из файла: {str(e)}")
@@ -560,8 +585,7 @@ class SpectrumWindow(QMainWindow):
         # Явное преобразование second_word в строку и отладочный вывод
         second_word = str(file_name.split()[1] if len(file_name.split()) > 1 else file_name)
         series_name = f"({second_word})"
-        print(f"Debug: second_word = {second_word}, type = {type(second_word)}")
-        print(f"Debug: series_name = {series_name}, type = {type(series_name)}")
+
 
         # Проверяем условие с явным приведением к строке
         if "фона" in series_name.lower():
@@ -570,7 +594,7 @@ class SpectrumWindow(QMainWindow):
             for _, row in df.iterrows():
                 beta_series.append(row['Канал'], row['Кол-во импульсов'])
             self.beta_series_dict[file_name] = beta_series
-            print(f"Debug: Calling process_fon_data with original_data = {original_data[:5]}...")  # Отладка
+
             process_fon_data(self, original_data, file_name)
             return
 

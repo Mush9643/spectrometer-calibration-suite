@@ -1,7 +1,7 @@
-from PyQt6.QtWidgets import QPushButton, QVBoxLayout, QDialog, QDialogButtonBox, QCheckBox
+from PyQt6.QtWidgets import QPushButton, QVBoxLayout, QDialog, QDialogButtonBox, QCheckBox, QFormLayout, QLabel
 from PyQt6.QtCharts import QChart, QChartView, QValueAxis, QLineSeries, QLogValueAxis
-from PyQt6.QtGui import QPainter
-from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPainter, QColor
+from PyQt6.QtCore import Qt, QPointF
 
 
 def add_beta_calibration_button(parent):
@@ -78,11 +78,29 @@ def show_calibration_dialog(parent):
                     max_y_value = max(max_y_value, normalized_y)
             calibration_chart.addSeries(calibration_series)
 
+    # Отрисовка красных прямых
+    p2700 = getattr(parent, 'beta_p2700', None)
+    if p2700 is not None and p2700 <= 500:  # Убеждаемся, что P(2700) в пределах графика
+        # Вертикальная линия от x = 200
+        line_x200 = QLineSeries()
+        line_x200.setName("Line x=200")
+        line_x200.setColor(QColor(255, 0, 0))  # Красный цвет
+        line_x200.append(QPointF(200, 1))  # Начало
+        line_x200.append(QPointF(200, max_y_value * 1.1))  # До верхней границы
+        calibration_chart.addSeries(line_x200)
+
+        # Вертикальная линия от x = P(2700)
+        line_p2700 = QLineSeries()
+        line_p2700.setName("Line x=P(2700)")
+        line_p2700.setColor(QColor(255, 0, 0))  # Красный цвет
+        line_p2700.append(QPointF(p2700, 1))  # Начало
+        line_p2700.append(QPointF(p2700, max_y_value * 1.1))  # До верхней границы
+        calibration_chart.addSeries(line_p2700)
+
     axis_x = QValueAxis()
     axis_x.setTitleText("Канал")
     axis_x.setRange(0, 500)
 
-    # Изначально линейная ось Y
     axis_y = QValueAxis()
     axis_y.setTitleText("Нормализованное значение")
     axis_y.setRange(1, max_y_value * 1.1)
@@ -96,7 +114,6 @@ def show_calibration_dialog(parent):
     chart_view = QChartView(calibration_chart)
     chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
 
-    # Чекбокс для переключения масштаба
     log_checkbox = QCheckBox("Логарифмический масштаб")
 
     def toggle_log_scale(state):
@@ -121,6 +138,15 @@ def show_calibration_dialog(parent):
 
     log_checkbox.stateChanged.connect(toggle_log_scale)
 
+    # Информационная панель с активностями
+    info_layout = QFormLayout()
+    if hasattr(parent, 'am241_activity'):
+        info_layout.addRow("A_am:", QLabel(f"{parent.am241_activity:.3f}"))
+    if hasattr(parent, 'sry90_activity'):
+        info_layout.addRow("A_sr:", QLabel(f"{parent.sry90_activity:.3f}"))
+    if p2700 is not None:
+        info_layout.addRow("P(2700):", QLabel(f"{p2700:.2f}"))
+
     button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
     button_box.accepted.connect(dialog.accept)
     button_box.rejected.connect(dialog.reject)
@@ -128,6 +154,7 @@ def show_calibration_dialog(parent):
     layout = QVBoxLayout()
     layout.addWidget(chart_view)
     layout.addWidget(log_checkbox)
+    layout.addLayout(info_layout)
     layout.addWidget(button_box)
     dialog.setLayout(layout)
 
