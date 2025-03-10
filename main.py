@@ -1,5 +1,7 @@
 import sys
-from PyQt6.QtCharts import QChart, QLineSeries, QValueAxis, QChartView, QLogValueAxis, QAbstractSeries
+from scipy.signal import find_peaks, savgol_filter
+import numpy as np
+from PyQt6.QtCharts import QChart, QLineSeries, QValueAxis, QChartView, QLogValueAxis, QAbstractSeries, QScatterSeries
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QMessageBox, QDialog, \
     QSplashScreen, QCheckBox, QLineEdit, QTabWidget, QListWidgetItem, QListWidget, QMenu, QHBoxLayout
 from PyQt6.QtGui import QPixmap, QIcon, QPainter, QDesktopServices, QColor
@@ -354,47 +356,24 @@ class SpectrumWindow(QMainWindow):
 
     def remove_specific_chart(self, chart_type, file_name):
         try:
-            if chart_type == 'alfa':
-                if file_name in self.alfa_series_dict:
-                    series_to_remove = self.alfa_series_dict[file_name]
-                    self.chart.removeSeries(series_to_remove)
-
-                    # Удаляем точку/пики, если они существуют
-                    series_name = series_to_remove.name()
-                    if series_name in self.peak_points:
-                        peak_data = self.peak_points.pop(series_name)
-                        if isinstance(peak_data, dict):  # Для Rn пиков (словарь)
-                            for peak_series in peak_data.values():
-                                if isinstance(peak_series, QAbstractSeries):
-                                    self.chart.removeSeries(peak_series)
-                        elif isinstance(peak_data, QAbstractSeries):  # Для Am241 пика
-                            self.chart.removeSeries(peak_data)
-
-                    # Освобождаем цвет для повторного использования
-                    if file_name in self.used_alfa_colors:
-                        del self.used_alfa_colors[file_name]
-
-                    del self.alfa_series_dict[file_name]
-            elif chart_type == 'beta':
+            if chart_type == 'beta':
                 if file_name in self.beta_series_dict:
                     series_to_remove = self.beta_series_dict[file_name]
                     self.beta_chart.removeSeries(series_to_remove)
 
-                    # Освобождаем цвет для повторного использования
+                    # Удаляем точки пиков Cs137, если они существуют
+                    if hasattr(self, 'cs137_peak_points'):
+                        for peak_point in self.cs137_peak_points:
+                            self.beta_chart.removeSeries(peak_point)
+                        self.cs137_peak_points.clear()
+
                     if file_name in self.used_beta_colors:
                         del self.used_beta_colors[file_name]
 
                     del self.beta_series_dict[file_name]
-                    # Обновляем состояние кнопки после удаления графика
                     update_calibration_button_state(self)
         except Exception as e:
             self.show_error_message(f"Ошибка при удалении графика: {str(e)}")
-
-        if chart_type == 'beta' and file_name in self.beta_series_dict:
-            series_to_remove = self.beta_series_dict[file_name]
-            self.beta_chart.removeSeries(series_to_remove)
-            del self.beta_series_dict[file_name]
-            update_calibration_button_state(self)  # Обновляем состояние кнопки
 
     ##########################################################################
     # Методы для работы с графиками и данными
@@ -620,6 +599,13 @@ class SpectrumWindow(QMainWindow):
         beta_series.attachAxis(self.beta_axis_x)
         beta_series.attachAxis(self.beta_axis_y)
 
+        # Добавляем обработку изотопов
+        process_isotope_data(self, original_data, file_name)
+
+        # Выделяем второй пик Cs137
+        if "Cs137" in file_name:
+            self.highlight_cs137_second_peak()
+
         if file_name in self.beta_checkboxes:
             old_checkbox = self.beta_checkboxes.pop(file_name)
             old_checkbox.setParent(None)
@@ -662,6 +648,88 @@ class SpectrumWindow(QMainWindow):
         color = available_colors[0]
         used_colors[file_name] = color  # Сохраняем цвет для этого файла
         return color
+
+    def highlight_cs137_second_peak(self):
+        """
+        Обнаруживает второй пик Cs137 динамически с использованием скользящего среднего,
+        находит его наивысшую точку и выделяет её точкой на графике.
+        """
+        if not self.cs137_data or len(self.cs137_data) < 10:
+            self.show_warning_message("Недостаточно данных Cs137 для анализа пиков.")
+            return
+
+        cs137_data = np.array(self.cs137_data)
+
+        # 1. Сглаживание с помощью скользящего среднего
+        window_size = min(5, len(cs137_data) - 1)
+        if window_size % 2 == 0:
+            window_size += 1
+        smoothed_data = np.convolve(cs137_data, np.ones(window_size) / window_size, mode='same')
+
+        # 2. Обнаружение первого пика (глобальный максимум)
+        max_peak_idx = np.argmax(smoothed_data)
+        max_peak_value = smoothed_data[max_peak_idx]
+        threshold = max_peak_value * 0.1
+        start_second_peak = max_peak_idx
+        for i in range(max_peak_idx, len(smoothed_data)):
+            if smoothed_data[i] < threshold:
+                start_second_peak = i
+                break
+        if start_second_peak >= len(smoothed_data) - 1:
+            self.show_warning_message("Не удалось определить начало второго пика.")
+            return
+
+        # 3. Поиск второго пика в оставшемся диапазоне
+        remaining_data = smoothed_data[start_second_peak:]
+        peaks = []
+        for i in range(1, len(remaining_data) - 1):
+            if remaining_data[i] > remaining_data[i - 1] and remaining_data[i] > remaining_data[i + 1]:
+                peaks.append(i + start_second_peak)
+
+        if not peaks:
+            self.show_warning_message("Второй пик Cs137 не обнаружен.")
+            return
+
+        second_peak_idx = peaks[0]
+        second_peak_x = second_peak_idx
+        second_peak_y = cs137_data[second_peak_x]
+
+        # 4. Уточняем наивысшую точку в диапазоне ±10
+        peak_range_start = max(0, second_peak_x - 10)
+        peak_range_end = min(len(cs137_data) - 1, second_peak_x + 10)
+        peak_range_data = cs137_data[peak_range_start:peak_range_end + 1]
+        refined_peak_x = peak_range_start + np.argmax(peak_range_data)
+        refined_peak_y = cs137_data[refined_peak_x]
+
+        print(f"Второй пик Cs137 обнаружен: x={refined_peak_x}, y={refined_peak_y}")
+
+        # 5. Выделяем точку на графике
+        cs137_series = None
+        for file_name, series in self.beta_series_dict.items():
+            if "Cs137" in file_name:
+                cs137_series = series
+                break
+
+        if not cs137_series:
+            self.show_warning_message("Серия Cs137 не найдена на графике.")
+            return
+
+        # Используем QScatterSeries для точки
+        peak_point = QScatterSeries()
+        peak_point.setName(f"Второй пик Cs137 (x={refined_peak_x})")
+        peak_point.setColor(QColor(255, 0, 0))  # Красный цвет
+        peak_point.setMarkerSize(10.0)  # Размер точки
+        peak_point.append(refined_peak_x, refined_peak_y)
+
+        self.beta_chart.addSeries(peak_point)
+        peak_point.attachAxis(self.beta_axis_x)
+        peak_point.attachAxis(self.beta_axis_y)
+
+        if not hasattr(self, 'cs137_peak_points'):
+            self.cs137_peak_points = []
+        self.cs137_peak_points.append(peak_point)
+
+        self.update_beta_y_axis_range()
 
     ##########################################################################
     # Методы для работы с графиками и масштабированием
