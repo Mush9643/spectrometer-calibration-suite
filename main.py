@@ -651,8 +651,8 @@ class SpectrumWindow(QMainWindow):
 
     def highlight_cs137_second_peak(self):
         """
-        Обнаруживает второй пик Cs137 динамически с использованием скользящего среднего,
-        находит его наивысшую точку и выделяет её точкой на графике.
+        Обнаруживает второй пик Cs137 динамически, находит его наивысшую точку и выделяет её точкой на графике.
+        Сохраняет координаты точки для корректного отображения в логарифмическом и линейном масштабе.
         """
         if not self.cs137_data or len(self.cs137_data) < 10:
             self.show_warning_message("Недостаточно данных Cs137 для анализа пиков.")
@@ -703,23 +703,43 @@ class SpectrumWindow(QMainWindow):
 
         print(f"Второй пик Cs137 обнаружен: x={refined_peak_x}, y={refined_peak_y}")
 
-        # 5. Выделяем точку на графике
-        cs137_series = None
-        for file_name, series in self.beta_series_dict.items():
-            if "Cs137" in file_name:
-                cs137_series = series
-                break
+        # Сохраняем координаты пика
+        if not hasattr(self, 'cs137_peak_coords'):
+            self.cs137_peak_coords = []
+        self.cs137_peak_coords.append((refined_peak_x, refined_peak_y))
 
-        if not cs137_series:
-            self.show_warning_message("Серия Cs137 не найдена на графике.")
+        # 5. Выделяем точку на графике
+        self.draw_cs137_peak_point()
+
+    def draw_cs137_peak_point(self):
+        """
+        Рисует точку пика Cs137 на графике с учётом текущего масштаба.
+        """
+        # Удаляем предыдущие точки, если они есть
+        if hasattr(self, 'cs137_peak_points'):
+            for peak_point in self.cs137_peak_points:
+                self.beta_chart.removeSeries(peak_point)
+            self.cs137_peak_points.clear()
+
+        if not hasattr(self, 'cs137_peak_coords') or not self.cs137_peak_coords:
             return
 
-        # Используем QScatterSeries для точки
+        # Проверяем текущий масштаб
+        is_log_scale = isinstance(self.beta_axis_y, QLogValueAxis)
+
+        # Создаём новую точку
         peak_point = QScatterSeries()
-        peak_point.setName(f"Второй пик Cs137 (x={refined_peak_x})")
-        peak_point.setColor(QColor(255, 0, 0))  # Красный цвет
-        peak_point.setMarkerSize(10.0)  # Размер точки
-        peak_point.append(refined_peak_x, refined_peak_y)
+        peak_point.setName(f"Второй пик Cs137 (x={self.cs137_peak_coords[0][0]})")
+        peak_point.setColor(QColor(255, 0, 0))
+        peak_point.setMarkerSize(10.0)
+
+        # Получаем координаты
+        peak_x, peak_y = self.cs137_peak_coords[0]
+
+        # Если логарифмический масштаб, корректируем y (y >= 1 для QLogValueAxis)
+        if is_log_scale:
+            peak_y = max(peak_y, 1.0)  # Логарифмическая ось не допускает значений < 1
+        peak_point.append(peak_x, peak_y)
 
         self.beta_chart.addSeries(peak_point)
         peak_point.attachAxis(self.beta_axis_x)
@@ -728,8 +748,6 @@ class SpectrumWindow(QMainWindow):
         if not hasattr(self, 'cs137_peak_points'):
             self.cs137_peak_points = []
         self.cs137_peak_points.append(peak_point)
-
-        self.update_beta_y_axis_range()
 
     ##########################################################################
     # Методы для работы с графиками и масштабированием
@@ -867,15 +885,18 @@ class SpectrumWindow(QMainWindow):
         self.reapply_peaks()
 
     def apply_beta_log_scale(self):
-        """Применяет логарифмический масштаб ко всем сериям Beta с началом оси Y от 1."""
+        """
+        Применяет логарифмический масштаб ко всем сериям Beta с началом оси Y от 1.
+        Перерисовывает точку пика Cs137.
+        """
         if not hasattr(self, "original_beta_series"):
             self.original_beta_series = {}
 
-        # Создаем логарифмическую ось Y
+        # Создаём логарифмическую ось Y
         beta_log_axis_y = QLogValueAxis()
         beta_log_axis_y.setTitleText("Значение импульса (логарифмический масштаб)")
         beta_log_axis_y.setBase(10.0)
-        beta_log_axis_y.setMinorTickCount(9)  # Увеличиваем количество делений для точности
+        beta_log_axis_y.setMinorTickCount(9)
 
         # Удаляем старую ось Y
         self.beta_chart.removeAxis(self.beta_axis_y)
@@ -884,23 +905,18 @@ class SpectrumWindow(QMainWindow):
         for series in self.beta_series_dict.values():
             self.beta_chart.removeSeries(series)
 
-        # Создаем новые логарифмические серии
+        # Создаём новые логарифмические серии
         new_series_dict = {}
         global_max_y = float('-inf')
-
-        # Минимальное значение для логарифма (ниже 1 не допускаем)
         min_y_threshold = 1.0
 
-        # Обрабатываем данные для каждой серии
         for file_name, (original_series, color) in self.original_beta_series.items():
             log_series = QLineSeries()
             log_series.setName(original_series.name())
-            log_series.setColor(color)  # Сохраняем цвет оригинальной серии
+            log_series.setColor(color)
 
-            # Преобразуем данные для логарифмического масштаба
             for point in original_series.points():
                 x, y = point.x(), point.y()
-                # Устанавливаем минимальное значение y как 1 для корректного отображения
                 y_log = max(y, min_y_threshold)
                 log_series.append(x, y_log)
                 global_max_y = max(global_max_y, y_log)
@@ -909,24 +925,26 @@ class SpectrumWindow(QMainWindow):
             self.beta_chart.addSeries(log_series)
             log_series.attachAxis(self.beta_axis_x)
 
-        # Устанавливаем диапазон логарифмической оси, начиная с 1
-        beta_log_axis_y.setRange(min_y_threshold, global_max_y * 1.5)  # Фиксируем минимум на 1
-
-        # Добавляем новую ось и привязываем серии
+        beta_log_axis_y.setRange(min_y_threshold, global_max_y * 1.5)
         self.beta_chart.addAxis(beta_log_axis_y, Qt.AlignmentFlag.AlignLeft)
         for series in new_series_dict.values():
             series.attachAxis(beta_log_axis_y)
 
-        # Обновляем словари и текущую ось
         self.beta_series_dict = new_series_dict
         self.beta_axis_y = beta_log_axis_y
 
+        # Перерисовываем точку пика
+        self.draw_cs137_peak_point()
+
     def apply_beta_linear_scale(self):
-        """Применяет линейный масштаб ко всем сериям Beta."""
+        """
+        Применяет линейный масштаб ко всем сериям Beta.
+        Перерисовывает точку пика Cs137.
+        """
         if not hasattr(self, "original_beta_series"):
             return
 
-        # Создаем линейную ось Y
+        # Создаём линейную ось Y
         beta_linear_axis_y = QValueAxis()
         beta_linear_axis_y.setTitleText("Значение")
 
@@ -937,12 +955,12 @@ class SpectrumWindow(QMainWindow):
         for series in self.beta_series_dict.values():
             self.beta_chart.removeSeries(series)
 
-        # Восстанавливаем оригинальные серии с их цветами
+        # Восстанавливаем оригинальные серии
         self.beta_series_dict = {}
         global_max_y = float('-inf')
 
         for file_name, (original_series, color) in self.original_beta_series.items():
-            original_series.setColor(color)  # Убеждаемся, что цвет сохранён
+            original_series.setColor(color)
             self.beta_series_dict[file_name] = original_series
             self.beta_chart.addSeries(original_series)
             original_series.attachAxis(self.beta_axis_x)
@@ -950,14 +968,15 @@ class SpectrumWindow(QMainWindow):
             if y_values:
                 global_max_y = max(global_max_y, max(y_values))
 
-        # Устанавливаем диапазон линейной оси
         beta_linear_axis_y.setRange(0, global_max_y * 1.1 if global_max_y > 0 else 1)
         self.beta_chart.addAxis(beta_linear_axis_y, Qt.AlignmentFlag.AlignLeft)
         for series in self.beta_series_dict.values():
             series.attachAxis(beta_linear_axis_y)
 
-        # Обновляем текущую ось
         self.beta_axis_y = beta_linear_axis_y
+
+        # Перерисовываем точку пика
+        self.draw_cs137_peak_point()
 
     def reapply_peaks(self):
         """Перерисовывает пики после смены масштаба."""
