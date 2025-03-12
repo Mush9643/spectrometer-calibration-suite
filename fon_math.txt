@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import numpy as np
 import pandas as pd
 import os
 from PyQt6.QtCharts import QLineSeries
@@ -70,9 +71,23 @@ def calculate_activity_am241(am241_data, fon_data, nud_b=10, vud_b=200):
     return activity
 
 
-def calculate_activity_c14(c14_data, fon_data, nud_b=10, vud_b=200):
+def calculate_regression_coefficients(parent):
+    """
+    Вычисляет коэффициенты линейной регрессии [b, a] для уравнения y = a * x + b.
+    Использует Ben как x, а Bch как y.
+    Возвращает вектор [b, a] в соответствии с Mathcad.
+    """
+
+
+def calculate_activity_c14(parent, c14_data, fon_data, nud_b=10, vud_b=200):
     """
     Вычисляет активность A_c14 по формуле Σ (C14_i / C14_0 - fon_i / fon_0).
+    Также вычисляет массив c14s_i = (C14_i / C14_0 - fon_i / fon_0) / A_c для i от 0 до 100.
+    Дополнительно:
+    - Находит максимальный элемент в массиве c14_data и его индекс.
+    - В диапазоне от найденного индекса до 100 ищет первый элемент в c14s, меньший 0.005.
+    - Если пик Cs-137 и found_index (ugler) найдены, формирует и сохраняет массивы Ben и Bch.
+    - Выполняет расчет коэффициентов линейной регрессии, если Ben и Bch доступны.
     """
     if not c14_data or not fon_data or len(c14_data) <= vud_b or len(fon_data) <= vud_b:
         print("Массивы c14_data или fon_data пусты или слишком короткие.")
@@ -84,11 +99,71 @@ def calculate_activity_c14(c14_data, fon_data, nud_b=10, vud_b=200):
         print("Предупреждение: c14_0 или fon_0 равно 0. Деление на 0 невозможно, возвращаем 0.")
         return 0.0
 
+    # Вычисление активности A_c14
     activity = sum((c14_data[i] / c14_0 - fon_data[i] / fon_0) for i in range(nud_b, vud_b + 1))
-    print(f"Активность A_c14 (от NUD_b={nud_b} до VUD_b={vud_b}): {activity:.3f}")
+    print(f"Активность A_c14 = {activity}:.3f")
 
     # Записываем результат в файл
     write_to_result_file("A_c14", activity)
+
+    # Вычисление массива c14s для i от 0 до 100
+    if activity == 0:
+        print("Предупреждение: A_c14 равно 0. Деление на 0 невозможно, c14s устанавливается в 0.")
+        parent.c14s_data = [0.0] * 101  # Массив из 101 элемента (0 до 100)
+    else:
+        c14s = []
+        for i in range(101):  # i от 0 до 100
+            if i < len(c14_data) and i < len(fon_data):  # Проверка на доступность данных
+                term = (c14_data[i] / c14_0 - fon_data[i] / fon_0) / activity
+                c14s.append(term)
+            else:
+                c14s.append(0.0)  # Заполнение нулями, если данных недостаточно
+        parent.c14s_data = c14s
+        print(f"Массив c14s (i от 0 до 100): {c14s[:10]}... (показаны первые 10 элементов, всего {len(c14s)})")
+
+    # Поиск максимального элемента в c14_data и его индекса
+    max_c14_value = max(c14_data)
+    max_c14_index = c14_data.index(max_c14_value)
+    print(f"Максимальный элемент в массиве c14_data: {max_c14_value:.3f}, индекс: {max_c14_index}")
+    write_to_result_file("Max_c14_value", max_c14_value)
+    write_to_result_file("Max_c14_index", max_c14_index)
+
+    # Поиск первого элемента в c14s, меньшего 0.005, в диапазоне от max_c14_index до 100
+    threshold = 0.005
+    found_index = -1
+    for i in range(max_c14_index, 101):
+        if i < len(c14s) and c14s[i] < threshold:
+            found_index = i
+            break
+
+    if found_index != -1:
+        print(f"Первый элемент в c14s, меньший {threshold}, найден на индексе {found_index}: {c14s[found_index]:.6f}")
+        write_to_result_file("c14s_threshold_index", found_index)
+        write_to_result_file("c14s_threshold_value", c14s[found_index])
+    else:
+        print(f"Элемент в c14s, меньший {threshold}, не найден в диапазоне от {max_c14_index} до 100.")
+        write_to_result_file("c14s_threshold_index", "Not found")
+        write_to_result_file("c14s_threshold_value", "Not found")
+
+    # Формирование и сохранение массивов Ben и Bch, если условия выполнены
+    if hasattr(parent, 'cs137_peak_coords') and parent.cs137_peak_coords and found_index != -1:
+        cs_peak_x = parent.cs137_peak_coords[0][0]
+        # Bch: [found_index, cs_peak_x]
+        parent.Bch = np.array([found_index, cs_peak_x])
+        # Ben: Константы [156.475, 624.216]
+        parent.Ben = np.array([156.475, 624.216])
+        print(f"Массив Bch (ugler и пик Cs-137): {parent.Bch}")
+        print(f"Массив Ben (константы): {parent.Ben}")
+    else:
+        print("Условия для формирования массивов Ben и Bch не выполнены: либо пик Cs-137, либо found_index отсутствуют.")
+
+    # Расчет коэффициентов линейной регрессии, если Ben и Bch доступны
+    if hasattr(parent, 'Ben') and hasattr(parent, 'Bch'):
+        a, b = calculate_regression_coefficients(parent)
+        if a is not None and b is not None:
+            print(f"Коэффициенты линейной регрессии: a = {a:.6f}, b = {b:.6f}")
+            write_to_result_file("regression_a", a)
+            write_to_result_file("regression_b", b)
 
     return activity
 
@@ -190,7 +265,7 @@ def process_isotope_data(parent, isotope_data, file_name):
         print(isotope_data)
         print(f"Значение с индексом 0 (c14_0): {isotope_data[0]}")
         print(f"Количество элементов в массиве C14: {len(parent.c14_data)}")
-        calculate_activity_c14(parent.c14_data, parent.fon_data)
+        calculate_activity_c14(parent, parent.c14_data, parent.fon_data)
     elif "Cs137" in file_name:
         parent.cs137_data = isotope_data
         print(f"Оригинальные данные из столбца 'Кол-во импульсов' файла '{file_name}':")

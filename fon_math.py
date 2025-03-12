@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import numpy as np
 import pandas as pd
 import os
 from PyQt6.QtCharts import QLineSeries
@@ -70,6 +71,39 @@ def calculate_activity_am241(am241_data, fon_data, nud_b=10, vud_b=200):
     return activity
 
 
+def calculate_regression_coefficients(parent):
+    """
+    Вычисляет коэффициенты линейной регрессии [b, a] для уравнения y = a * x + b.
+    Использует Ben как x, а Bch как y.
+    Возвращает вектор [b, a] в соответствии с Mathcad.
+    """
+    # Проверяем наличие атрибутов
+    if not hasattr(parent, 'Ben') or not hasattr(parent, 'Bch'):
+        print("Ошибка: Ben или Bch отсутствуют в объекте parent.")
+        return 0.0, 0.0
+
+    x = parent.Bch
+    y = parent.Ben
+
+    n = len(x)
+    if n == 0 or len(y) != n:
+        print("Ошибка: Массивы Ben или Bch пусты или имеют разную длину.")
+        return 0.0, 0.0
+
+    # Вычисляем суммы
+    sum_x = sum(x)
+    sum_y = sum(y)
+    sum_xy = sum(xi * yi for xi, yi in zip(x, y))
+    sum_x2 = sum(xi * xi for xi in x)
+
+    # Вычисляем коэффициенты
+    slope = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x * sum_x)  # a
+    intercept = (sum_y - slope * sum_x) / n  # b
+
+    print(f"Коэффициенты линейной регрессии: intercept={intercept:.6f}, slope={slope:.6f}")
+    return intercept, slope  # Возвращаем [b, a]
+
+
 def calculate_activity_c14(parent, c14_data, fon_data, nud_b=10, vud_b=200):
     """
     Вычисляет активность A_c14 по формуле Σ (C14_i / C14_0 - fon_i / fon_0).
@@ -77,6 +111,10 @@ def calculate_activity_c14(parent, c14_data, fon_data, nud_b=10, vud_b=200):
     Дополнительно:
     - Находит максимальный элемент в массиве c14_data и его индекс.
     - В диапазоне от найденного индекса до 100 ищет первый элемент в c14s, меньший 0.005.
+    - Если пик Cs-137 и found_index (ugler) найдены, формирует и сохраняет массивы Ben и Bch.
+    - Выполняет расчет коэффициентов линейной регрессии, если Ben и Bch доступны.
+    - Вычисляет Enewb_i и pb(e) на основе полученных коэффициентов.
+    - Вычисляет k1c0 на основе A_sr.
     """
     if not c14_data or not fon_data or len(c14_data) <= vud_b or len(fon_data) <= vud_b:
         print("Массивы c14_data или fon_data пусты или слишком короткие.")
@@ -90,7 +128,7 @@ def calculate_activity_c14(parent, c14_data, fon_data, nud_b=10, vud_b=200):
 
     # Вычисление активности A_c14
     activity = sum((c14_data[i] / c14_0 - fon_data[i] / fon_0) for i in range(nud_b, vud_b + 1))
-    print(f"Активность A_c14 (от NUD_b={nud_b} до VUD_b={vud_b}): {activity:.3f}")
+    print(f"Активность A_c14 = {activity:.3f}")
 
     # Записываем результат в файл
     write_to_result_file("A_c14", activity)
@@ -119,8 +157,8 @@ def calculate_activity_c14(parent, c14_data, fon_data, nud_b=10, vud_b=200):
 
     # Поиск первого элемента в c14s, меньшего 0.005, в диапазоне от max_c14_index до 100
     threshold = 0.005
-    found_index = -1  # -1 означает, что элемент не найден
-    for i in range(max_c14_index, 101):  # От max_c14_index до 100
+    found_index = -1
+    for i in range(max_c14_index, 101):
         if i < len(c14s) and c14s[i] < threshold:
             found_index = i
             break
@@ -133,6 +171,68 @@ def calculate_activity_c14(parent, c14_data, fon_data, nud_b=10, vud_b=200):
         print(f"Элемент в c14s, меньший {threshold}, не найден в диапазоне от {max_c14_index} до 100.")
         write_to_result_file("c14s_threshold_index", "Not found")
         write_to_result_file("c14s_threshold_value", "Not found")
+
+    # Формирование и сохранение массивов Ben и Bch, если условия выполнены
+    if hasattr(parent, 'cs137_peak_coords') and parent.cs137_peak_coords and found_index != -1:
+        cs_peak_x = parent.cs137_peak_coords[0][0]
+        # Bch: [found_index, cs_peak_x]
+        parent.Bch = np.array([found_index, cs_peak_x])
+        # Ben: Константы [156.475, 624.216]
+        parent.Ben = np.array([156.475, 624.216])
+        print(f"Массив Bch (ugler и пик Cs-137): {parent.Bch}")
+        print(f"Массив Ben (константы): {parent.Ben}")
+    else:
+        print("Условия для формирования массивов Ben и Bch не выполнены: либо пик Cs-137, либо found_index отсутствуют.")
+
+    # Расчет коэффициентов линейной регрессии, если Ben и Bch доступны
+    if hasattr(parent, 'Ben') and hasattr(parent, 'Bch'):
+        AB, BB = calculate_regression_coefficients(parent)  # AB — intercept (b), BB — slope (a)
+        if AB is not None and BB is not None:
+            print(f"Коэффициенты линейной регрессии: AB = {AB:.6f}, BB = {BB:.6f}")
+            write_to_result_file("regression_AB", AB)
+            write_to_result_file("regression_BB", BB)
+
+            # Сохраняем коэффициенты в parent для дальнейшего использования
+            parent.calibration_coefficients = (AB, BB)
+
+            # Вычисляем Enewb_i для i = 12
+            i = 12
+            Enewb_i = AB + BB * i
+            print(f"Enewb_{i} = {Enewb_i:.3f}")
+            write_to_result_file(f"Enewb_{i}", Enewb_i)
+
+            # Вычисляем pb(e) для e = 53.818 и e = 3000
+            if BB == 0:
+                print("Ошибка: BB равен 0, вычисление pb(e) невозможно.")
+            else:
+                e_values = [53.818, 3000]
+                for e in e_values:
+                    pb_e = (e - AB) / BB
+                    print(f"pb({e}) = {pb_e:.3f}")
+                    write_to_result_file(f"pb({e})", pb_e)
+
+    # Убедимся, что A_sr вычислен (если данные для SrY90 доступны)
+    if hasattr(parent, 'sry90_data') and parent.sry90_data:
+        A_sr = calculate_activity_sry90(parent.sry90_data, parent.fon_data, nud_b, vud_b)
+        parent.A_sr = A_sr  # Сохраняем A_sr в parent для дальнейшего использования
+    elif hasattr(parent, 'A_sr'):
+        print(f"A_sr уже вычислен: {parent.A_sr:.3f}")
+    else:
+        print("Предупреждение: Данные для SrY90 отсутствуют, A_sr не вычислен.")
+
+    # Вычисляем k1c0, если A_sr доступен
+    if hasattr(parent, 'A_sr'):
+        A_sr = parent.A_sr
+        if A_sr == 0:
+            print("Ошибка: A_sr равен 0, вычисление k1c0 невозможно.")
+        else:
+            k1c0 = (A_sr / 365) ** (-1)
+            print(f"Значение k1c0: {k1c0:.3f}")
+            write_to_result_file("k1c0", k1c0)
+            # Сохраняем k1c0 в parent для дальнейшего использования
+            parent.k1c0 = k1c0
+    else:
+        print("Ошибка: A_sr отсутствует, вычисление k1c0 невозможно.")
 
     return activity
 
