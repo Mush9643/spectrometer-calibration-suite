@@ -205,3 +205,4 @@ def process_isotope_data(parent, isotope_data, file_name):
         print(f"Значение с индексом 0 (sry90_0): {isotope_data[0]}")
         print(f"Количество элементов в массиве SrY90: {len(parent.sry90_data)}")
         calculate_activity_sry90(parent.sry90_data, parent.fon_data)
+

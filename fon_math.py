@@ -70,9 +70,10 @@ def calculate_activity_am241(am241_data, fon_data, nud_b=10, vud_b=200):
     return activity
 
 
-def calculate_activity_c14(c14_data, fon_data, nud_b=10, vud_b=200):
+def calculate_activity_c14(parent, c14_data, fon_data, nud_b=10, vud_b=200):
     """
     Вычисляет активность A_c14 по формуле Σ (C14_i / C14_0 - fon_i / fon_0).
+    Также вычисляет массив c14s_i = (C14_i / C14_0 - fon_i / fon_0) / A_c для i от 0 до 100.
     """
     if not c14_data or not fon_data or len(c14_data) <= vud_b or len(fon_data) <= vud_b:
         print("Массивы c14_data или fon_data пусты или слишком короткие.")
@@ -84,11 +85,27 @@ def calculate_activity_c14(c14_data, fon_data, nud_b=10, vud_b=200):
         print("Предупреждение: c14_0 или fon_0 равно 0. Деление на 0 невозможно, возвращаем 0.")
         return 0.0
 
+    # Вычисление активности A_c14
     activity = sum((c14_data[i] / c14_0 - fon_data[i] / fon_0) for i in range(nud_b, vud_b + 1))
     print(f"Активность A_c14 (от NUD_b={nud_b} до VUD_b={vud_b}): {activity:.3f}")
 
     # Записываем результат в файл
     write_to_result_file("A_c14", activity)
+
+    # Вычисление массива c14s для i от 0 до 100
+    if activity == 0:
+        print("Предупреждение: A_c14 равно 0. Деление на 0 невозможно, c14s устанавливается в 0.")
+        parent.c14s_data = [0.0] * 101  # Массив из 101 элемента (0 до 100)
+    else:
+        c14s = []
+        for i in range(101):  # i от 0 до 100
+            if i < len(c14_data) and i < len(fon_data):  # Проверка на доступность данных
+                term = (c14_data[i] / c14_0 - fon_data[i] / fon_0) / activity
+                c14s.append(term)
+            else:
+                c14s.append(0.0)  # Заполнение нулями, если данных недостаточно
+        parent.c14s_data = c14s
+        print(f"Массив c14s (i от 0 до 100): {c14s[:30]}... (показаны первые 10 элементов, всего {len(c14s)})")
 
     return activity
 
@@ -190,7 +207,7 @@ def process_isotope_data(parent, isotope_data, file_name):
         print(isotope_data)
         print(f"Значение с индексом 0 (c14_0): {isotope_data[0]}")
         print(f"Количество элементов в массиве C14: {len(parent.c14_data)}")
-        calculate_activity_c14(parent.c14_data, parent.fon_data)
+        calculate_activity_c14(parent, parent.c14_data, parent.fon_data)
     elif "Cs137" in file_name:
         parent.cs137_data = isotope_data
         print(f"Оригинальные данные из столбца 'Кол-во импульсов' файла '{file_name}':")
