@@ -41,7 +41,6 @@ class SpectrumWindow(QMainWindow):
         self.used_beta_colors = {}  # Ключ — имя файла, значение — QColor
         # Список уникальных цветов (RGB)
         self.available_colors = [
-
             QColor(255, 206, 86),  # Жёлтый
             QColor(75, 192, 192),  # Бирюзовый
             QColor(153, 102, 255),  # Фиолетовый
@@ -49,7 +48,8 @@ class SpectrumWindow(QMainWindow):
             QColor(0, 128, 0),  # Зелёный
             QColor(128, 0, 128),  # Пурпурный
             QColor(255, 165, 0),  # Золотой
-            QColor(0, 191, 255)]  # Глубокий голубой
+            QColor(0, 191, 255)  # Глубокий голубой
+        ]
 
         # Словарь для хранения массивов данных Alfa
         self.alfa_data_arrays = {}
@@ -89,6 +89,12 @@ class SpectrumWindow(QMainWindow):
         self.file_list.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.file_list.customContextMenuRequested.connect(self.show_context_menu)  # Обработка правого клика
         menu_layout.addWidget(self.file_list)
+
+        # Кнопка "Авто загрузка"
+        self.auto_load_button = QPushButton("Авто загрузка")
+        self.auto_load_button.clicked.connect(self.auto_load_files)  # Подключаем метод для авто загрузки
+        menu_layout.addWidget(self.auto_load_button)
+
         # Кнопка "Экспорт в Excel"
         self.export_button = QPushButton("Экспорт в Excel")
         self.export_button.clicked.connect(self.export_to_excel)
@@ -187,6 +193,68 @@ class SpectrumWindow(QMainWindow):
     ##########################################################################
     # Методы для работы с файлами и контекстным меню
     ##########################################################################
+    def auto_load_files(self):
+        """
+        Эмулирует нажатие на "Загрузить Beta" для файлов с именами, содержащими
+        "фона", "SrY90", "Rad", "Cs137", "C14", "Am241" и на "Загрузить Alfa" для файлов
+        с именами, содержащими "Rn", "Am241", в заданной последовательности.
+        Сначала загружаются Beta-файлы, затем Alfa-файлы.
+        """
+        # Заданная последовательность ключевых слов для Beta
+        beta_keywords = ["фона", "SrY90", "Rad", "Cs137", "C14", "Am241"]
+        # Заданная последовательность ключевых слов для Alfa
+        alfa_keywords = ["Rn", "Am241"]
+
+        # Создаём списки файлов для Beta и Alfa, отсортированных по заданной последовательности
+        beta_files_to_process = []
+        alfa_files_to_process = []
+        for i in range(self.file_list.count()):
+            item = self.file_list.item(i)
+            file_name = item.text().lower()  # Приводим к нижнему регистру для проверки
+
+            # Проверяем Beta-файлы
+            for keyword in beta_keywords:
+                if keyword.lower() in file_name:
+                    beta_files_to_process.append((keyword, item, i))
+                    break
+
+            # Проверяем Alfa-файлы
+            for keyword in alfa_keywords:
+                if keyword.lower() in file_name:
+                    alfa_files_to_process.append((keyword, item, i))
+                    break
+
+        # Сортируем файлы по порядку ключевых слов
+        beta_files_to_process.sort(key=lambda x: beta_keywords.index(x[0]))
+        alfa_files_to_process.sort(key=lambda x: alfa_keywords.index(x[0]))
+
+        # Эмулируем нажатие на "Загрузить Beta" для Beta-файлов
+        for keyword, item, row in beta_files_to_process:
+            print(f"Авто загрузка Beta для файла: {item.text()} (ключевое слово: {keyword})")
+            pos = self.file_list.visualItemRect(item).center()
+            self.change_color(pos, 'beta')
+            self.check_color_and_load_data(pos)
+
+        # Эмулируем нажатие на "Загрузить Alfa" для Alfa-файлов
+        for keyword, item, row in alfa_files_to_process:
+            print(f"Авто загрузка Alfa для файла: {item.text()} (ключевое слово: {keyword})")
+            pos = self.file_list.visualItemRect(item).center()
+            self.change_color(pos, 'alfa')
+            self.check_color_and_load_data(pos)
+
+        # Проверяем, были ли найдены файлы для обработки
+        if not beta_files_to_process and not alfa_files_to_process:
+            self.show_warning_message(
+                "Не найдено файлов с именами, содержащими 'фона', 'SrY90', 'Rad', 'Cs137', 'C14', 'Am241' (Beta) или 'Rn', 'Am241' (Alfa)."
+            )
+        elif not beta_files_to_process:
+            self.show_warning_message(
+                "Не найдено файлов для Beta с именами, содержащими 'фона', 'SrY90', 'Rad', 'Cs137', 'C14', 'Am241'."
+            )
+        elif not alfa_files_to_process:
+            self.show_warning_message(
+                "Не найдено файлов для Alfa с именами, содержащими 'Rn', 'Am241'."
+            )
 
     def load_xls_files(self):
         """Загружает список файлов .xls и .xlsx из указанной папки."""
