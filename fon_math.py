@@ -74,6 +74,9 @@ def calculate_activity_c14(parent, c14_data, fon_data, nud_b=10, vud_b=200):
     """
     Вычисляет активность A_c14 по формуле Σ (C14_i / C14_0 - fon_i / fon_0).
     Также вычисляет массив c14s_i = (C14_i / C14_0 - fon_i / fon_0) / A_c для i от 0 до 100.
+    Дополнительно:
+    - Находит максимальный элемент в массиве c14_data и его индекс.
+    - В диапазоне от найденного индекса до 100 ищет первый элемент в c14s, меньший 0.005.
     """
     if not c14_data or not fon_data or len(c14_data) <= vud_b or len(fon_data) <= vud_b:
         print("Массивы c14_data или fon_data пусты или слишком короткие.")
@@ -105,7 +108,31 @@ def calculate_activity_c14(parent, c14_data, fon_data, nud_b=10, vud_b=200):
             else:
                 c14s.append(0.0)  # Заполнение нулями, если данных недостаточно
         parent.c14s_data = c14s
-        print(f"Массив c14s (i от 0 до 100): {c14s[:30]}... (показаны первые 10 элементов, всего {len(c14s)})")
+        print(f"Массив c14s (i от 0 до 100): {c14s[:10]}... (показаны первые 10 элементов, всего {len(c14s)})")
+
+    # Поиск максимального элемента в c14_data и его индекса
+    max_c14_value = max(c14_data)
+    max_c14_index = c14_data.index(max_c14_value)
+    print(f"Максимальный элемент в массиве c14_data: {max_c14_value:.3f}, индекс: {max_c14_index}")
+    write_to_result_file("Max_c14_value", max_c14_value)
+    write_to_result_file("Max_c14_index", max_c14_index)
+
+    # Поиск первого элемента в c14s, меньшего 0.005, в диапазоне от max_c14_index до 100
+    threshold = 0.005
+    found_index = -1  # -1 означает, что элемент не найден
+    for i in range(max_c14_index, 101):  # От max_c14_index до 100
+        if i < len(c14s) and c14s[i] < threshold:
+            found_index = i
+            break
+
+    if found_index != -1:
+        print(f"Первый элемент в c14s, меньший {threshold}, найден на индексе {found_index}: {c14s[found_index]:.6f}")
+        write_to_result_file("c14s_threshold_index", found_index)
+        write_to_result_file("c14s_threshold_value", c14s[found_index])
+    else:
+        print(f"Элемент в c14s, меньший {threshold}, не найден в диапазоне от {max_c14_index} до 100.")
+        write_to_result_file("c14s_threshold_index", "Not found")
+        write_to_result_file("c14s_threshold_value", "Not found")
 
     return activity
 
