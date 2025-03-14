@@ -304,6 +304,40 @@ class SpectrumWindow(QMainWindow):
         self.clear_button.setObjectName("clearButton")
         self.clear_button.clicked.connect(self.clear_alfa_chart)
 
+        # Создаем виджет для чекбоксов Alfa chart
+        self.alfa_checkboxes_widget = QWidget()
+        self.alfa_checkboxes_layout = QVBoxLayout()
+        self.alfa_checkboxes_widget.setLayout(self.alfa_checkboxes_layout)
+        self.alfa_checkboxes_widget.setStyleSheet("""
+            QWidget {
+                background-color: #F8FAFC;
+                border: 1px solid #D3D9DE;
+                border-radius: 5px;
+                padding: 5px;
+            }
+        """)
+        self.alfa_checkboxes_widget.setMinimumHeight(50)  # Устанавливаем минимальную высоту
+        self.alfa_checkboxes_widget.hide()  # Изначально скрыт
+
+        # Кнопка для отображения/скрытия чекбоксов Alfa chart
+        self.alfa_toggle_checkboxes_button = QPushButton("📋 Чекбоксы")
+        self.alfa_toggle_checkboxes_button.setObjectName("toggleCheckboxesButton")
+        self.alfa_toggle_checkboxes_button.setStyleSheet("""
+            QPushButton#toggleCheckboxesButton {
+                background-color: #D1E0FF;
+                color: #2D3748;
+                border-radius: 5px;
+                padding: 5px;
+            }
+            QPushButton#toggleCheckboxesButton:hover {
+                background-color: #B3C9FF;
+            }
+            QPushButton#toggleCheckboxesButton:pressed {
+                background-color: #A3BFFA;
+            }
+        """)
+        self.alfa_toggle_checkboxes_button.clicked.connect(self.toggle_alfa_checkboxes)
+
         # Компоновка вкладки "Alfa chart"
         layout = QVBoxLayout()
         layout.addWidget(self.chart_view)
@@ -312,7 +346,13 @@ class SpectrumWindow(QMainWindow):
         controls_layout = QHBoxLayout()
         controls_layout.addWidget(self.log_checkbox)
         controls_layout.addStretch()  # Растяжка для выравнивания
+        controls_layout.addWidget(self.alfa_toggle_checkboxes_button)
         controls_layout.addWidget(self.clear_button)
+
+        layout.addLayout(controls_layout)
+
+        # Добавляем виджет с чекбоксами
+        layout.addWidget(self.alfa_checkboxes_widget)
 
         layout.addLayout(controls_layout)
 
@@ -451,6 +491,22 @@ class SpectrumWindow(QMainWindow):
             new_height = self.height() + checkboxes_height
             self.resize(self.width(), new_height)
 
+    def toggle_alfa_checkboxes(self):
+        """Переключает видимость виджета с чекбоксами для Alfa chart и изменяет размер окна."""
+        if self.alfa_checkboxes_widget.isVisible():
+            # Скрываем виджет с чекбоксами
+            self.alfa_checkboxes_widget.hide()
+            self.alfa_toggle_checkboxes_button.setText("📋 Чекбоксы")
+            # Возвращаем исходный размер окна
+            self.resize(self.width(), self.original_height)
+        else:
+            # Показываем виджет с чекбоксами
+            self.alfa_checkboxes_widget.show()
+            self.alfa_toggle_checkboxes_button.setText("📋 Скрыть")
+            # Увеличиваем высоту окна на размер виджета с чекбоксами
+            checkboxes_height = self.alfa_checkboxes_widget.sizeHint().height()
+            new_height = self.height() + checkboxes_height
+            self.resize(self.width(), new_height)
     ##########################################################################
     # Методы для работы с файлами и контекстным меню
     ##########################################################################
@@ -875,6 +931,9 @@ class SpectrumWindow(QMainWindow):
         checkbox.stateChanged.connect(
             lambda state, series=alfa_series: self.adjust_y_axis_for_series(series, state))
         self.alfa_checkboxes[file_name] = checkbox
+
+        # Добавляем чекбокс в self.alfa_checkboxes_layout
+        #self.alfa_checkboxes_layout.addWidget(checkbox)
 
         layout = self.tab1.layout()
         if isinstance(layout, QVBoxLayout):
