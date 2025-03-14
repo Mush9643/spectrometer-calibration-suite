@@ -1,9 +1,10 @@
 import sys
+from PyQt6 import QtCore
 from scipy.signal import find_peaks, savgol_filter
 import numpy as np
 from PyQt6.QtCharts import QChart, QLineSeries, QValueAxis, QChartView, QLogValueAxis, QAbstractSeries, QScatterSeries
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QMessageBox, QDialog, \
-    QSplashScreen, QCheckBox, QLineEdit, QTabWidget, QListWidgetItem, QListWidget, QMenu, QHBoxLayout
+    QSplashScreen, QCheckBox, QLineEdit, QTabWidget, QListWidgetItem, QListWidget, QMenu, QHBoxLayout, QFileDialog
 from PyQt6.QtGui import QPixmap, QIcon, QPainter, QDesktopServices, QColor
 from PyQt6.QtCore import Qt, QTimer, QUrl
 from modbus import ModbusClient  # Импортируем ModbusClient из файла modbus.py
@@ -23,8 +24,85 @@ import os
 ##########################################################################
 
 class SpectrumWindow(QMainWindow):
+
     def __init__(self, modbus):
+        """
+        Инициализация основного окна приложения SpectrumWindow.
+        """
+        # =========================================================================
+        # Блок 1: Инициализация базовых свойств и стилей
+        # =========================================================================
         super().__init__()
+
+        # Применение стилей с постельными тонами
+        self.setStyleSheet("""
+            QMainWindow {
+                background-color: #F5F7FA; /* Очень светло-серый пастельный фон */
+            }
+            QTabWidget::pane {
+                border: 1px solid #D3D9DE; /* Мягкая серая граница */
+                background-color: white;
+                border-radius: 5px;
+            }
+            QTabBar::tab {
+                background-color: #E8ECEF; /* Пастельный серый для вкладок */
+                padding: 5px;
+                border-top-left-radius: 5px;
+                border-top-right-radius: 5px;
+            }
+            QTabBar::tab:selected {
+                background-color: white;
+                border-bottom: 2px solid #A3BFFA; /* Мягкий пастельный голубой акцент */
+            }
+            QListWidget {
+                background-color: #F8FAFC; /* Очень светлый пастельный фон */
+                border: 1px solid #D3D9DE;
+                border-radius: 5px;
+            }
+            QLineEdit {
+                border: 1px solid #D3D9DE;
+                border-radius: 5px;
+                padding: 5px;
+                background-color: white;
+            }
+            QPushButton {
+                background-color: #D1E0FF; /* Пастельный голубой для кнопок */
+                color: #2D3748; /* Тёмно-серый текст */
+                border-radius: 5px;
+                padding: 5px;
+            }
+            QPushButton:hover {
+                background-color: #B3C9FF; /* Более насыщенный пастельный голубой */
+            }
+            QPushButton:pressed {
+                background-color: #A3BFFA; /* Ещё более насыщенный акцент */
+            }
+            QPushButton#exportButton {
+                background-color: #D1E0FF; /* Пастельный голубой для кнопок экспорта*/
+            }
+            QPushButton#exportButton:hover {
+                background-color: #B9DEC7;
+            }
+            QPushButton#exportButton:pressed {
+                background-color: #A3D0B6;
+            }
+            QPushButton#folderButton {
+                background-color: rgba(0, 0, 0, 0); /* Прозрачный фон для кнопки папки */
+                border: none;
+                padding: 2px;
+                color: #2D3748; /* Тёмно-серый цвет текста */
+                font-size: 16px; /* Размер символа */
+            }
+            QPushButton#folderButton:hover {
+                background-color: rgba(209, 224, 255, 0.3); /* Лёгкий оттенок при наведении */
+            }
+        """)
+
+        # Настройка окна
+        self.setWindowTitle("Спектр импульсов")
+        self.setWindowIcon(QIcon("M-Photoroom.png"))
+
+        # Инициализация данных
         self.fon_processed = False
         self.am241_data = []  # Массив для данных Am241
         self.c14_data = []  # Массив для данных C14
@@ -33,12 +111,14 @@ class SpectrumWindow(QMainWindow):
         self.rad_data = []  # Массив для данных Rad
         self.fon_data = []  # Массив для данных фона
         self.modbus_client = modbus
-        self.setWindowTitle("Спектр импульсов")
-        self.setWindowIcon(QIcon("M-Photoroom.png"))
 
+        # =========================================================================
+        # Блок 2: Инициализация словарей для хранения данных и цветов
+        # =========================================================================
         # Словарь для хранения использованных цветов для Alfa и Beta
         self.used_alfa_colors = {}  # Ключ — имя файла, значение — QColor
         self.used_beta_colors = {}  # Ключ — имя файла, значение — QColor
+
         # Список уникальных цветов (RGB)
         self.available_colors = [
             QColor(255, 206, 86),  # Жёлтый
@@ -55,22 +135,23 @@ class SpectrumWindow(QMainWindow):
         self.alfa_data_arrays = {}
         self.first_impulse_values = {}
 
-        # Инициализируем серию для точек P90 (вертикальные линии)
+        # Инициализация серий для точек P90 (вертикальные линии) и пиков
         self.p90_series = {}
         self.calibration_coefficients = None
-
-        # Словарь для хранения точек пиков
         self.peak_points = {}
 
-        # Словарь для хранения CheckBox
+        # Словари для хранения CheckBox
         self.alfa_checkboxes = {}
         self.beta_checkboxes = {}
 
-        # Инициализируем словари для серий
+        # Словари для хранения серий графиков
         self.alfa_series_dict = {}
         self.beta_series_dict = {}
 
-        # Создаем вкладки
+        # =========================================================================
+        # Блок 3: Создание вкладки "Menu"
+        # =========================================================================
+        # Создание вкладок
         self.tabs = QTabWidget()
         self.setCentralWidget(self.tabs)
 
@@ -78,11 +159,22 @@ class SpectrumWindow(QMainWindow):
         self.tab0 = QWidget()
         self.tabs.addTab(self.tab0, "Menu")
         menu_layout = QVBoxLayout()
-        # Поле для ввода имени папки
+
+        # Поле для ввода имени папки с кнопкой выбора папки
+        folder_layout = QHBoxLayout()
         self.folder_input = QLineEdit("098")  # По умолчанию папка "098"
         self.folder_input.setPlaceholderText("Введите имя папки и нажмите ENTER")
         self.folder_input.returnPressed.connect(self.load_xls_files)  # Обработка нажатия ENTER
-        menu_layout.addWidget(self.folder_input)
+        folder_layout.addWidget(self.folder_input)
+
+        # Кнопка с иконкой папки для выбора папки
+        self.folder_button = QPushButton("📁")
+        self.folder_button.setObjectName("folderButton")  # Для специфического стиля
+        self.folder_button.setToolTip("Выберите папку с файлами")
+        self.folder_button.clicked.connect(self.select_folder)  # Подключаем метод выбора папки
+        folder_layout.addWidget(self.folder_button)
+
+        menu_layout.addLayout(folder_layout)
 
         # Список для отображения файлов .xls
         self.file_list = QListWidget()
@@ -97,17 +189,23 @@ class SpectrumWindow(QMainWindow):
 
         # Кнопка "Экспорт в Excel"
         self.export_button = QPushButton("Экспорт в Excel")
+        self.export_button.setObjectName("exportButton")  # Для специфического стиля
         self.export_button.clicked.connect(self.export_to_excel)
         menu_layout.addWidget(self.export_button)
+
         self.tab0.setLayout(menu_layout)
+
         # Загружаем файлы .xls из папки по умолчанию
         self.load_xls_files()
 
+        # =========================================================================
+        # Блок 4: Создание вкладки "Alfa chart"
+        # =========================================================================
         # Первая вкладка
         self.tab1 = QWidget()
         self.tabs.addTab(self.tab1, "Alfa chart")
 
-        # Создаем график для первой вкладки
+        # Создание графика для первой вкладки
         self.chart = QChart()
         self.chart.setTitle("Спектр импульсов (0-1023)")
         self.series = QLineSeries()
@@ -119,6 +217,7 @@ class SpectrumWindow(QMainWindow):
         except Exception as e:
             self.show_error_message(str(e))
             self.spectrum_values = []
+
         self.chart.addSeries(self.series)
         self.axis_x = QValueAxis()
         self.axis_x.setTitleText("Точка спектра")
@@ -141,9 +240,11 @@ class SpectrumWindow(QMainWindow):
         self.chart_view = QChartView(self.chart)
         self.chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
 
+        # Чекбокс для логарифмического масштаба
         self.log_checkbox = QCheckBox("Логарифмический масштаб")
         self.log_checkbox.stateChanged.connect(self.toggle_log_scale)
 
+        # Компоновка вкладки "Alfa chart"
         layout = QVBoxLayout()
         layout.addWidget(self.chart_view)
         layout.addWidget(self.log_checkbox)
@@ -153,11 +254,14 @@ class SpectrumWindow(QMainWindow):
 
         self.tab1.setLayout(layout)
 
+        # =========================================================================
+        # Блок 5: Создание вкладки "Beta chart"
+        # =========================================================================
         # Вторая вкладка (Beta chart)
         self.tab2 = QWidget()
         self.tabs.addTab(self.tab2, "Beta chart")
 
-        # Создаем график для второй вкладки
+        # Создание графика для второй вкладки
         self.beta_chart = QChart()
         self.beta_chart.setTitle("Beta chart")
         self.beta_series = QLineSeries()
@@ -178,9 +282,11 @@ class SpectrumWindow(QMainWindow):
         self.beta_chart_view = QChartView(self.beta_chart)
         self.beta_chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
 
+        # Чекбокс для логарифмического масштаба
         self.beta_log_checkbox = QCheckBox("Логарифмический масштаб")
         self.beta_log_checkbox.stateChanged.connect(self.toggle_beta_log_scale)
 
+        # Компоновка вкладки "Beta chart"
         beta_layout = QVBoxLayout()
         beta_layout.addWidget(self.beta_chart_view)
         beta_layout.addWidget(self.beta_log_checkbox)
@@ -189,6 +295,13 @@ class SpectrumWindow(QMainWindow):
 
         # Добавляем кнопку калибровки
         add_beta_calibration_button(self)
+
+    def select_folder(self):
+        """Открывает диалог выбора папки и загружает файлы."""
+        folder = QFileDialog.getExistingDirectory(self, "Выберите папку", os.getcwd())
+        if folder:
+            self.folder_input.setText(os.path.basename(folder))
+            self.load_xls_files()
 
     ##########################################################################
     # Методы для работы с файлами и контекстным меню
