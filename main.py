@@ -380,6 +380,7 @@ class SpectrumWindow(QMainWindow):
                 padding: 5px;
             }
         """)
+        self.checkboxes_widget.setMinimumHeight(50)  # Устанавливаем минимальную высоту
         self.checkboxes_widget.hide()  # Изначально скрыт
 
         # Кнопка для отображения/скрытия чекбоксов
@@ -434,13 +435,21 @@ class SpectrumWindow(QMainWindow):
         self.chart_view.update()
 
     def toggle_checkboxes(self):
-        """Переключает видимость виджета с чекбоксами."""
+        """Переключает видимость виджета с чекбоксами и изменяет размер окна."""
         if self.checkboxes_widget.isVisible():
+            # Скрываем виджет с чекбоксами
             self.checkboxes_widget.hide()
             self.toggle_checkboxes_button.setText("📋 Чекбоксы")
+            # Возвращаем исходный размер окна
+            self.resize(self.width(), self.original_height)
         else:
+            # Показываем виджет с чекбоксами
             self.checkboxes_widget.show()
             self.toggle_checkboxes_button.setText("📋 Скрыть")
+            # Увеличиваем высоту окна на размер виджета с чекбоксами
+            checkboxes_height = self.checkboxes_widget.sizeHint().height()
+            new_height = self.height() + checkboxes_height
+            self.resize(self.width(), new_height)
 
     ##########################################################################
     # Методы для работы с файлами и контекстным меню
@@ -1394,7 +1403,13 @@ if __name__ == "__main__":
 
     window = SpectrumWindow(modbus)
     window.resize(800, 600)
-
+    window.original_height = 600
+    # Получаем доступную геометрию экрана
+    screen_geometry = app.primaryScreen().availableGeometry()
+    # Перемещаем окно к верхнему левому углу (x=0 для левого края, y=0 для верхнего края)
+    x_position = screen_geometry.x() + (screen_geometry.width() - window.width()) // 2
+    y_position = screen_geometry.y()
+    window.move(x_position, y_position)
     QTimer.singleShot(2000, window.show)
 
     sys.exit(app.exec())
