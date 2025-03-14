@@ -155,7 +155,11 @@ class SpectrumWindow(QMainWindow):
             QColor(0, 128, 0),  # Зелёный
             QColor(128, 0, 128),  # Пурпурный
             QColor(255, 165, 0),  # Золотой
-            QColor(0, 191, 255)  # Глубокий голубой
+            QColor(0, 191, 255),  # Глубокий голубой
+            QColor(173, 216, 230),  # Светло-голубой
+            QColor(135, 206, 235),  # Небесно-голубой
+            QColor(240, 128, 128),  # Светло-розовый
+            QColor(144, 238, 144),  # Салатовый
         ]
 
         # Словарь для хранения массивов данных Alfa
@@ -327,6 +331,12 @@ class SpectrumWindow(QMainWindow):
         # Создание графика для второй вкладки
         self.beta_chart = QChart()
         self.beta_chart.setTitle("Beta chart")
+        # Устанавливаем шрифт для заголовка, как в Alfa chart
+        title_font = QFont()
+        title_font.setPointSize(14)
+        title_font.setBold(True)
+        self.beta_chart.setTitleFont(title_font)
+
         self.beta_series = QLineSeries()
         self.beta_series.setName("Beta данные")
         self.beta_chart.addSeries(self.beta_series)
@@ -334,8 +344,17 @@ class SpectrumWindow(QMainWindow):
         self.beta_axis_x = QValueAxis()
         self.beta_axis_x.setTitleText("Точка")
         self.beta_axis_x.setRange(0, 100)
+        # Устанавливаем шрифт для оси X
+        axis_font = QFont()
+        axis_font.setPointSize(10)
+        self.beta_axis_x.setLabelsFont(axis_font)
+        self.beta_axis_x.setTitleFont(axis_font)
+
         self.beta_axis_y = QValueAxis()
         self.beta_axis_y.setTitleText("Значение")
+        # Устанавливаем шрифт для оси Y
+        self.beta_axis_y.setLabelsFont(axis_font)
+        self.beta_axis_y.setTitleFont(axis_font)
 
         self.beta_chart.addAxis(self.beta_axis_x, Qt.AlignmentFlag.AlignBottom)
         self.beta_chart.addAxis(self.beta_axis_y, Qt.AlignmentFlag.AlignLeft)
@@ -349,10 +368,52 @@ class SpectrumWindow(QMainWindow):
         self.beta_log_checkbox = QCheckBox("Логарифмический масштаб")
         self.beta_log_checkbox.stateChanged.connect(self.toggle_beta_log_scale)
 
+        # Создаем виджет для чекбоксов
+        self.checkboxes_widget = QWidget()
+        self.checkboxes_layout = QVBoxLayout()
+        self.checkboxes_widget.setLayout(self.checkboxes_layout)
+        self.checkboxes_widget.setStyleSheet("""
+            QWidget {
+                background-color: #F8FAFC;
+                border: 1px solid #D3D9DE;
+                border-radius: 5px;
+                padding: 5px;
+            }
+        """)
+        self.checkboxes_widget.hide()  # Изначально скрыт
+
+        # Кнопка для отображения/скрытия чекбоксов
+        self.toggle_checkboxes_button = QPushButton("📋 Чекбоксы")
+        self.toggle_checkboxes_button.setObjectName("toggleCheckboxesButton")
+        self.toggle_checkboxes_button.setStyleSheet("""
+            QPushButton#toggleCheckboxesButton {
+                background-color: #D1E0FF;
+                color: #2D3748;
+                border-radius: 5px;
+                padding: 5px;
+            }
+            QPushButton#toggleCheckboxesButton:hover {
+                background-color: #B3C9FF;
+            }
+            QPushButton#toggleCheckboxesButton:pressed {
+                background-color: #A3BFFA;
+            }
+        """)
+        self.toggle_checkboxes_button.clicked.connect(self.toggle_checkboxes)
+
         # Компоновка вкладки "Beta chart"
         beta_layout = QVBoxLayout()
         beta_layout.addWidget(self.beta_chart_view)
-        beta_layout.addWidget(self.beta_log_checkbox)
+
+        # Горизонтальный layout для кнопки и логарифмического чекбокса
+        controls_layout = QHBoxLayout()
+        controls_layout.addWidget(self.beta_log_checkbox)
+        controls_layout.addStretch()  # Растяжка для выравнивания
+        controls_layout.addWidget(self.toggle_checkboxes_button)
+        beta_layout.addLayout(controls_layout)
+
+        # Добавляем виджет с чекбоксами
+        beta_layout.addWidget(self.checkboxes_widget)
 
         self.tab2.setLayout(beta_layout)
 
@@ -371,6 +432,15 @@ class SpectrumWindow(QMainWindow):
         self.series.clear()
         self.axis_y.setRange(0, 1)  # Сбрасываем диапазон оси Y
         self.chart_view.update()
+
+    def toggle_checkboxes(self):
+        """Переключает видимость виджета с чекбоксами."""
+        if self.checkboxes_widget.isVisible():
+            self.checkboxes_widget.hide()
+            self.toggle_checkboxes_button.setText("📋 Чекбоксы")
+        else:
+            self.checkboxes_widget.show()
+            self.toggle_checkboxes_button.setText("📋 Скрыть")
 
     ##########################################################################
     # Методы для работы с файлами и контекстным меню
@@ -866,9 +936,8 @@ class SpectrumWindow(QMainWindow):
             lambda state, series=beta_series: self.adjust_beta_y_axis_for_series(series, state))
         self.beta_checkboxes[file_name] = checkbox
 
-        layout = self.tab2.layout()
-        if isinstance(layout, QVBoxLayout):
-            layout.addWidget(checkbox)
+        # Добавляем чекбокс в self.checkboxes_layout
+        self.checkboxes_layout.addWidget(checkbox)
 
         self.update_beta_y_axis_range()
         update_calibration_button_state(self)
