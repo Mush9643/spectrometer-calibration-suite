@@ -5,7 +5,7 @@ import numpy as np
 from PyQt6.QtCharts import QChart, QLineSeries, QValueAxis, QChartView, QLogValueAxis, QAbstractSeries, QScatterSeries
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QMessageBox, QDialog, \
     QSplashScreen, QCheckBox, QLineEdit, QTabWidget, QListWidgetItem, QListWidget, QMenu, QHBoxLayout, QFileDialog
-from PyQt6.QtGui import QPixmap, QIcon, QPainter, QDesktopServices, QColor
+from PyQt6.QtGui import QPixmap, QIcon, QPainter, QDesktopServices, QColor, QFont
 from PyQt6.QtCore import Qt, QTimer, QUrl
 from modbus import ModbusClient  # Импортируем ModbusClient из файла modbus.py
 from settings_dialog import SettingsDialog  # Импортируем диалоговое окно настроек
@@ -78,7 +78,7 @@ class SpectrumWindow(QMainWindow):
                 background-color: #A3BFFA; /* Ещё более насыщенный акцент */
             }
             QPushButton#exportButton {
-                background-color: #D1E0FF; /* Пастельный голубой для кнопок экспорта*/
+                background-color: #D1E7DD; /* Пастельный зелёный для экспорта */
             }
             QPushButton#exportButton:hover {
                 background-color: #B9DEC7;
@@ -96,6 +96,24 @@ class SpectrumWindow(QMainWindow):
             QPushButton#folderButton:hover {
                 background-color: rgba(209, 224, 255, 0.3); /* Лёгкий оттенок при наведении */
             }
+            QPushButton#calibrationButton {
+                background-color: #D1E0FF; /* Пастельный голубой для кнопки калибровки */
+            }
+            QPushButton#calibrationButton:hover {
+                background-color: #B3C9FF;
+            }
+            QPushButton#calibrationButton:pressed {
+                background-color: #A3BFFA;
+            }
+            QPushButton#clearButton {
+                background-color: #FFD1DC; /* Пастельный розовый для кнопки очистки */
+            }
+            QPushButton#clearButton:hover {
+                background-color: #FFB3C6;
+            }
+            QPushButton#clearButton:pressed {
+                background-color: #FF99AC;
+            }
         """)
 
         # Настройка окна
@@ -110,7 +128,16 @@ class SpectrumWindow(QMainWindow):
         self.sry90_data = []  # Массив для данных SrY90
         self.rad_data = []  # Массив для данных Rad
         self.fon_data = []  # Массив для данных фона
-        self.modbus_client = modbus
+
+        # Проверка и обработка modbus
+        try:
+            self.modbus_client = modbus
+            # Проверяем подключение через connect()
+            if not self.modbus_client.connect():
+                raise Exception("Не удалось подключиться к порту Modbus")
+        except Exception as e:
+            print(f"Ошибка подключения к Modbus: {e}. Работа продолжается без Modbus.")
+            self.modbus_client = None  # Продолжаем без Modbus, если подключение не удалось
 
         # =========================================================================
         # Блок 2: Инициализация словарей для хранения данных и цветов
@@ -208,8 +235,16 @@ class SpectrumWindow(QMainWindow):
         # Создание графика для первой вкладки
         self.chart = QChart()
         self.chart.setTitle("Спектр импульсов (0-1023)")
+        # Устанавливаем шрифт для заголовка
+        title_font = QFont()
+        title_font.setPointSize(14)
+        title_font.setBold(True)
+        self.chart.setTitleFont(title_font)
+
         self.series = QLineSeries()
         self.series.setName("Импульсы")
+        # Устанавливаем пастельный цвет для линии
+        self.series.setPen(QColor("#A3BFFA"))  # Мягкий пастельный голубой
 
         self.spectrum_addition = SpectrumAddition(self)
         try:
@@ -222,32 +257,60 @@ class SpectrumWindow(QMainWindow):
         self.axis_x = QValueAxis()
         self.axis_x.setTitleText("Точка спектра")
         self.axis_x.setRange(0, 1023)
+        self.axis_x.setTickCount(11)  # Шаг каждые ~100 единиц (1023 / 10)
+        self.axis_x.setLabelFormat("%d")  # Целые числа
+        # Устанавливаем шрифт для подписей оси
+        axis_font = QFont()
+        axis_font.setPointSize(10)
+        self.axis_x.setLabelsFont(axis_font)
+        self.axis_x.setTitleFont(axis_font)
+
         self.axis_y = QValueAxis()
         self.axis_y.setTitleText("Значение импульса")
-
         points = self.series.points()
         if points:
             y_values = [point.y() for point in points]
             self.axis_y.setRange(min(y_values), max(y_values))
         else:
             self.axis_y.setRange(0, 1)
+        self.axis_y.setLabelFormat("%.2f")  # Два знака после запятой
+        self.axis_y.setLabelsFont(axis_font)
+        self.axis_y.setTitleFont(axis_font)
 
         self.chart.addAxis(self.axis_x, Qt.AlignmentFlag.AlignBottom)
         self.chart.addAxis(self.axis_y, Qt.AlignmentFlag.AlignLeft)
         self.series.attachAxis(self.axis_x)
         self.series.attachAxis(self.axis_y)
 
+        # Включаем сетку
+        self.axis_x.setGridLineVisible(True)
+        self.axis_y.setGridLineVisible(True)
+
         self.chart_view = QChartView(self.chart)
         self.chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
+        # Исправление: Включаем зум с правильным перечислением
+        self.chart_view.setRubberBand(QChartView.RubberBand.RectangleRubberBand)
 
         # Чекбокс для логарифмического масштаба
         self.log_checkbox = QCheckBox("Логарифмический масштаб")
         self.log_checkbox.stateChanged.connect(self.toggle_log_scale)
 
+        # Кнопка очистки графика
+        self.clear_button = QPushButton("Очистить график")
+        self.clear_button.setObjectName("clearButton")
+        self.clear_button.clicked.connect(self.clear_alfa_chart)
+
         # Компоновка вкладки "Alfa chart"
         layout = QVBoxLayout()
         layout.addWidget(self.chart_view)
-        layout.addWidget(self.log_checkbox)
+
+        # Горизонтальный layout для чекбокса, кнопки калибровки и кнопки очистки
+        controls_layout = QHBoxLayout()
+        controls_layout.addWidget(self.log_checkbox)
+        controls_layout.addStretch()  # Растяжка для выравнивания
+        controls_layout.addWidget(self.clear_button)
+
+        layout.addLayout(controls_layout)
 
         # Добавляем кнопку "Калибровка" после создания chart_view
         add_calibration_button(self)
@@ -302,6 +365,12 @@ class SpectrumWindow(QMainWindow):
         if folder:
             self.folder_input.setText(os.path.basename(folder))
             self.load_xls_files()
+
+    def clear_alfa_chart(self):
+        """Очищает график Alfa chart."""
+        self.series.clear()
+        self.axis_y.setRange(0, 1)  # Сбрасываем диапазон оси Y
+        self.chart_view.update()
 
     ##########################################################################
     # Методы для работы с файлами и контекстным меню
