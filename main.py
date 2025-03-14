@@ -385,7 +385,7 @@ class SpectrumWindow(QMainWindow):
         # Заданная последовательность ключевых слов для Beta
         beta_keywords = ["фона", "SrY90", "Rad", "Cs137", "C14", "Am241"]
         # Заданная последовательность ключевых слов для Alfa
-        alfa_keywords = ["Rn", "Am241"]
+        alfa_keywords = ["new Rn", "Am241"]
 
         # Создаём списки файлов для Beta и Alfa, отсортированных по заданной последовательности
         beta_files_to_process = []
