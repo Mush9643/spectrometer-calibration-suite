@@ -130,14 +130,7 @@ class SpectrumWindow(QMainWindow):
         self.fon_data = []  # Массив для данных фона
 
         # Проверка и обработка modbus
-        try:
-            self.modbus_client = modbus
-            # Проверяем подключение через connect()
-            if not self.modbus_client.connect():
-                raise Exception("Не удалось подключиться к порту Modbus")
-        except Exception as e:
-            print(f"Ошибка подключения к Modbus: {e}. Работа продолжается без Modbus.")
-            self.modbus_client = None  # Продолжаем без Modbus, если подключение не удалось
+        self.modbus_client = modbus  # Просто присваиваем, как в старой версии
 
         # =========================================================================
         # Блок 2: Инициализация словарей для хранения данных и цветов

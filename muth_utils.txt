@@ -109,6 +109,10 @@ def highlight_rn_peaks(chart, series, peak_points, parent_window=None):
         print(f"Enewa = {intercept + slope * 1023:.3f}")
         for e in P90:
             p_value = round((e - intercept) / slope)
+            # Сохраняем P(e) в parent_window
+            if not hasattr(parent_window, 'p_values'):
+                parent_window.p_values = {}
+            parent_window.p_values[e] = p_value
             print(f"P({e}) = {p_value}")
             if e == 2700 and parent_window is not None:
                 parent_window.beta_p2700 = p_value  # Сохраняем P(2700) для бета-канала
@@ -464,7 +468,7 @@ class CalibrationDialog(QDialog):
 def add_calibration_button(window):
     """Добавляет кнопку калибровки на вкладку Alfa chart."""
     button = QPushButton("Калибровка")
-    button.clicked.connect(lambda: CalibrationDialog(window).exec())
+    button.clicked.connect(lambda: open_calibration_dialog(window))
     if layout := window.tab1.layout():
         layout.addWidget(button)
     else:
@@ -473,3 +477,9 @@ def add_calibration_button(window):
         layout.addWidget(window.log_checkbox if hasattr(window, 'log_checkbox') else QWidget())
         layout.addWidget(button)
         window.tab1.setLayout(layout)
+
+def open_calibration_dialog(window):
+    """Открывает диалоговое окно калибровки и устанавливает флаг calibration_performed."""
+    window.calibration_performed = True  # Устанавливаем флаг
+    dialog = CalibrationDialog(window)
+    dialog.exec()

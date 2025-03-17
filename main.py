@@ -17,6 +17,10 @@ from math_utils import add_calibration_button
 from Beta_math import add_beta_calibration_button
 from Beta_math import update_calibration_button_state
 from fon_math import process_fon_data, process_isotope_data
+from fon_math import NUD_b, VUD_b
+import openpyxl
+from openpyxl.styles import Font, Border, Side, PatternFill, Alignment
+from openpyxl.utils.dataframe import dataframe_to_rows
 import os
 
 ##########################################################################
@@ -131,7 +135,8 @@ class SpectrumWindow(QMainWindow):
 
         # Проверка и обработка modbus
         self.modbus_client = modbus  # Просто присваиваем, как в старой версии
-
+        # Инициализация флага для отслеживания выполнения калибровки
+        self.calibration_performed = False
         # =========================================================================
         # Блок 2: Инициализация словарей для хранения данных и цветов
         # =========================================================================
@@ -454,6 +459,50 @@ class SpectrumWindow(QMainWindow):
         # Добавляем кнопку калибровки
         add_beta_calibration_button(self)
 
+        # =========================================================================
+        # Блок 6: Создание вкладки "Report"
+        # =========================================================================
+        # Третья вкладка (Report)
+        self.tab3 = QWidget()
+        self.tabs.addTab(self.tab3, "Report")
+
+        # Создание компоновки для вкладки Report
+        report_layout = QVBoxLayout()
+
+        # Создание большой кнопки "Создание отчёта"
+        self.report_button = QPushButton("Создание отчёта")
+        self.report_button.setObjectName("reportButton")
+
+        # Установка стилей для кнопки
+        self.report_button.setStyleSheet("""
+            QPushButton#reportButton {
+                background-color: #D4A5A5; /* Пастельный розовый оттенок */
+                color: #2D3748; /* Тёмно-серый текст */
+                border-radius: 10px;
+                padding: 15px;
+                font-size: 18px;
+                font-weight: bold;
+                min-height: 100px;
+                min-width: 300px;
+            }
+            QPushButton#reportButton:hover {
+                background-color: #C68B8B; /* Более насыщенный оттенок при наведении */
+            }
+            QPushButton#reportButton:pressed {
+                background-color: #B97171; /* Ещё более насыщенный при нажатии */
+            }
+        """)
+
+        # Подключение метода для обработки нажатия кнопки (пока заглушка)
+        self.report_button.clicked.connect(self.generate_report)
+
+        # Центрирование кнопки
+        report_layout.addStretch()  # Добавляем растяжку сверху
+        report_layout.addWidget(self.report_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        report_layout.addStretch()  # Добавляем растяжку снизу
+
+        self.tab3.setLayout(report_layout)
+
     def select_folder(self):
         """Открывает диалог выбора папки и загружает файлы."""
         folder = QFileDialog.getExistingDirectory(self, "Выберите папку", os.getcwd())
@@ -500,6 +549,86 @@ class SpectrumWindow(QMainWindow):
             checkboxes_height = self.alfa_checkboxes_widget.sizeHint().height()
             new_height = self.height() + checkboxes_height
             self.resize(self.width(), new_height)
+
+    def generate_report(self):
+        """Метод для создания отчёта: выводит значение folder_input, aRa, bRa, P(), ra, k1p9, пик Am241, NUD_b, VUD_b, k1c0, intercept, slope в консоль, если выполнена калибровка."""
+        # Проверяем, была ли выполнена калибровка
+        if not self.calibration_performed:
+            self.show_warning_message("Сначала выполните калибровку на вкладке Alfa chart.")
+            print("Предупреждение: Калибровка не выполнена. Нажмите кнопку 'Калибровка' на вкладке Alfa chart.")
+            return
+
+        # Выводим значение поля ввода папки
+        folder_name = self.folder_input.text()
+        print(f"Значение поля ввода папки: {folder_name}")
+
+        # Выводим aRa и bRa
+        if hasattr(self, 'calibration_coefficients') and self.calibration_coefficients:
+            aRa, bRa = self.calibration_coefficients
+            print(f"\nКоэффициенты линейной регрессии (Alfa):")
+            print(f"a(Alfa) = {aRa:.3f}")
+            print(f"b(Alfa) = {bRa:.3f}")
+        else:
+            print(
+                "\nПредупреждение: Коэффициенты aRa и bRa отсутствуют. Убедитесь, что выполнена калибровка с данными Rn.")
+
+        # Выводим значения P()
+        if hasattr(self, 'p_values') and self.p_values:
+            print(f"\nЗначения P():")
+            for energy, p_value in self.p_values.items():
+                print(f"P({energy}) = {p_value}")
+        else:
+            print("\nПредупреждение: Значения P() отсутствуют. Убедитесь, что выполнена калибровка с данными Rn.")
+
+        # Выводим значение ra
+        if hasattr(self, 'ra_value') and self.ra_value is not None:
+            print(f"\nЗначение ra:")
+            print(f"ra = {self.ra_value:.3f}")
+        else:
+            print("\nПредупреждение: Значение ra отсутствует. Убедитесь, что выполнены расчёты для Rn данных.")
+
+        # Выводим значение k1p9
+        if hasattr(self, 'k1p9_value') and self.k1p9_value is not None:
+            print(f"\nЗначение k1p9:")
+            print(f"k1p9 = {self.k1p9_value:.3f}")
+        else:
+            print("\nПредупреждение: Значение k1p9 отсутствует. Убедитесь, что выполнены расчёты для am_rate.")
+
+        # Выводим координату x пика Am241
+        if hasattr(self, 'peak_points') and self.peak_points:
+            for series_name, peak in self.peak_points.items():
+                if "Am241" in series_name and peak and peak.points():
+                    am241_x = peak.points()[0].x()
+                    print(f"\nПик Am241:")
+                    print(f"Пик Am241: x = {am241_x:.3f}")
+                    break
+            else:
+                print("\nПредупреждение: Пик Am241 не найден. Убедитесь, что данные Am241 загружены и обработаны.")
+        else:
+            print("\nПредупреждение: Данные пиков отсутствуют. Убедитесь, что выполнена калибровка с данными Am241.")
+
+        # Выводим NUD_b и VUD_b
+        print(f"\nЗначения для бета-канала:")
+        print(f"NUD_b = {NUD_b:.3f}")
+        print(f"VUD_b = {VUD_b:.3f}")
+
+        # Выводим k1c0
+        if hasattr(self, 'k1c0') and self.k1c0 is not None:
+            print(f"\nЗначение k1c0:")
+            print(f"k1c0 = {self.k1c0:.3f}")
+        else:
+            print("\nПредупреждение: Значение k1c0 отсутствует. Убедитесь, что обработаны данные C14.")
+
+        # Выводим коэффициенты линейной регрессии (Beta)
+
+            print(f"\nКоэффициенты линейной регрессии (Beta):")
+            print(f"a(Alfa) = ")
+            print(f"b(Beta) = ")
+
+
+        self.show_info_message(
+            f"Данные отчёта выведены в консоль: значение папки, aRa, bRa, P(), ra, k1p9, пик Am241, NUD_b, VUD_b, k1c0, intercept, slope.")
+
     ##########################################################################
     # Методы для работы с файлами и контекстным меню
     ##########################################################################
@@ -797,19 +926,15 @@ class SpectrumWindow(QMainWindow):
             file_name_lower = file_name.lower()  # Приводим имя файла к нижнему регистру для проверки
             if "rad" in file_name_lower:
                 self.rad_data = original_impulses
-
             elif "am241" in file_name_lower:
                 self.am241_data = original_impulses
-
+                self.save_alfa_data(file_name)  # Сохраняем данные второй строки для Am241
             elif "c14" in file_name_lower:
                 self.c14_data = original_impulses
-
             elif "sry90" in file_name_lower:
                 self.sry90_data = original_impulses
-
             elif "cs137" in file_name_lower:
                 self.cs137_data = original_impulses
-
             elif "фона" in file_name_lower:
                 self.fon_data = original_impulses
 

@@ -5,6 +5,8 @@ import os
 from PyQt6.QtCharts import QLineSeries
 from Beta_math import update_calibration_button_state
 
+NUD_b = 5  # Константа для NUD_b
+VUD_b = 200  # Константа для VUD_b
 
 def write_to_result_file(value_name, value):
     """
@@ -21,7 +23,7 @@ def write_to_result_file(value_name, value):
         f.write(f"{value_name}: {value:.3f}\n")
 
 
-def calculate_fon_sum(fon_data, nud_b=10, vud_b=200):
+def calculate_fon_sum(fon_data, nud_b=5, vud_b=200):
     """
     Вычисляет сумму по формуле fon_И = Σ (fon_i / fon_0) для i от NUD_b до VUD_b.
     """
@@ -47,7 +49,7 @@ def calculate_fon_sum(fon_data, nud_b=10, vud_b=200):
     return fon_sum
 
 
-def calculate_activity_am241(am241_data, fon_data, nud_b=10, vud_b=200):
+def calculate_activity_am241(am241_data, fon_data, nud_b=5, vud_b=200):
     """
     Вычисляет активность A_am по формуле Σ (M2_i / M2_0 - fon_i / fon_0).
     Предполагается, что am241_data соответствует M2_i.
@@ -104,18 +106,8 @@ def calculate_regression_coefficients(parent):
     return intercept, slope  # Возвращаем [b, a]
 
 
-def calculate_activity_c14(parent, c14_data, fon_data, nud_b=10, vud_b=200):
-    """
-    Вычисляет активность A_c14 по формуле Σ (C14_i / C14_0 - fon_i / fon_0).
-    Также вычисляет массив c14s_i = (C14_i / C14_0 - fon_i / fon_0) / A_c для i от 0 до 100.
-    Дополнительно:
-    - Находит максимальный элемент в массиве c14_data и его индекс.
-    - В диапазоне от найденного индекса до 100 ищет первый элемент в c14s, меньший 0.005.
-    - Если пик Cs-137 и found_index (ugler) найдены, формирует и сохраняет массивы Ben и Bch.
-    - Выполняет расчет коэффициентов линейной регрессии, если Ben и Bch доступны.
-    - Вычисляет Enewb_i и pb(e) на основе полученных коэффициентов.
-    - Вычисляет k1c0 на основе A_sr.
-    """
+def calculate_activity_c14(parent, c14_data, fon_data, nud_b=5, vud_b=200):
+
     if not c14_data or not fon_data or len(c14_data) <= vud_b or len(fon_data) <= vud_b:
         print("Массивы c14_data или fon_data пусты или слишком короткие.")
         return 0.0
@@ -237,7 +229,7 @@ def calculate_activity_c14(parent, c14_data, fon_data, nud_b=10, vud_b=200):
     return activity
 
 
-def calculate_activity_cs137(cs137_data, fon_data, nud_b=10, vud_b=200):
+def calculate_activity_cs137(cs137_data, fon_data, nud_b=5, vud_b=200):
     """
     Вычисляет активность A_cs137 по формуле Σ (cs137_nash_i / cs137_nash_0 - fon_i / fon_0).
     """
@@ -260,7 +252,7 @@ def calculate_activity_cs137(cs137_data, fon_data, nud_b=10, vud_b=200):
     return activity
 
 
-def calculate_activity_sry90(sry90_data, fon_data, nud_b=10, vud_b=200):
+def calculate_activity_sry90(sry90_data, fon_data, nud_b=5, vud_b=200):
     """
     Вычисляет активность A_sr по формуле Σ (SrY_i / SrY_0 - fon_i / fon_0).
     """
