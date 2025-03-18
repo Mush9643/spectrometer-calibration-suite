@@ -4,7 +4,8 @@ from scipy.signal import find_peaks, savgol_filter
 import numpy as np
 from PyQt6.QtCharts import QChart, QLineSeries, QValueAxis, QChartView, QLogValueAxis, QAbstractSeries, QScatterSeries
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QMessageBox, QDialog, \
-    QSplashScreen, QCheckBox, QLineEdit, QTabWidget, QListWidgetItem, QListWidget, QMenu, QHBoxLayout, QFileDialog
+    QSplashScreen, QCheckBox, QLineEdit, QTabWidget, QListWidgetItem, QListWidget, QMenu, QHBoxLayout, QFileDialog, \
+    QTableWidgetItem, QTableWidget, QHeaderView
 from PyQt6.QtGui import QPixmap, QIcon, QPainter, QDesktopServices, QColor, QFont
 from PyQt6.QtCore import Qt, QTimer, QUrl
 from modbus import ModbusClient  # Импортируем ModbusClient из файла modbus.py
@@ -192,8 +193,15 @@ class SpectrumWindow(QMainWindow):
         # Поле для ввода имени папки с кнопкой выбора папки
         folder_layout = QHBoxLayout()
         self.folder_input = QLineEdit("098")  # По умолчанию папка "098"
-        self.folder_input.setPlaceholderText("Введите имя папки и нажмите ENTER")
-        self.folder_input.returnPressed.connect(self.load_xls_files)  # Обработка нажатия ENTER
+        self.folder_input.setReadOnly(True)  # Запрещаем ручное редактирование
+        self.folder_input.setStyleSheet("""
+                    QLineEdit {
+                        border: 1px solid #D3D9DE;
+                        border-radius: 5px;
+                        padding: 5px;
+                        background-color: white;
+                    }
+                """)  # Сохраняем стиль
         folder_layout.addWidget(self.folder_input)
 
         # Кнопка с иконкой папки для выбора папки
@@ -462,52 +470,189 @@ class SpectrumWindow(QMainWindow):
         # =========================================================================
         # Блок 6: Создание вкладки "Report"
         # =========================================================================
-        # Третья вкладка (Report)
-        self.tab3 = QWidget()
-        self.tabs.addTab(self.tab3, "Report")
+        self.tab4 = QWidget()
+        self.tabs.addTab(self.tab4, "Report")
 
-        # Создание компоновки для вкладки Report
-        report_layout = QVBoxLayout()
+        calibration_layout = QVBoxLayout()
 
-        # Создание большой кнопки "Создание отчёта"
+        self.calibration_table = QTableWidget()
+        self.calibration_table.setColumnCount(2)
+        self.calibration_table.setHorizontalHeaderLabels(["Параметр", "Значение"])
+        self.calibration_table.setStyleSheet("""
+                    QTableWidget {
+                        background-color: #F8FAFC;
+                        border: 1px solid #D3D9DE;
+                        border-radius: 5px;
+                    }
+                    QHeaderView::section {
+                        background-color: #E8ECEF;
+                        padding: 5px;
+                        border: 1px solid #D3D9DE;
+                        font-weight: bold;
+                    }
+                    QTableWidget::item {
+                        padding: 5px;
+                    }
+                """)
+        self.calibration_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        calibration_layout.addWidget(self.calibration_table)
+
+        # Горизонтальный layout для кнопок
+        buttons_layout = QHBoxLayout()
+        buttons_layout.addStretch()
+
+        # Кнопка "Обновить данные"
+        self.refresh_button = QPushButton("Обновить данные")
+        self.refresh_button.setObjectName("refreshButton")
+        self.refresh_button.setStyleSheet("""
+                    QPushButton#refreshButton {
+                        background-color: #D1E0FF;
+                        color: #2D3748;
+                        border-radius: 5px;
+                        padding: 5px;
+                        max-width: 150px;
+                    }
+                    QPushButton#refreshButton:hover {
+                        background-color: #B3C9FF;
+                    }
+                    QPushButton#refreshButton:pressed {
+                        background-color: #A3BFFA;
+                    }
+                """)
+        self.refresh_button.clicked.connect(self.update_calibration_table)
+        buttons_layout.addWidget(self.refresh_button)
+
+        # Кнопка "Создание отчёта" (перенесена из "Report")
         self.report_button = QPushButton("Создание отчёта")
         self.report_button.setObjectName("reportButton")
-
-        # Установка стилей для кнопки
         self.report_button.setStyleSheet("""
-            QPushButton#reportButton {
-                background-color: #D4A5A5; /* Пастельный розовый оттенок */
-                color: #2D3748; /* Тёмно-серый текст */
-                border-radius: 10px;
-                padding: 15px;
-                font-size: 18px;
-                font-weight: bold;
-                min-height: 100px;
-                min-width: 300px;
-            }
-            QPushButton#reportButton:hover {
-                background-color: #C68B8B; /* Более насыщенный оттенок при наведении */
-            }
-            QPushButton#reportButton:pressed {
-                background-color: #B97171; /* Ещё более насыщенный при нажатии */
-            }
-        """)
-
-        # Подключение метода для обработки нажатия кнопки (пока заглушка)
+                    QPushButton#reportButton {
+                        background-color: #D4A5A5;
+                        color: #2D3748;
+                        border-radius: 5px;
+                        padding: 5px;
+                        max-width: 150px;
+                    }
+                    QPushButton#reportButton:hover {
+                        background-color: #C68B8B;
+                    }
+                    QPushButton#reportButton:pressed {
+                        background-color: #B97171;
+                    }
+                """)
         self.report_button.clicked.connect(self.generate_report)
+        buttons_layout.addWidget(self.report_button)
 
-        # Центрирование кнопки
-        report_layout.addStretch()  # Добавляем растяжку сверху
-        report_layout.addWidget(self.report_button, alignment=Qt.AlignmentFlag.AlignCenter)
-        report_layout.addStretch()  # Добавляем растяжку снизу
+        buttons_layout.addStretch()
 
-        self.tab3.setLayout(report_layout)
+        calibration_layout.addLayout(buttons_layout)
+
+        self.tab4.setLayout(calibration_layout)
+
+        self.update_calibration_table()
+
+    def update_calibration_table(self):
+        """Обновляет таблицу с параметрами калибровки"""
+        # Список параметров и их значений (аналогично generate_report)
+        parameters = []
+
+        # folder_name
+        parameters.append(("Имя папки", self.folder_input.text()))
+
+        # aRa и bRa (Alfa)
+        if hasattr(self, 'calibration_coefficients') and self.calibration_coefficients:
+            aRa, bRa = self.calibration_coefficients
+            parameters.append(("a (Alfa)", f"{aRa:.3f}"))
+            parameters.append(("b (Alfa)", f"{bRa:.3f}"))
+        else:
+            parameters.append(("a (Alfa)", "Отсутствует"))
+            parameters.append(("b (Alfa)", "Отсутствует"))
+
+        # Значения P()
+        p_names = [
+            "НУД α, № канала", "ВУД ROI 3, № канала", "НУД ROI 2, № канала",
+            "НУД ROI 6, № канала", "НУД ROI 4, № канала", "НУД ROI 5, № канала"
+        ]
+        if hasattr(self, 'p_values') and self.p_values:
+            p_values_list = list(self.p_values.items())
+            for i in range(6):
+                if i < len(p_values_list):
+                    energy, p_value = p_values_list[i]
+                    parameters.append((f"{p_names[i]} ({energy})", f"{p_value}"))
+                else:
+                    parameters.append((p_names[i], "Данные отсутствуют"))
+        else:
+            for name in p_names:
+                parameters.append((name, "Отсутствует"))
+
+        # K(Po218)
+        if hasattr(self, 'ra_value') and self.ra_value is not None:
+            parameters.append(("K(Po218)", f"{self.ra_value:.3f}"))
+        else:
+            parameters.append(("K(Po218)", "Отсутствует"))
+
+        # k1p9
+        if hasattr(self, 'k1p9_value') and self.k1p9_value is not None:
+            parameters.append(("k1p9", f"{self.k1p9_value:.3f}"))
+        else:
+            parameters.append(("k1p9", "Отсутствует"))
+
+        # Пик Am241
+        if hasattr(self, 'peak_points') and self.peak_points:
+            for series_name, peak in self.peak_points.items():
+                if "Am241" in series_name and peak and peak.points():
+                    am241_x = peak.points()[0].x()
+                    parameters.append(("Пик Am241", f"{am241_x:.3f}"))
+                    break
+            else:
+                parameters.append(("Пик Am241", "Не найден"))
+        else:
+            parameters.append(("Пик Am241", "Отсутствует"))
+
+        # НУД β и ВУД β
+        parameters.append(("НУД β", f"{NUD_b:.3f}"))
+        parameters.append(("ВУД β", f"{VUD_b:.3f}"))
+
+        # k1c0
+        if hasattr(self, 'k1c0') and self.k1c0 is not None:
+            parameters.append(("k1c0", f"{self.k1c0:.3f}"))
+        else:
+            parameters.append(("k1c0", "Отсутствует"))
+
+        # AB и BB (Beta)
+        if hasattr(self, 'beta_calibration_coefficients') and self.beta_calibration_coefficients:
+            intercept, slope = self.beta_calibration_coefficients
+            parameters.append(("a (Beta)", f"{intercept:.3f}"))
+            parameters.append(("b (Beta)", f"{slope:.3f}"))
+        else:
+            parameters.append(("a (Beta)", "Отсутствует"))
+            parameters.append(("b (Beta)", "Отсутствует"))
+
+        # Устанавливаем количество строк в таблице
+        self.calibration_table.setRowCount(len(parameters))
+
+        # Заполняем таблицу
+        for row, (param, value) in enumerate(parameters):
+            param_item = QTableWidgetItem(param)
+            value_item = QTableWidgetItem(value)
+
+            # Выравнивание по центру
+            param_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            value_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+
+            # Запрещаем редактирование
+            param_item.setFlags(param_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+            value_item.setFlags(value_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+
+            self.calibration_table.setItem(row, 0, param_item)
+            self.calibration_table.setItem(row, 1, value_item)
 
     def select_folder(self):
         """Открывает диалог выбора папки и загружает файлы."""
         folder = QFileDialog.getExistingDirectory(self, "Выберите папку", os.getcwd())
         if folder:
             self.folder_input.setText(os.path.basename(folder))
+            self.reset_all_data()
             self.load_xls_files()
 
     def clear_alfa_chart(self):
@@ -713,6 +858,96 @@ class SpectrumWindow(QMainWindow):
             print(f"Ошибка при сохранении отчёта: {str(e)}")
             return
 
+    def reset_all_data(self):
+        """Сбрасывает все данные до начального состояния, как при запуске приложения."""
+        # Очистка данных Alfa chart
+        self.chart.removeAllSeries()  # Удаляем все серии из графика Alfa
+        self.series = QLineSeries()  # Создаем новую пустую серию
+        self.series.setName("Импульсы")
+        self.series.setPen(QColor("#A3BFFA"))
+        self.chart.addSeries(self.series)
+        self.series.attachAxis(self.axis_x)
+        self.series.attachAxis(self.axis_y)
+        self.axis_y.setRange(0, 1)  # Сбрасываем диапазон оси Y
+
+        # Очистка словарей и массивов Alfa
+        self.alfa_series_dict.clear()
+        self.alfa_checkboxes.clear()
+        self.used_alfa_colors.clear()
+        self.alfa_data_arrays.clear()
+        self.first_impulse_values.clear()
+        self.p90_series.clear()
+        self.peak_points.clear()
+        if hasattr(self, 'original_alfa_series'):
+            self.original_alfa_series.clear()
+
+        # Очистка чекбоксов Alfa
+        while self.alfa_checkboxes_layout.count():
+            item = self.alfa_checkboxes_layout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
+        # Очистка данных Beta chart
+        self.beta_chart.removeAllSeries()
+        self.beta_series = QLineSeries()
+        self.beta_series.setName("Beta данные")
+        self.beta_chart.addSeries(self.beta_series)
+        self.beta_series.attachAxis(self.beta_axis_x)
+        self.beta_series.attachAxis(self.beta_axis_y)
+        self.beta_axis_y.setRange(0, 1)
+
+        # Очистка словарей и массивов Beta
+        self.beta_series_dict.clear()
+        self.beta_checkboxes.clear()
+        self.used_beta_colors.clear()
+        if hasattr(self, 'original_beta_series'):
+            self.original_beta_series.clear()
+        if hasattr(self, 'cs137_peak_points'):
+            self.cs137_peak_points.clear()
+        if hasattr(self, 'cs137_peak_coords'):
+            self.cs137_peak_coords.clear()
+
+        # Очистка чекбоксов Beta
+        while self.checkboxes_layout.count():
+            item = self.checkboxes_layout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
+        # Очистка массивов данных
+        self.fon_data = []
+        self.am241_data = []
+        self.c14_data = []
+        self.cs137_data = []
+        self.sry90_data = []
+        self.rad_data = []
+
+        # Сброс флагов и калибровочных данных
+        self.fon_processed = False
+        self.calibration_performed = False
+        if hasattr(self, 'calibration_coefficients'):
+            delattr(self, 'calibration_coefficients')
+        if hasattr(self, 'beta_calibration_coefficients'):
+            delattr(self, 'beta_calibration_coefficients')
+        if hasattr(self, 'p_values'):
+            delattr(self, 'p_values')
+        if hasattr(self, 'ra_value'):
+            delattr(self, 'ra_value')
+        if hasattr(self, 'k1p9_value'):
+            delattr(self, 'k1p9_value')
+        if hasattr(self, 'k1c0'):
+            delattr(self, 'k1c0')
+
+        # Обновление таблицы калибровки
+        self.update_calibration_table()
+
+        # Сброс состояния логарифмических чекбоксов
+        self.log_checkbox.setChecked(False)
+        self.beta_log_checkbox.setChecked(False)
+
+        # Обновление интерфейса
+        self.chart_view.update()
+        self.beta_chart_view.update()
+
     ##########################################################################
     # Методы для работы с файлами и контекстным меню
     ##########################################################################
@@ -783,6 +1018,11 @@ class SpectrumWindow(QMainWindow):
         """Загружает список файлов .xls и .xlsx из указанной папки."""
         folder_name = self.folder_input.text()  # Получаем имя папки из поля ввода
         folder_path = os.path.join(os.getcwd(), folder_name)  # Полный путь к папке
+
+        # Если папка изменилась, сбрасываем данные
+        if folder_name != self.folder_input.text():
+            self.reset_all_data()
+
 
         self.file_list.clear()  # Очищаем список перед загрузкой новых файлов
 
@@ -1614,7 +1854,6 @@ class SpectrumWindow(QMainWindow):
         msg_box.setWindowTitle("Информация")
         msg_box.setText(message)
         msg_box.exec()
-
 
     def show_warning_message(self, message):
         """Показывает предупреждение."""
