@@ -193,8 +193,15 @@ class SpectrumWindow(QMainWindow):
         # Поле для ввода имени папки с кнопкой выбора папки
         folder_layout = QHBoxLayout()
         self.folder_input = QLineEdit("098")  # По умолчанию папка "098"
-        self.folder_input.setPlaceholderText("Введите имя папки и нажмите ENTER")
-        self.folder_input.returnPressed.connect(self.load_xls_files)  # Обработка нажатия ENTER
+        self.folder_input.setReadOnly(True)  # Запрещаем ручное редактирование
+        self.folder_input.setStyleSheet("""
+                    QLineEdit {
+                        border: 1px solid #D3D9DE;
+                        border-radius: 5px;
+                        padding: 5px;
+                        background-color: white;
+                    }
+                """)  # Сохраняем стиль
         folder_layout.addWidget(self.folder_input)
 
         # Кнопка с иконкой папки для выбора папки
@@ -676,6 +683,7 @@ class SpectrumWindow(QMainWindow):
         folder = QFileDialog.getExistingDirectory(self, "Выберите папку", os.getcwd())
         if folder:
             self.folder_input.setText(os.path.basename(folder))
+            self.reset_all_data()
             self.load_xls_files()
 
     def clear_alfa_chart(self):
@@ -881,6 +889,96 @@ class SpectrumWindow(QMainWindow):
             print(f"Ошибка при сохранении отчёта: {str(e)}")
             return
 
+    def reset_all_data(self):
+        """Сбрасывает все данные до начального состояния, как при запуске приложения."""
+        # Очистка данных Alfa chart
+        self.chart.removeAllSeries()  # Удаляем все серии из графика Alfa
+        self.series = QLineSeries()  # Создаем новую пустую серию
+        self.series.setName("Импульсы")
+        self.series.setPen(QColor("#A3BFFA"))
+        self.chart.addSeries(self.series)
+        self.series.attachAxis(self.axis_x)
+        self.series.attachAxis(self.axis_y)
+        self.axis_y.setRange(0, 1)  # Сбрасываем диапазон оси Y
+
+        # Очистка словарей и массивов Alfa
+        self.alfa_series_dict.clear()
+        self.alfa_checkboxes.clear()
+        self.used_alfa_colors.clear()
+        self.alfa_data_arrays.clear()
+        self.first_impulse_values.clear()
+        self.p90_series.clear()
+        self.peak_points.clear()
+        if hasattr(self, 'original_alfa_series'):
+            self.original_alfa_series.clear()
+
+        # Очистка чекбоксов Alfa
+        while self.alfa_checkboxes_layout.count():
+            item = self.alfa_checkboxes_layout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
+        # Очистка данных Beta chart
+        self.beta_chart.removeAllSeries()
+        self.beta_series = QLineSeries()
+        self.beta_series.setName("Beta данные")
+        self.beta_chart.addSeries(self.beta_series)
+        self.beta_series.attachAxis(self.beta_axis_x)
+        self.beta_series.attachAxis(self.beta_axis_y)
+        self.beta_axis_y.setRange(0, 1)
+
+        # Очистка словарей и массивов Beta
+        self.beta_series_dict.clear()
+        self.beta_checkboxes.clear()
+        self.used_beta_colors.clear()
+        if hasattr(self, 'original_beta_series'):
+            self.original_beta_series.clear()
+        if hasattr(self, 'cs137_peak_points'):
+            self.cs137_peak_points.clear()
+        if hasattr(self, 'cs137_peak_coords'):
+            self.cs137_peak_coords.clear()
+
+        # Очистка чекбоксов Beta
+        while self.checkboxes_layout.count():
+            item = self.checkboxes_layout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
+        # Очистка массивов данных
+        self.fon_data = []
+        self.am241_data = []
+        self.c14_data = []
+        self.cs137_data = []
+        self.sry90_data = []
+        self.rad_data = []
+
+        # Сброс флагов и калибровочных данных
+        self.fon_processed = False
+        self.calibration_performed = False
+        if hasattr(self, 'calibration_coefficients'):
+            delattr(self, 'calibration_coefficients')
+        if hasattr(self, 'beta_calibration_coefficients'):
+            delattr(self, 'beta_calibration_coefficients')
+        if hasattr(self, 'p_values'):
+            delattr(self, 'p_values')
+        if hasattr(self, 'ra_value'):
+            delattr(self, 'ra_value')
+        if hasattr(self, 'k1p9_value'):
+            delattr(self, 'k1p9_value')
+        if hasattr(self, 'k1c0'):
+            delattr(self, 'k1c0')
+
+        # Обновление таблицы калибровки
+        self.update_calibration_table()
+
+        # Сброс состояния логарифмических чекбоксов
+        self.log_checkbox.setChecked(False)
+        self.beta_log_checkbox.setChecked(False)
+
+        # Обновление интерфейса
+        self.chart_view.update()
+        self.beta_chart_view.update()
+
     ##########################################################################
     # Методы для работы с файлами и контекстным меню
     ##########################################################################
@@ -951,6 +1049,11 @@ class SpectrumWindow(QMainWindow):
         """Загружает список файлов .xls и .xlsx из указанной папки."""
         folder_name = self.folder_input.text()  # Получаем имя папки из поля ввода
         folder_path = os.path.join(os.getcwd(), folder_name)  # Полный путь к папке
+
+        # Если папка изменилась, сбрасываем данные
+        if folder_name != self.folder_input.text():
+            self.reset_all_data()
+
 
         self.file_list.clear()  # Очищаем список перед загрузкой новых файлов
 
@@ -1782,7 +1885,6 @@ class SpectrumWindow(QMainWindow):
         msg_box.setWindowTitle("Информация")
         msg_box.setText(message)
         msg_box.exec()
-
 
     def show_warning_message(self, message):
         """Показывает предупреждение."""
