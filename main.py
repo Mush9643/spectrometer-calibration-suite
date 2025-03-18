@@ -4,7 +4,8 @@ from scipy.signal import find_peaks, savgol_filter
 import numpy as np
 from PyQt6.QtCharts import QChart, QLineSeries, QValueAxis, QChartView, QLogValueAxis, QAbstractSeries, QScatterSeries
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QMessageBox, QDialog, \
-    QSplashScreen, QCheckBox, QLineEdit, QTabWidget, QListWidgetItem, QListWidget, QMenu, QHBoxLayout, QFileDialog
+    QSplashScreen, QCheckBox, QLineEdit, QTabWidget, QListWidgetItem, QListWidget, QMenu, QHBoxLayout, QFileDialog, \
+    QTableWidgetItem, QTableWidget, QHeaderView
 from PyQt6.QtGui import QPixmap, QIcon, QPainter, QDesktopServices, QColor, QFont
 from PyQt6.QtCore import Qt, QTimer, QUrl
 from modbus import ModbusClient  # Импортируем ModbusClient из файла modbus.py
@@ -502,6 +503,173 @@ class SpectrumWindow(QMainWindow):
         report_layout.addStretch()  # Добавляем растяжку снизу
 
         self.tab3.setLayout(report_layout)
+
+        # =========================================================================
+        # Блок 7: Создание вкладки "Калибровка"
+        # =========================================================================
+        self.tab4 = QWidget()
+        self.tabs.addTab(self.tab4, "Калибровка")
+
+        # Основная компоновка вкладки
+        calibration_layout = QVBoxLayout()
+
+        # Создаем таблицу для отображения параметров
+        self.calibration_table = QTableWidget()
+        self.calibration_table.setColumnCount(2)
+        self.calibration_table.setHorizontalHeaderLabels(["Параметр", "Значение"])
+
+        # Настраиваем стиль таблицы
+        self.calibration_table.setStyleSheet("""
+                    QTableWidget {
+                        background-color: #F8FAFC;
+                        border: 1px solid #D3D9DE;
+                        border-radius: 5px;
+                    }
+                    QHeaderView::section {
+                        background-color: #E8ECEF;
+                        padding: 5px;
+                        border: 1px solid #D3D9DE;
+                        font-weight: bold;
+                    }
+                    QTableWidget::item {
+                        padding: 5px;
+                    }
+                """)
+
+        # Растягиваем колонки по содержимому
+        self.calibration_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+
+        # Добавляем таблицу в компоновку
+        calibration_layout.addWidget(self.calibration_table)
+
+        # Кнопка обновления данных
+        self.refresh_button = QPushButton("Обновить данные")
+        self.refresh_button.setObjectName("refreshButton")
+        self.refresh_button.setStyleSheet("""
+                    QPushButton#refreshButton {
+                        background-color: #D1E0FF;
+                        color: #2D3748;
+                        border-radius: 5px;
+                        padding: 5px;
+                        max-width: 150px;
+                    }
+                    QPushButton#refreshButton:hover {
+                        background-color: #B3C9FF;
+                    }
+                    QPushButton#refreshButton:pressed {
+                        background-color: #A3BFFA;
+                    }
+                """)
+        self.refresh_button.clicked.connect(self.update_calibration_table)
+
+        # Добавляем кнопку в компоновку с выравниванием по центру
+        button_layout = QHBoxLayout()
+        button_layout.addStretch()
+        button_layout.addWidget(self.refresh_button)
+        button_layout.addStretch()
+
+        calibration_layout.addLayout(button_layout)
+
+        self.tab4.setLayout(calibration_layout)
+
+        # Первоначальное заполнение таблицы
+        self.update_calibration_table()
+
+    def update_calibration_table(self):
+        """Обновляет таблицу с параметрами калибровки"""
+        # Список параметров и их значений (аналогично generate_report)
+        parameters = []
+
+        # folder_name
+        parameters.append(("Имя папки", self.folder_input.text()))
+
+        # aRa и bRa (Alfa)
+        if hasattr(self, 'calibration_coefficients') and self.calibration_coefficients:
+            aRa, bRa = self.calibration_coefficients
+            parameters.append(("a (Alfa)", f"{aRa:.3f}"))
+            parameters.append(("b (Alfa)", f"{bRa:.3f}"))
+        else:
+            parameters.append(("a (Alfa)", "Отсутствует"))
+            parameters.append(("b (Alfa)", "Отсутствует"))
+
+        # Значения P()
+        p_names = [
+            "НУД α, № канала", "ВУД ROI 3, № канала", "НУД ROI 2, № канала",
+            "НУД ROI 6, № канала", "НУД ROI 4, № канала", "НУД ROI 5, № канала"
+        ]
+        if hasattr(self, 'p_values') and self.p_values:
+            p_values_list = list(self.p_values.items())
+            for i in range(6):
+                if i < len(p_values_list):
+                    energy, p_value = p_values_list[i]
+                    parameters.append((f"{p_names[i]} ({energy})", f"{p_value}"))
+                else:
+                    parameters.append((p_names[i], "Данные отсутствуют"))
+        else:
+            for name in p_names:
+                parameters.append((name, "Отсутствует"))
+
+        # K(Po218)
+        if hasattr(self, 'ra_value') and self.ra_value is not None:
+            parameters.append(("K(Po218)", f"{self.ra_value:.3f}"))
+        else:
+            parameters.append(("K(Po218)", "Отсутствует"))
+
+        # k1p9
+        if hasattr(self, 'k1p9_value') and self.k1p9_value is not None:
+            parameters.append(("k1p9", f"{self.k1p9_value:.3f}"))
+        else:
+            parameters.append(("k1p9", "Отсутствует"))
+
+        # Пик Am241
+        if hasattr(self, 'peak_points') and self.peak_points:
+            for series_name, peak in self.peak_points.items():
+                if "Am241" in series_name and peak and peak.points():
+                    am241_x = peak.points()[0].x()
+                    parameters.append(("Пик Am241", f"{am241_x:.3f}"))
+                    break
+            else:
+                parameters.append(("Пик Am241", "Не найден"))
+        else:
+            parameters.append(("Пик Am241", "Отсутствует"))
+
+        # НУД β и ВУД β
+        parameters.append(("НУД β", f"{NUD_b:.3f}"))
+        parameters.append(("ВУД β", f"{VUD_b:.3f}"))
+
+        # k1c0
+        if hasattr(self, 'k1c0') and self.k1c0 is not None:
+            parameters.append(("k1c0", f"{self.k1c0:.3f}"))
+        else:
+            parameters.append(("k1c0", "Отсутствует"))
+
+        # AB и BB (Beta)
+        if hasattr(self, 'beta_calibration_coefficients') and self.beta_calibration_coefficients:
+            intercept, slope = self.beta_calibration_coefficients
+            parameters.append(("a (Beta)", f"{intercept:.3f}"))
+            parameters.append(("b (Beta)", f"{slope:.3f}"))
+        else:
+            parameters.append(("a (Beta)", "Отсутствует"))
+            parameters.append(("b (Beta)", "Отсутствует"))
+
+        # Устанавливаем количество строк в таблице
+        self.calibration_table.setRowCount(len(parameters))
+
+        # Заполняем таблицу
+        for row, (param, value) in enumerate(parameters):
+            param_item = QTableWidgetItem(param)
+            value_item = QTableWidgetItem(value)
+
+            # Выравнивание по центру
+            param_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            value_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+
+            # Запрещаем редактирование
+            param_item.setFlags(param_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+            value_item.setFlags(value_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+
+            self.calibration_table.setItem(row, 0, param_item)
+            self.calibration_table.setItem(row, 1, value_item)
 
     def select_folder(self):
         """Открывает диалог выбора папки и загружает файлы."""
