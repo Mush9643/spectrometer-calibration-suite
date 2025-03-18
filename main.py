@@ -470,62 +470,14 @@ class SpectrumWindow(QMainWindow):
         # =========================================================================
         # Блок 6: Создание вкладки "Report"
         # =========================================================================
-        # Третья вкладка (Report)
-        self.tab3 = QWidget()
-        self.tabs.addTab(self.tab3, "Report")
-
-        # Создание компоновки для вкладки Report
-        report_layout = QVBoxLayout()
-
-        # Создание большой кнопки "Создание отчёта"
-        self.report_button = QPushButton("Создание отчёта")
-        self.report_button.setObjectName("reportButton")
-
-        # Установка стилей для кнопки
-        self.report_button.setStyleSheet("""
-            QPushButton#reportButton {
-                background-color: #D4A5A5; /* Пастельный розовый оттенок */
-                color: #2D3748; /* Тёмно-серый текст */
-                border-radius: 10px;
-                padding: 15px;
-                font-size: 18px;
-                font-weight: bold;
-                min-height: 100px;
-                min-width: 300px;
-            }
-            QPushButton#reportButton:hover {
-                background-color: #C68B8B; /* Более насыщенный оттенок при наведении */
-            }
-            QPushButton#reportButton:pressed {
-                background-color: #B97171; /* Ещё более насыщенный при нажатии */
-            }
-        """)
-
-        # Подключение метода для обработки нажатия кнопки (пока заглушка)
-        self.report_button.clicked.connect(self.generate_report)
-
-        # Центрирование кнопки
-        report_layout.addStretch()  # Добавляем растяжку сверху
-        report_layout.addWidget(self.report_button, alignment=Qt.AlignmentFlag.AlignCenter)
-        report_layout.addStretch()  # Добавляем растяжку снизу
-
-        self.tab3.setLayout(report_layout)
-
-        # =========================================================================
-        # Блок 7: Создание вкладки "Калибровка"
-        # =========================================================================
         self.tab4 = QWidget()
-        self.tabs.addTab(self.tab4, "Калибровка")
+        self.tabs.addTab(self.tab4, "Report")
 
-        # Основная компоновка вкладки
         calibration_layout = QVBoxLayout()
 
-        # Создаем таблицу для отображения параметров
         self.calibration_table = QTableWidget()
         self.calibration_table.setColumnCount(2)
         self.calibration_table.setHorizontalHeaderLabels(["Параметр", "Значение"])
-
-        # Настраиваем стиль таблицы
         self.calibration_table.setStyleSheet("""
                     QTableWidget {
                         background-color: #F8FAFC;
@@ -542,14 +494,14 @@ class SpectrumWindow(QMainWindow):
                         padding: 5px;
                     }
                 """)
-
-        # Растягиваем колонки по содержимому
         self.calibration_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-
-        # Добавляем таблицу в компоновку
         calibration_layout.addWidget(self.calibration_table)
 
-        # Кнопка обновления данных
+        # Горизонтальный layout для кнопок
+        buttons_layout = QHBoxLayout()
+        buttons_layout.addStretch()
+
+        # Кнопка "Обновить данные"
         self.refresh_button = QPushButton("Обновить данные")
         self.refresh_button.setObjectName("refreshButton")
         self.refresh_button.setStyleSheet("""
@@ -568,18 +520,35 @@ class SpectrumWindow(QMainWindow):
                     }
                 """)
         self.refresh_button.clicked.connect(self.update_calibration_table)
+        buttons_layout.addWidget(self.refresh_button)
 
-        # Добавляем кнопку в компоновку с выравниванием по центру
-        button_layout = QHBoxLayout()
-        button_layout.addStretch()
-        button_layout.addWidget(self.refresh_button)
-        button_layout.addStretch()
+        # Кнопка "Создание отчёта" (перенесена из "Report")
+        self.report_button = QPushButton("Создание отчёта")
+        self.report_button.setObjectName("reportButton")
+        self.report_button.setStyleSheet("""
+                    QPushButton#reportButton {
+                        background-color: #D4A5A5;
+                        color: #2D3748;
+                        border-radius: 5px;
+                        padding: 5px;
+                        max-width: 150px;
+                    }
+                    QPushButton#reportButton:hover {
+                        background-color: #C68B8B;
+                    }
+                    QPushButton#reportButton:pressed {
+                        background-color: #B97171;
+                    }
+                """)
+        self.report_button.clicked.connect(self.generate_report)
+        buttons_layout.addWidget(self.report_button)
 
-        calibration_layout.addLayout(button_layout)
+        buttons_layout.addStretch()
+
+        calibration_layout.addLayout(buttons_layout)
 
         self.tab4.setLayout(calibration_layout)
 
-        # Первоначальное заполнение таблицы
         self.update_calibration_table()
 
     def update_calibration_table(self):
