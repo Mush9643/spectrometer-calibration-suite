@@ -8,21 +8,6 @@ from Beta_math import update_calibration_button_state
 NUD_b = 5  # Константа для NUD_b
 VUD_b = 200  # Константа для VUD_b
 
-def write_to_result_file(value_name, value):
-    """
-    Записывает результат в файл Result.txt. Если файла нет, создаёт его и добавляет подпись.
-    """
-    file_path = "Result.txt"
-    file_exists = os.path.exists(file_path)
-
-    with open(file_path, 'a', encoding='utf-8') as f:
-        # Если файл создаётся впервые, добавляем подпись
-        if not file_exists:
-            f.write("Скорости счёта в бета канале от различных изотопов\n")
-        # Записываем значение
-        f.write(f"{value_name}: {value:.3f}\n")
-
-
 def calculate_fon_sum(fon_data, nud_b=5, vud_b=200):
     """
     Вычисляет сумму по формуле fon_И = Σ (fon_i / fon_0) для i от NUD_b до VUD_b.
@@ -43,8 +28,6 @@ def calculate_fon_sum(fon_data, nud_b=5, vud_b=200):
     fon_sum = sum(fon_data[i] / fon_0 for i in range(nud_b, vud_b + 1))
     print(f"Вычисленное значение fon_И (сумма от NUD_b={nud_b} до VUD_b={vud_b}): {fon_sum:.3f}")
 
-    # Записываем результат в файл
-    write_to_result_file("fon_И", fon_sum)
 
     return fon_sum
 
@@ -66,9 +49,6 @@ def calculate_activity_am241(am241_data, fon_data, nud_b=5, vud_b=200):
 
     activity = sum((am241_data[i] / am241_0 - fon_data[i] / fon_0) for i in range(nud_b, vud_b + 1))
     print(f"Активность A_am (от NUD_b={nud_b} до VUD_b={vud_b}): {activity:.3f}")
-
-    # Записываем результат в файл
-    write_to_result_file("A_am", activity)
 
     return activity
 
@@ -122,9 +102,6 @@ def calculate_activity_c14(parent, c14_data, fon_data, nud_b=5, vud_b=200):
     activity = sum((c14_data[i] / c14_0 - fon_data[i] / fon_0) for i in range(nud_b, vud_b + 1))
     print(f"Активность A_c14 = {activity:.3f}")
 
-    # Записываем результат в файл
-    write_to_result_file("A_c14", activity)
-
     # Вычисление массива c14s для i от 0 до 100
     if activity == 0:
         print("Предупреждение: A_c14 равно 0. Деление на 0 невозможно, c14s устанавливается в 0.")
@@ -144,8 +121,6 @@ def calculate_activity_c14(parent, c14_data, fon_data, nud_b=5, vud_b=200):
     max_c14_value = max(c14_data)
     max_c14_index = c14_data.index(max_c14_value)
     print(f"Максимальный элемент в массиве c14_data: {max_c14_value:.3f}, индекс: {max_c14_index}")
-    write_to_result_file("Max_c14_value", max_c14_value)
-    write_to_result_file("Max_c14_index", max_c14_index)
 
     # Поиск первого элемента в c14s, меньшего 0.005, в диапазоне от max_c14_index до 100
     threshold = 0.005
@@ -157,12 +132,8 @@ def calculate_activity_c14(parent, c14_data, fon_data, nud_b=5, vud_b=200):
 
     if found_index != -1:
         print(f"Первый элемент в c14s, меньший {threshold}, найден на индексе {found_index}: {c14s[found_index]:.6f}")
-        write_to_result_file("c14s_threshold_index", found_index)
-        write_to_result_file("c14s_threshold_value", c14s[found_index])
     else:
         print(f"Элемент в c14s, меньший {threshold}, не найден в диапазоне от {max_c14_index} до 100.")
-        write_to_result_file("c14s_threshold_index", "Not found")
-        write_to_result_file("c14s_threshold_value", "Not found")
 
     # Формирование и сохранение массивов Ben и Bch, если условия выполнены
     if hasattr(parent, 'cs137_peak_coords') and parent.cs137_peak_coords and found_index != -1:
@@ -181,8 +152,6 @@ def calculate_activity_c14(parent, c14_data, fon_data, nud_b=5, vud_b=200):
         AB, BB = calculate_regression_coefficients(parent)  # AB — intercept (b), BB — slope (a)
         if AB is not None and BB is not None:
             print(f"Коэффициенты линейной регрессии: AB = {AB:.6f}, BB = {BB:.6f}")
-            write_to_result_file("regression_AB", AB)
-            write_to_result_file("regression_BB", BB)
             parent.beta_calibration_coefficients = (AB, BB)
             # Сохраняем коэффициенты в parent для дальнейшего использования
             parent.calibration_coefficients = (AB, BB)
@@ -191,7 +160,6 @@ def calculate_activity_c14(parent, c14_data, fon_data, nud_b=5, vud_b=200):
             i = 12
             Enewb_i = AB + BB * i
             print(f"Enewb_{i} = {Enewb_i:.3f}")
-            write_to_result_file(f"Enewb_{i}", Enewb_i)
 
             # Вычисляем pb(e) для e = 53.818 и e = 3000
             if BB == 0:
@@ -201,7 +169,6 @@ def calculate_activity_c14(parent, c14_data, fon_data, nud_b=5, vud_b=200):
                 for e in e_values:
                     pb_e = (e - AB) / BB
                     print(f"pb({e}) = {pb_e:.3f}")
-                    write_to_result_file(f"pb({e})", pb_e)
 
     # Убедимся, что A_sr вычислен (если данные для SrY90 доступны)
     if hasattr(parent, 'sry90_data') and parent.sry90_data:
@@ -220,8 +187,6 @@ def calculate_activity_c14(parent, c14_data, fon_data, nud_b=5, vud_b=200):
         else:
             k1c0 = (A_sr / 365) ** (-1)
             print(f"Значение k1c0: {k1c0:.3f}")
-            write_to_result_file("k1c0", k1c0)
-            # Сохраняем k1c0 в parent для дальнейшего использования
             parent.k1c0 = k1c0
     else:
         print("Ошибка: A_sr отсутствует, вычисление k1c0 невозможно.")
@@ -246,9 +211,6 @@ def calculate_activity_cs137(cs137_data, fon_data, nud_b=5, vud_b=200):
     activity = sum((cs137_data[i] / cs137_0 - fon_data[i] / fon_0) for i in range(nud_b, vud_b + 1))
     print(f"Активность A_cs137 (от NUD_b={nud_b} до VUD_b={vud_b}): {activity:.3f}")
 
-    # Записываем результат в файл
-    write_to_result_file("A_cs137", activity)
-
     return activity
 
 
@@ -268,9 +230,6 @@ def calculate_activity_sry90(sry90_data, fon_data, nud_b=5, vud_b=200):
 
     activity = sum((sry90_data[i] / sry90_0 - fon_data[i] / fon_0) for i in range(nud_b, vud_b + 1))
     print(f"Активность A_sr (от NUD_b={nud_b} до VUD_b={vud_b}): {activity:.3f}")
-
-    # Записываем результат в файл
-    write_to_result_file("A_sr", activity)
 
     return activity
 

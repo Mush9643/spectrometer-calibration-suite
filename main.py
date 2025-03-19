@@ -193,7 +193,7 @@ class SpectrumWindow(QMainWindow):
 
         # Поле для ввода имени папки с кнопкой выбора папки
         folder_layout = QHBoxLayout()
-        self.folder_input = QLineEdit("098")  # По умолчанию папка "098"
+        self.folder_input = QLineEdit("")  # По умолчанию папка "098"
         self.folder_input.setReadOnly(True)  # Запрещаем ручное редактирование
         self.folder_input.setStyleSheet("""
                     QLineEdit {
@@ -357,16 +357,15 @@ class SpectrumWindow(QMainWindow):
         controls_layout.addWidget(self.clear_button)
 
         layout.addLayout(controls_layout)
-
         # Добавляем виджет с чекбоксами
         layout.addWidget(self.alfa_checkboxes_widget)
 
-        layout.addLayout(controls_layout)
+        self.tab1.setLayout(layout)
 
         # Добавляем кнопку "Калибровка" после создания chart_view
         add_calibration_button(self)
 
-        self.tab1.setLayout(layout)
+
 
         # =========================================================================
         # Блок 5: Создание вкладки "Beta chart"
@@ -554,8 +553,6 @@ class SpectrumWindow(QMainWindow):
 
         add_recalculate_button(self)
         self.use_three_peaks = True
-
-
 
     def update_calibration_table(self):
         """Обновляет таблицу с параметрами калибровки"""
@@ -967,7 +964,7 @@ class SpectrumWindow(QMainWindow):
         # Заданная последовательность ключевых слов для Beta
         beta_keywords = ["фона", "SrY90", "Rad", "Cs137", "C14", "Am241"]
         # Заданная последовательность ключевых слов для Alfa
-        alfa_keywords = ["new Rn", "Am241"]
+        alfa_keywords = ["Rn", "Am241"]
 
         # Создаём списки файлов для Beta и Alfa, отсортированных по заданной последовательности
         beta_files_to_process = []
