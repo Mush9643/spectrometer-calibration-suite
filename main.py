@@ -12,7 +12,7 @@ from modbus import ModbusClient  # Импортируем ModbusClient из фа
 from settings_dialog import SettingsDialog  # Импортируем диалоговое окно настроек
 from spectrum_addition import SpectrumAddition
 import pandas as pd  # Для работы с Excel
-from math_utils import highlight_am241_peak
+from math_utils import highlight_am241_peak, add_recalculate_button
 from math_utils import highlight_rn_peaks
 from math_utils import add_calibration_button
 from Beta_math import add_beta_calibration_button
@@ -40,6 +40,7 @@ class SpectrumWindow(QMainWindow):
         super().__init__()
 
         # Применение стилей с постельными тонами
+
         self.setStyleSheet("""
             QMainWindow {
                 background-color: #F5F7FA; /* Очень светло-серый пастельный фон */
@@ -550,6 +551,11 @@ class SpectrumWindow(QMainWindow):
         self.tab4.setLayout(calibration_layout)
 
         self.update_calibration_table()
+
+        add_recalculate_button(self)
+        self.use_three_peaks = True
+
+
 
     def update_calibration_table(self):
         """Обновляет таблицу с параметрами калибровки"""

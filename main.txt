@@ -1315,18 +1315,26 @@ class SpectrumWindow(QMainWindow):
             self.chart.removeSeries(series)
         self.p90_series.clear()
 
-        # Координаты x для P90
-        p90_x_values = [221, 391, 523, 574, 589, 762]
+        # Используем значения из self.p_values, если они есть
+        if not hasattr(self, 'p_values') or not self.p_values:
+            print("Предупреждение: Значения P(e) не найдены. Используются значения по умолчанию.")
+
+        else:
+            p90_x_values = list(self.p_values.values())  # Используем рассчитанные значения
 
         # Находим максимальное значение y для установки высоты линий
         max_y = max((max((point.y() for point in series.points()), default=1)
                      for series in self.alfa_series_dict.values()), default=1000)
 
         # Создаем вертикальные линии для каждой координаты x
-        for x in p90_x_values:
+        for i, x in enumerate(p90_x_values):
             line_series = QLineSeries()
-            line_series.setName(f"P90 at x={x}")
-            line_series.setColor(QColor(255, 0, 0))  # Красный цвет
+            energy = list(self.p_values.keys())[i] if hasattr(self, 'p_values') else f"unknown_{x}"
+            line_series.setName(f"P({energy})")
+            pen = line_series.pen()
+            pen.setColor(QColor(255, 0, 0))  # Красный цвет
+            pen.setStyle(Qt.PenStyle.DashLine)  # Пунктирный стиль
+            line_series.setPen(pen)
             line_series.append(x, 0)  # Начало линии
             line_series.append(x, max_y * 1.1)  # Конец линии (с запасом выше максимума)
             self.chart.addSeries(line_series)
