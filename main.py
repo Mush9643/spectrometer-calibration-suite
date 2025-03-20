@@ -1386,11 +1386,10 @@ class SpectrumWindow(QMainWindow):
         self.alfa_checkboxes[file_name] = checkbox
 
         # Добавляем чекбокс в self.alfa_checkboxes_layout
-        #self.alfa_checkboxes_layout.addWidget(checkbox)
+        self.alfa_checkboxes_layout.addWidget(checkbox)
 
-        layout = self.tab1.layout()
-        if isinstance(layout, QVBoxLayout):
-            layout.addWidget(checkbox)
+        if not self.alfa_checkboxes_widget.isVisible():
+            self.alfa_checkboxes_widget.show()
 
         self.update_y_axis_range()
         self.highlight_p90_points()

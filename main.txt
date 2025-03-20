@@ -12,7 +12,7 @@ from modbus import ModbusClient  # Импортируем ModbusClient из фа
 from settings_dialog import SettingsDialog  # Импортируем диалоговое окно настроек
 from spectrum_addition import SpectrumAddition
 import pandas as pd  # Для работы с Excel
-from math_utils import highlight_am241_peak
+from math_utils import highlight_am241_peak, add_recalculate_button
 from math_utils import highlight_rn_peaks
 from math_utils import add_calibration_button
 from Beta_math import add_beta_calibration_button
@@ -40,6 +40,7 @@ class SpectrumWindow(QMainWindow):
         super().__init__()
 
         # Применение стилей с постельными тонами
+
         self.setStyleSheet("""
             QMainWindow {
                 background-color: #F5F7FA; /* Очень светло-серый пастельный фон */
@@ -192,7 +193,7 @@ class SpectrumWindow(QMainWindow):
 
         # Поле для ввода имени папки с кнопкой выбора папки
         folder_layout = QHBoxLayout()
-        self.folder_input = QLineEdit("098")  # По умолчанию папка "098"
+        self.folder_input = QLineEdit("")  # По умолчанию папка "098"
         self.folder_input.setReadOnly(True)  # Запрещаем ручное редактирование
         self.folder_input.setStyleSheet("""
                     QLineEdit {
@@ -240,11 +241,11 @@ class SpectrumWindow(QMainWindow):
         # =========================================================================
         # Первая вкладка
         self.tab1 = QWidget()
-        self.tabs.addTab(self.tab1, "Alfa chart")
+        self.tabs.addTab(self.tab1, "Alfa")
 
         # Создание графика для первой вкладки
         self.chart = QChart()
-        self.chart.setTitle("Спектр импульсов (0-1023)")
+        self.chart.setTitle("Alfa")
         # Устанавливаем шрифт для заголовка
         title_font = QFont()
         title_font.setPointSize(14)
@@ -356,27 +357,26 @@ class SpectrumWindow(QMainWindow):
         controls_layout.addWidget(self.clear_button)
 
         layout.addLayout(controls_layout)
-
         # Добавляем виджет с чекбоксами
         layout.addWidget(self.alfa_checkboxes_widget)
 
-        layout.addLayout(controls_layout)
+        self.tab1.setLayout(layout)
 
         # Добавляем кнопку "Калибровка" после создания chart_view
         add_calibration_button(self)
 
-        self.tab1.setLayout(layout)
+
 
         # =========================================================================
         # Блок 5: Создание вкладки "Beta chart"
         # =========================================================================
         # Вторая вкладка (Beta chart)
         self.tab2 = QWidget()
-        self.tabs.addTab(self.tab2, "Beta chart")
+        self.tabs.addTab(self.tab2, "Beta")
 
         # Создание графика для второй вкладки
         self.beta_chart = QChart()
-        self.beta_chart.setTitle("Beta chart")
+        self.beta_chart.setTitle("Beta")
         # Устанавливаем шрифт для заголовка, как в Alfa chart
         title_font = QFont()
         title_font.setPointSize(14)
@@ -550,6 +550,9 @@ class SpectrumWindow(QMainWindow):
         self.tab4.setLayout(calibration_layout)
 
         self.update_calibration_table()
+
+        add_recalculate_button(self)
+        self.use_three_peaks = True
 
     def update_calibration_table(self):
         """Обновляет таблицу с параметрами калибровки"""
@@ -961,7 +964,7 @@ class SpectrumWindow(QMainWindow):
         # Заданная последовательность ключевых слов для Beta
         beta_keywords = ["фона", "SrY90", "Rad", "Cs137", "C14", "Am241"]
         # Заданная последовательность ключевых слов для Alfa
-        alfa_keywords = ["new Rn", "Am241"]
+        alfa_keywords = ["Rn", "Am241"]
 
         # Создаём списки файлов для Beta и Alfa, отсортированных по заданной последовательности
         beta_files_to_process = []
