@@ -27,7 +27,6 @@ def add_beta_calibration_button(parent):
 
     update_calibration_button_state(parent)
 
-
 def update_calibration_button_state(parent):
     """
     Проверяет наличие графиков с "Am241" и "SrY90" в именах и обновляет состояние кнопки.
@@ -52,6 +51,52 @@ def update_calibration_button_state(parent):
     else:
         parent.beta_calibration_button.setToolTip("Готово к калибровке")
 
+def add_beta_calibration_button(parent):
+    """
+    Добавляет кнопку 'Калибровка' на вкладку Beta chart и управляет её состоянием.
+
+    Args:
+        parent: Экземпляр SpectrumWindow, к которому добавляется кнопка.
+    """
+    calibration_button = QPushButton("Калибровка")
+    calibration_button.clicked.connect(lambda: show_calibration_dialog(parent))
+    calibration_button.setEnabled(False)
+    parent.beta_calibration_button = calibration_button
+
+    beta_layout = parent.tab2.layout()
+    if beta_layout is None:
+        beta_layout = QVBoxLayout()
+        parent.tab2.setLayout(beta_layout)
+    if isinstance(beta_layout, QVBoxLayout):
+        beta_layout.addWidget(calibration_button)
+    else:
+        raise ValueError("Layout вкладки Beta не является QVBoxLayout")
+
+    update_calibration_button_state(parent)
+
+def update_calibration_button_state(parent):
+    """
+    Проверяет наличие графиков с "Am241" и "SrY90" в именах и обновляет состояние кнопки.
+
+    Args:
+        parent: Экземпляр SpectrumWindow.
+    """
+    if not hasattr(parent, 'beta_calibration_button'):
+        return
+
+    series_names = [series.name() for series in parent.beta_series_dict.values()]
+    has_am241 = any("Am241" in name for name in series_names)
+    has_sry90 = any("SrY90" in name for name in series_names)
+
+    parent.beta_calibration_button.setEnabled(has_am241 and has_sry90)
+    if not has_am241 and not has_sry90:
+        parent.beta_calibration_button.setToolTip("Требуются графики Am241 и SrY90")
+    elif not has_am241:
+        parent.beta_calibration_button.setToolTip("Требуется график Am241")
+    elif not has_sry90:
+        parent.beta_calibration_button.setToolTip("Требуется график SrY90")
+    else:
+        parent.beta_calibration_button.setToolTip("Готово к калибровке")
 
 def show_calibration_dialog(parent):
     dialog = QDialog(parent)
@@ -78,7 +123,7 @@ def show_calibration_dialog(parent):
                     max_y_value = max(max_y_value, normalized_y)
             calibration_chart.addSeries(calibration_series)
 
-    # Отрисовка красных прямых
+    # Отрисовка красных прямых только если beta_p2700 определён
     p2700 = getattr(parent, 'beta_p2700', None)
     if p2700 is not None and p2700 <= 500:  # Убеждаемся, что P(2700) в пределах графика
         # Вертикальная линия от x = 200
@@ -96,6 +141,8 @@ def show_calibration_dialog(parent):
         line_p2700.append(QPointF(p2700, 1))  # Начало
         line_p2700.append(QPointF(p2700, max_y_value * 1.1))  # До верхней границы
         calibration_chart.addSeries(line_p2700)
+    else:
+        print("Предупреждение: P(2700) не рассчитан или выходит за пределы графика (500). Прямые не отображаются.")
 
     axis_x = QValueAxis()
     axis_x.setTitleText("Канал")
@@ -146,6 +193,8 @@ def show_calibration_dialog(parent):
         info_layout.addRow("A_sr:", QLabel(f"{parent.sry90_activity:.3f}"))
     if p2700 is not None:
         info_layout.addRow("P(2700):", QLabel(f"{p2700:.2f}"))
+    else:
+        info_layout.addRow("P(2700):", QLabel("Не рассчитан"))
 
     button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
     button_box.accepted.connect(dialog.accept)
