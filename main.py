@@ -241,11 +241,11 @@ class SpectrumWindow(QMainWindow):
         # =========================================================================
         # Первая вкладка
         self.tab1 = QWidget()
-        self.tabs.addTab(self.tab1, "Alfa chart")
+        self.tabs.addTab(self.tab1, "Alfa")
 
         # Создание графика для первой вкладки
         self.chart = QChart()
-        self.chart.setTitle("Спектр импульсов (0-1023)")
+        self.chart.setTitle("Alfa")
         # Устанавливаем шрифт для заголовка
         title_font = QFont()
         title_font.setPointSize(14)
@@ -372,11 +372,11 @@ class SpectrumWindow(QMainWindow):
         # =========================================================================
         # Вторая вкладка (Beta chart)
         self.tab2 = QWidget()
-        self.tabs.addTab(self.tab2, "Beta chart")
+        self.tabs.addTab(self.tab2, "Beta")
 
         # Создание графика для второй вкладки
         self.beta_chart = QChart()
-        self.beta_chart.setTitle("Beta chart")
+        self.beta_chart.setTitle("Beta")
         # Устанавливаем шрифт для заголовка, как в Alfa chart
         title_font = QFont()
         title_font.setPointSize(14)
