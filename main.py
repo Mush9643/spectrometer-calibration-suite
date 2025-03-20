@@ -551,7 +551,7 @@ class SpectrumWindow(QMainWindow):
 
         # Добавляем кнопку калибровки
         add_beta_calibration_button(self)
-
+        self.add_beta_reset_zoom_button()
         # =========================================================================
         # Блок 6: Создание вкладки "Report"
         # =========================================================================
@@ -638,6 +638,40 @@ class SpectrumWindow(QMainWindow):
 
         add_recalculate_button(self)
         self.use_three_peaks = True
+
+    def reset_beta_zoom(self):
+        """Сбрасывает масштаб графика Beta до исходного состояния."""
+        self.beta_axis_x.setRange(0, 100)
+        if self.beta_series_dict:
+            max_y = max(
+                max(series.points(), key=lambda p: p.y()).y()
+                for series in self.beta_series_dict.values()
+                if series.points()
+            )
+            self.beta_axis_y.setRange(0, max_y * 1.1)
+        else:
+            self.beta_axis_y.setRange(0, 1)
+        self.beta_chart_view.update()
+
+    def add_beta_reset_zoom_button(self):
+        """Добавляет кнопку сброса масштаба на вкладку Beta chart в beta_controls_layout."""
+        reset_button = QPushButton("Сбросить масштаб")
+        reset_button.clicked.connect(self.reset_beta_zoom)
+        main_layout = self.tab2.layout()
+        controls_layout = None
+        for i in range(main_layout.count()):
+            item = main_layout.itemAt(i)
+            if isinstance(item.layout(), QHBoxLayout):
+                controls_layout = item.layout()
+                break
+        if controls_layout:
+            controls_layout.addWidget(reset_button)
+        else:
+            new_layout = QHBoxLayout()
+            new_layout.addWidget(self.beta_log_checkbox if hasattr(self, 'beta_log_checkbox') else QWidget())
+            new_layout.addStretch()
+            new_layout.addWidget(reset_button)
+            main_layout.addLayout(new_layout)
 
     def reset_zoom(self):
         """Сбрасывает масштаб графика Alfa до исходного состояния."""
