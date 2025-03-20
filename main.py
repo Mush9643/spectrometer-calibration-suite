@@ -25,6 +25,95 @@ from openpyxl.styles import Font, Border, Side, PatternFill, Alignment
 import os
 
 ##########################################################################
+# Класс Зума
+##########################################################################
+
+class CustomChartView(QChartView):
+    def __init__(self, chart, parent=None):
+        super().__init__(chart, parent)
+        self.setRenderHint(QPainter.RenderHint.Antialiasing)
+        self._is_panning = False  # Флаг для режима перемещения
+        self._last_pos = None  # Последняя позиция мыши для расчета смещения
+
+    def wheelEvent(self, event):
+        """Обработка прокрутки колесика мыши для зума относительно центра графика."""
+        # Коэффициент масштабирования
+        factor = 1.05  # Увеличение/уменьшение на 5% за шаг
+        if event.angleDelta().y() < 0:
+            factor = 0.95
+
+        # Текущие диапазоны осей
+        x_axis = self.chart().axes(Qt.Orientation.Horizontal)[0]
+        y_axis = self.chart().axes(Qt.Orientation.Vertical)[0]
+        x_min, x_max = x_axis.min(), x_axis.max()
+        y_min, y_max = y_axis.min(), y_axis.max()
+
+        # Вычисляем новые диапазоны
+        new_x_range = (x_max - x_min) * factor
+        new_y_range = (y_max - y_min) * factor
+
+        # Ограничения на масштаб
+        if 10 < new_x_range < 2048:
+            # Находим центр текущего диапазона
+            x_center = (x_min + x_max) / 2
+            y_center = (y_min + y_max) / 2
+
+            # Новые границы относительно центра
+            x_half_range = new_x_range / 2
+            y_half_range = new_y_range / 2
+
+            new_x_min = x_center - x_half_range
+            new_x_max = x_center + x_half_range
+            new_y_min = y_center - y_half_range
+            new_y_max = y_center + y_half_range
+
+            # Применяем новые диапазоны
+            x_axis.setRange(new_x_min, new_x_max)
+            y_axis.setRange(new_y_min, new_y_max)
+
+        event.accept()
+
+    def mousePressEvent(self, event):
+        """Начало перемещения при нажатии левой кнопки."""
+        if event.button() == Qt.MouseButton.LeftButton and not self.rubberBandRect().isValid():
+            self._is_panning = True
+            self._last_pos = event.position().toPoint()
+            self.setCursor(Qt.CursorShape.ClosedHandCursor)  # Курсор "сжатая рука"
+        super().mousePressEvent(event)
+
+    def mouseMoveEvent(self, event):
+        """Перемещение графика при зажатой левой кнопке."""
+        if self._is_panning and self._last_pos is not None:
+            current_pos = event.position().toPoint()
+            delta = current_pos - self._last_pos
+
+            # Преобразование смещения пикселей в координаты графика
+            x_axis = self.chart().axes(Qt.Orientation.Horizontal)[0]
+            y_axis = self.chart().axes(Qt.Orientation.Vertical)[0]
+            x_range = x_axis.max() - x_axis.min()
+            y_range = y_axis.max() - y_axis.min()
+
+            # Масштабирование смещения относительно размеров viewport
+            dx = -delta.x() * x_range / self.viewport().width()
+            dy = delta.y() * y_range / self.viewport().height()  # Инверсия для Y (вверх = уменьшение)
+
+            # Обновление диапазонов осей
+            x_axis.setRange(x_axis.min() + dx, x_axis.max() + dx)
+            y_axis.setRange(y_axis.min() + dy, y_axis.max() + dy)
+
+            self._last_pos = current_pos
+            event.accept()
+        else:
+            super().mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        """Окончание перемещения."""
+        if event.button() == Qt.MouseButton.LeftButton:
+            self._is_panning = False
+            self.setCursor(Qt.CursorShape.ArrowCursor)  # Возвращаем стандартный курсор
+        super().mouseReleaseEvent(event)
+
+##########################################################################
 # Класс основного окна приложения
 ##########################################################################
 
@@ -297,10 +386,7 @@ class SpectrumWindow(QMainWindow):
         self.axis_x.setGridLineVisible(True)
         self.axis_y.setGridLineVisible(True)
 
-        self.chart_view = QChartView(self.chart)
-        self.chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
-        # Исправление: Включаем зум с правильным перечислением
-        self.chart_view.setRubberBand(QChartView.RubberBand.RectangleRubberBand)
+        self.chart_view = CustomChartView(self.chart)
 
         # Чекбокс для логарифмического масштаба
         self.log_checkbox = QCheckBox("Логарифмический масштаб")
@@ -364,7 +450,7 @@ class SpectrumWindow(QMainWindow):
 
         # Добавляем кнопку "Калибровка" после создания chart_view
         add_calibration_button(self)
-
+        self.add_reset_zoom_button()
 
 
         # =========================================================================
@@ -407,8 +493,7 @@ class SpectrumWindow(QMainWindow):
         self.beta_series.attachAxis(self.beta_axis_x)
         self.beta_series.attachAxis(self.beta_axis_y)
 
-        self.beta_chart_view = QChartView(self.beta_chart)
-        self.beta_chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
+        self.beta_chart_view = CustomChartView(self.beta_chart)
 
         # Чекбокс для логарифмического масштаба
         self.beta_log_checkbox = QCheckBox("Логарифмический масштаб")
@@ -553,6 +638,49 @@ class SpectrumWindow(QMainWindow):
 
         add_recalculate_button(self)
         self.use_three_peaks = True
+
+    def reset_zoom(self):
+        """Сбрасывает масштаб графика Alfa до исходного состояния."""
+        # Устанавливаем исходный диапазон по X (обычно 0-1023 для каналов)
+        self.axis_x.setRange(0, 1023)
+
+        # Восстанавливаем диапазон по Y на основе данных
+        if self.alfa_series_dict:
+            max_y = max(
+                max(series.points(), key=lambda p: p.y()).y()
+                for series in self.alfa_series_dict.values()
+                if series.points()
+            )
+            self.axis_y.setRange(0, max_y * 1.1)  # Добавляем 10% сверху для видимости
+        else:
+            self.axis_y.setRange(0, 1)  # Если данных нет, минимальный диапазон
+
+        # Обновляем график
+        self.chart_view.update()
+
+    def add_reset_zoom_button(self):
+        """Добавляет кнопку сброса масштаба на вкладку Alfa chart в controls_layout."""
+        reset_button = QPushButton("Сбросить масштаб")
+        reset_button.clicked.connect(self.reset_zoom)
+
+        # Ищем controls_layout в компоновке tab1
+        main_layout = self.tab1.layout()
+        controls_layout = None
+        for i in range(main_layout.count()):
+            item = main_layout.itemAt(i)
+            if isinstance(item.layout(), QHBoxLayout):
+                controls_layout = item.layout()
+                break
+
+        if controls_layout:
+            controls_layout.addWidget(reset_button)
+        else:
+            # Если controls_layout не найден, создаем новый
+            new_layout = QHBoxLayout()
+            new_layout.addWidget(self.log_checkbox if hasattr(self, 'log_checkbox') else QWidget())
+            new_layout.addStretch()
+            new_layout.addWidget(reset_button)
+            main_layout.addLayout(new_layout)
 
     def update_calibration_table(self):
         """Обновляет таблицу с параметрами калибровки"""
