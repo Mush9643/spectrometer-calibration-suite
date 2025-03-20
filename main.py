@@ -1,11 +1,13 @@
 import sys
-from PyQt6 import QtCore
+from datetime import datetime
+from pathlib import Path
+from openpyxl import load_workbook
 from scipy.signal import find_peaks, savgol_filter
 import numpy as np
 from PyQt6.QtCharts import QChart, QLineSeries, QValueAxis, QChartView, QLogValueAxis, QAbstractSeries, QScatterSeries
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QMessageBox, QDialog, \
     QSplashScreen, QCheckBox, QLineEdit, QTabWidget, QListWidgetItem, QListWidget, QMenu, QHBoxLayout, QFileDialog, \
-    QTableWidgetItem, QTableWidget, QHeaderView
+    QTableWidgetItem, QTableWidget, QHeaderView, QLabel
 from PyQt6.QtGui import QPixmap, QIcon, QPainter, QDesktopServices, QColor, QFont
 from PyQt6.QtCore import Qt, QTimer, QUrl
 from modbus import ModbusClient  # Импортируем ModbusClient из файла modbus.py
@@ -638,6 +640,235 @@ class SpectrumWindow(QMainWindow):
 
         add_recalculate_button(self)
         self.use_three_peaks = True
+
+        # =========================================================================
+        # Блок 7: Создание вкладки "Combined Report"
+        # =========================================================================
+        self.tab3 = QWidget()
+        self.tabs.addTab(self.tab3, "Combined Report")
+
+        self.reports_list = QListWidget()
+        self.reports_list.setStyleSheet("""
+            QListWidget {
+                border: 1px solid #D3D9DE;
+                border-radius: 5px;
+                background-color: #FFFFFF;
+                padding: 5px;
+                font-size: 12px;
+                color: #2D3748;
+            }
+            QListWidget::item {
+                padding: 5px;
+            }
+            QListWidget::item:selected {
+                background-color: #A3BFFA;
+                color: #FFFFFF;
+            }
+        """)
+
+        self.reports_status_label = QLabel("Проверка наличия папки 'Отчёты'...")
+        self.reports_status_label.setStyleSheet("""
+            QLabel {
+                font-size: 12px;
+                color: #4A5568;
+                padding: 5px;
+            }
+        """)
+
+        self.assembly_report_button = QPushButton("Сборочный отчёт")
+        self.assembly_report_button.clicked.connect(self.create_assembly_report)
+        self.assembly_report_button.setFixedWidth(200)
+        self.assembly_report_button.setStyleSheet("""
+            QPushButton {
+                background-color: #A3BFFA;
+                color: #2D3748;
+                border: none;
+                border-radius: 5px;
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+            QPushButton:hover {
+                background-color: #B3C9FF;
+            }
+            QPushButton:pressed {
+                background-color: #8B9FFE;
+            }
+        """)
+
+        status_layout = QHBoxLayout()
+        status_layout.addWidget(self.reports_status_label)
+
+        button_layout = QHBoxLayout()
+        button_layout.addStretch()
+        button_layout.addWidget(self.assembly_report_button)
+        button_layout.addStretch()
+
+        combined_layout = QVBoxLayout()
+        combined_layout.addLayout(status_layout)
+        combined_layout.addWidget(self.reports_list)
+        combined_layout.addLayout(button_layout)
+        combined_layout.setSpacing(10)
+        combined_layout.setContentsMargins(15, 15, 15, 15)
+        self.tab3.setLayout(combined_layout)
+
+        self.tabs.currentChanged.connect(self.update_reports_list)
+        self.reports_list.itemDoubleClicked.connect(self.open_report_file)
+
+    def open_report_file(self, item):
+        """Открывает выбранный файл Excel."""
+        reports_dir = Path("Отчёты")
+        file_path = reports_dir / item.text()
+
+        if not file_path.exists():
+            self.reports_status_label.setText(f"Файл {item.text()} не найден")
+            return
+
+        try:
+            if os.name == "nt":  # Windows
+                os.startfile(file_path)
+            else:  # macOS/Linux
+                import subprocess
+                subprocess.run(["xdg-open", str(file_path)])
+            self.reports_status_label.setText(f"Открыт файл: {item.text()}")
+        except Exception as e:
+            self.reports_status_label.setText(f"Ошибка при открытии файла: {str(e)}")
+
+    def create_assembly_reports_folder(self):
+        """Создает папку 'Сборочные отчёты' в корневой директории приложения."""
+        assembly_reports_dir = Path("Сборочные отчёты")
+        try:
+            if not assembly_reports_dir.exists():
+                assembly_reports_dir.mkdir()
+        except Exception as e:
+            self.reports_status_label.setText(f"Ошибка при создании папки: {str(e)}")
+
+    def create_assembly_report(self):
+        """Создает сборочный отчёт из файлов, отображаемых в списке Combined Report."""
+        assembly_reports_dir = Path("Сборочные отчёты")
+        try:
+            if not assembly_reports_dir.exists():
+                assembly_reports_dir.mkdir()
+                self.reports_status_label.setText("Папка 'Сборочные отчёты' создана")
+        except Exception as e:
+            self.reports_status_label.setText(f"Ошибка при создании папки: {str(e)}")
+            return
+
+        displayed_files = [self.reports_list.item(i).text() for i in range(self.reports_list.count())]
+        if not displayed_files:
+            self.reports_status_label.setText("Нет файлов для создания сборочного отчёта")
+            return
+
+        combined_data = []
+        reports_dir = Path("Отчёты")
+        for file_name in displayed_files:
+            file_path = reports_dir / file_name
+            if not file_path.exists():
+                self.reports_status_label.setText(f"Файл {file_name} не найден")
+                continue
+
+            try:
+                df = pd.read_excel(file_path)
+                # Проверяем, что файл имеет правильную структуру: два столбца "Параметр" и "Значение"
+                if df.shape[1] != 2 or list(df.columns) != ["Параметр", "Значение"]:
+                    self.reports_status_label.setText(f"Файл {file_name} имеет неверную структуру")
+                    return
+                df.reset_index(drop=True, inplace=True)
+                combined_data.append(df)
+            except Exception as e:
+                self.reports_status_label.setText(f"Ошибка при чтении файла {file_name}: {str(e)}")
+                continue
+
+        if not combined_data:
+            self.reports_status_label.setText("Не удалось прочитать ни один файл")
+            return
+
+        try:
+            # Объединяем данные в ширину (по столбцам)
+            combined_df = pd.concat(combined_data, axis=1)
+            date_str = datetime.now().strftime("%Y-%m-%d")
+            output_file = assembly_reports_dir / f"Сборочный отчёт_{date_str}.xlsx"
+
+            combined_df.to_excel(output_file, index=False)
+
+            # Форматирование с помощью openpyxl
+            workbook = load_workbook(output_file)
+            worksheet = workbook.active
+
+            # Автоматическая подгонка размеров ячеек
+            for column in worksheet.columns:
+                max_length = 0
+                column_letter = column[0].column_letter
+                for cell in column:
+                    try:
+                        if cell.value:
+                            max_length = max(max_length, len(str(cell.value)))
+                    except:
+                        pass
+                adjusted_width = max_length + 2
+                worksheet.column_dimensions[column_letter].width = adjusted_width
+
+            for row in worksheet.rows:
+                max_height = 0
+                for cell in row:
+                    try:
+                        if cell.value:
+                            lines = str(cell.value).count('\n') + 1
+                            max_height = max(max_height, lines)
+                    except:
+                        pass
+                adjusted_height = max_height * 15
+                worksheet.row_dimensions[row[0].row].height = adjusted_height
+
+            # Добавляем рамки для разделения отчётов
+            columns_per_report = [df.shape[1] for df in combined_data]  # Каждый отчёт — 2 столбца
+            current_column = 1
+
+            border = Border(right=Side(style='medium', color='000000'))
+            for cols in columns_per_report:
+                if current_column + cols - 1 >= worksheet.max_column:
+                    break
+
+                rightmost_column = current_column + cols - 1
+                for row in range(1, worksheet.max_row + 1):
+                    cell = worksheet.cell(row=row, column=rightmost_column)
+                    cell.border = border
+
+                current_column += cols
+
+            workbook.save(output_file)
+            self.reports_status_label.setText(f"Сборочный отчёт создан: {output_file.name}")
+            if os.name == "nt":
+                os.startfile(output_file)
+            else:
+                import subprocess
+                subprocess.run(["xdg-open", str(output_file)])
+        except Exception as e:
+            self.reports_status_label.setText(f"Ошибка при создании сборочного отчёта: {str(e)}")
+
+    def update_reports_list(self, index):
+        """Обновляет список файлов Excel на вкладке Combined Report при переключении вкладок."""
+        if index != self.tabs.indexOf(self.tab3):
+            return
+
+        self.reports_list.clear()
+
+        reports_dir = Path("Отчёты")
+        if not reports_dir.exists() or not reports_dir.is_dir():
+            self.reports_status_label.setText("Папка 'Отчёты' не найдена")
+            return
+
+        excel_files = []
+        for file_path in reports_dir.glob("*"):
+            if file_path.is_file() and file_path.suffix.lower() in (".xlsx", ".xls"):
+                excel_files.append(file_path)
+
+        if not excel_files:
+            self.reports_status_label.setText("Папка 'Отчёты' пуста или не содержит файлов Excel")
+            return
+
+        self.reports_status_label.setText(f"Найдено файлов Excel: {len(excel_files)}")
+        for file_path in excel_files:
+            self.reports_list.addItem(file_path.name)
 
     def reset_beta_zoom(self):
         """Сбрасывает масштаб графика Beta до исходного состояния."""

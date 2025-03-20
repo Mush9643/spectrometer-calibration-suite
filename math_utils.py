@@ -405,8 +405,7 @@ def recalculate_with_two_peaks(window):
     """Переключает между использованием двух и трёх пиков Rn для регрессии и обновляет график."""
     # Переключаем флаг
     window.use_three_peaks = not window.use_three_peaks
-    mode = "трём пикам" if window.use_three_peaks else "двум пикам"
-    print(f"Перерасчёт по {mode}")
+    print(f"Смена пиков")
 
     # Удаляем старые пики и серии с графика
     chart = window.chart
