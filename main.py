@@ -8,7 +8,7 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout,
     QSplashScreen, QCheckBox, QLineEdit, QTabWidget, QListWidgetItem, QListWidget, QMenu, QHBoxLayout, QFileDialog, \
     QTableWidgetItem, QTableWidget, QHeaderView, QLabel
 from PyQt6.QtGui import QPixmap, QIcon, QPainter, QDesktopServices, QColor, QFont
-from PyQt6.QtCore import Qt, QTimer, QUrl
+from PyQt6.QtCore import Qt, QTimer, QUrl, QRectF, pyqtSignal
 from modbus import ModbusClient  # Импортируем ModbusClient из файла modbus.py
 from settings_dialog import SettingsDialog  # Импортируем диалоговое окно настроек
 from spectrum_addition import SpectrumAddition
@@ -115,6 +115,62 @@ class CustomChartView(QChartView):
         super().mouseReleaseEvent(event)
 
 ##########################################################################
+# Класс Переключателя
+##########################################################################
+
+class ToggleSwitch(QWidget):
+    stateChanged = pyqtSignal(int)  # Сигнал для изменения состояния
+
+    def __init__(self, text="", parent=None):
+        super().__init__(parent)
+        self._checked = False
+        self._text = text
+        self.setFixedSize(265, 30)  # Увеличиваем ширину на 15px (250 + 15 = 265)
+
+    def isChecked(self):
+        return self._checked
+
+    def setChecked(self, checked):
+        if self._checked != checked:
+            self._checked = checked
+            self.update()  # Перерисовываем виджет
+            self.stateChanged.emit(Qt.CheckState.Checked.value if checked else Qt.CheckState.Unchecked.value)
+
+    def mousePressEvent(self, event):
+        self.setChecked(not self._checked)
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+        # Настройки шрифта для текста
+        painter.setFont(QFont("Montserrat", 12))
+        painter.setPen(QColor("#4A4A4A"))
+
+        # Рисуем текст слева
+        text_rect = QRectF(0, 0, 210, 30)  # Оставляем ширину текста без изменений
+        painter.drawText(text_rect, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, self._text)
+
+        # Рисуем фон переключателя справа, сдвигаем на 15px правее
+        switch_rect = QRectF(215, 5, 40, 20)  # Сдвигаем с x=200 на x=215
+        painter.setBrush(QColor("#4A4A4A"))  # Тёмно-серый фон
+        painter.setPen(QColor("#000000"))  # Чёрный контур
+        painter.drawRoundedRect(switch_rect, 10, 10)
+
+        # Рисуем шар, корректируем позиции
+        if self._checked:
+            circle_pos = 237  # Позиция шара вправо (222 + 15 = 237)
+            painter.setBrush(QColor("#C8102E"))  # Красный шар при активации
+        else:
+            circle_pos = 217  # Позиция шара влево (202 + 15 = 217)
+            painter.setBrush(QColor("#FFFFFF"))  # Белый шар
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.drawEllipse(circle_pos, 7, 16, 16)
+
+    def toggle(self):
+        self.setChecked(not self._checked)
+
+##########################################################################
 # Класс основного окна приложения
 ##########################################################################
 
@@ -218,15 +274,34 @@ class SpectrumWindow(QMainWindow):
             QPushButton#exportButton:pressed {
                 background-color: #8C0D1F;
             }
-            QPushButton#autoLoadButton {
+            QPushButton#toggleCheckboxesButton {
                 background-color: #4A4A4A; /* Тёмно-серый для вторичной кнопки */
                 color: #FFFFFF; /* Белый текст */
             }
-            QPushButton#autoLoadButton:hover {
+            QPushButton#toggleCheckboxesButton:hover {
                 background-color: #5A5A5A; /* Светлее при наведении */
             }
-            QPushButton#autoLoadButton:pressed {
+            QPushButton#toggleCheckboxesButton:pressed {
                 background-color: #3A3A3A; /* Темнее при нажатии */
+            }
+            QPushButton#resetZoomButton {
+                background-color: #4A4A4A; /* Тёмно-серый для вторичной кнопки */
+                color: #FFFFFF; /* Белый текст */
+            }
+            QPushButton#resetZoomButton:hover {
+                background-color: #5A5A5A; /* Светлее при наведении */
+            }
+            QPushButton#resetZoomButton:pressed {
+                background-color: #3A3A3A; /* Темнее при нажатии */
+            }
+            QWidget#checkboxesWidget {
+                background-color: #FFFFFF; /* Белый фон */
+                border: 1px solid #4A4A4A; /* Тёмно-серая граница */
+                border-radius: 5px;
+                padding: 5px;
+            }
+            QChartView {
+                background-color: #FFFFFF; /* Белый фон графика */
             }
         """)
 
@@ -404,10 +479,6 @@ class SpectrumWindow(QMainWindow):
         self.log_checkbox = QCheckBox("Логарифмический масштаб")
         self.log_checkbox.stateChanged.connect(self.toggle_log_scale)
 
-        # Кнопка очистки графика
-        self.clear_button = QPushButton("Очистить график")
-        self.clear_button.setObjectName("clearButton")
-        self.clear_button.clicked.connect(self.clear_alfa_chart)
 
         # Создаем виджет для чекбоксов Alfa chart
         self.alfa_checkboxes_widget = QWidget()
@@ -452,7 +523,6 @@ class SpectrumWindow(QMainWindow):
         controls_layout.addWidget(self.log_checkbox)
         controls_layout.addStretch()  # Растяжка для выравнивания
         controls_layout.addWidget(self.alfa_toggle_checkboxes_button)
-        controls_layout.addWidget(self.clear_button)
 
         layout.addLayout(controls_layout)
         # Добавляем виджет с чекбоксами
@@ -464,7 +534,6 @@ class SpectrumWindow(QMainWindow):
         add_calibration_button(self)
         self.add_reset_zoom_button()
 
-
         # =========================================================================
         # Блок 5: Создание вкладки "Beta chart"
         # =========================================================================
@@ -475,85 +544,75 @@ class SpectrumWindow(QMainWindow):
         # Создание графика для второй вкладки
         self.beta_chart = QChart()
         self.beta_chart.setTitle("Beta")
-        # Устанавливаем шрифт для заголовка, как в Alfa chart
-        title_font = QFont()
-        title_font.setPointSize(14)
-        title_font.setBold(True)
+        # Устанавливаем шрифт для заголовка
+        title_font = QFont("Montserrat", 14, QFont.Weight.Bold)
         self.beta_chart.setTitleFont(title_font)
+        self.beta_chart.setTitleBrush(QColor("#000000"))  # Чёрный цвет заголовка
 
         self.beta_series = QLineSeries()
         self.beta_series.setName("Beta данные")
         self.beta_chart.addSeries(self.beta_series)
 
         self.beta_axis_x = QValueAxis()
-        self.beta_axis_x.setTitleText("Точка")
+        self.beta_axis_x.setTitleText("Каналы")
         self.beta_axis_x.setRange(0, 100)
-        # Устанавливаем шрифт для оси X
-        axis_font = QFont()
-        axis_font.setPointSize(10)
+        # Устанавливаем шрифт и стиль для оси X
+        axis_font = QFont("Montserrat", 12)
         self.beta_axis_x.setLabelsFont(axis_font)
         self.beta_axis_x.setTitleFont(axis_font)
+        self.beta_axis_x.setTitleBrush(QColor("#000000"))  # Чёрный цвет текста
+        self.beta_axis_x.setLabelsColor(QColor("#000000"))  # Чёрный цвет меток
+        self.beta_axis_x.setGridLineColor(QColor("#F5F5F5"))  # Светло-серая сетка
 
         self.beta_axis_y = QValueAxis()
-        self.beta_axis_y.setTitleText("Значение")
-        # Устанавливаем шрифт для оси Y
+        self.beta_axis_y.setTitleText("Импульсы")
         self.beta_axis_y.setLabelsFont(axis_font)
         self.beta_axis_y.setTitleFont(axis_font)
+        self.beta_axis_y.setTitleBrush(QColor("#000000"))  # Чёрный цвет текста
+        self.beta_axis_y.setLabelsColor(QColor("#000000"))  # Чёрный цвет меток
+        self.beta_axis_y.setGridLineColor(QColor("#F5F5F5"))  # Светло-серая сетка
 
         self.beta_chart.addAxis(self.beta_axis_x, Qt.AlignmentFlag.AlignBottom)
         self.beta_chart.addAxis(self.beta_axis_y, Qt.AlignmentFlag.AlignLeft)
         self.beta_series.attachAxis(self.beta_axis_x)
         self.beta_series.attachAxis(self.beta_axis_y)
 
-        self.beta_chart_view = CustomChartView(self.beta_chart)
+        self.beta_chart_view = QChartView(self.beta_chart)
+        self.beta_chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
+        self.beta_chart_view.setRubberBand(QChartView.RubberBand.RectangleRubberBand)  # Включаем зум
 
-        # Чекбокс для логарифмического масштаба
-        self.beta_log_checkbox = QCheckBox("Логарифмический масштаб")
+        # Переключатель для логарифмического масштаба
+        self.beta_log_checkbox = ToggleSwitch("Логарифмический масштаб")
         self.beta_log_checkbox.stateChanged.connect(self.toggle_beta_log_scale)
 
         # Создаем виджет для чекбоксов
         self.checkboxes_widget = QWidget()
+        self.checkboxes_widget.setObjectName("checkboxesWidget")  # Для специфического стиля
         self.checkboxes_layout = QVBoxLayout()
         self.checkboxes_widget.setLayout(self.checkboxes_layout)
-        self.checkboxes_widget.setStyleSheet("""
-            QWidget {
-                background-color: #F8FAFC;
-                border: 1px solid #D3D9DE;
-                border-radius: 5px;
-                padding: 5px;
-            }
-        """)
         self.checkboxes_widget.setMinimumHeight(50)  # Устанавливаем минимальную высоту
         self.checkboxes_widget.hide()  # Изначально скрыт
 
         # Кнопка для отображения/скрытия чекбоксов
         self.toggle_checkboxes_button = QPushButton("📋 Чекбоксы")
         self.toggle_checkboxes_button.setObjectName("toggleCheckboxesButton")
-        self.toggle_checkboxes_button.setStyleSheet("""
-            QPushButton#toggleCheckboxesButton {
-                background-color: #D1E0FF;
-                color: #2D3748;
-                border-radius: 5px;
-                padding: 5px;
-            }
-            QPushButton#toggleCheckboxesButton:hover {
-                background-color: #B3C9FF;
-            }
-            QPushButton#toggleCheckboxesButton:pressed {
-                background-color: #A3BFFA;
-            }
-        """)
         self.toggle_checkboxes_button.clicked.connect(self.toggle_checkboxes)
+
+        # Кнопка "Сбросить масштаб"
+        self.beta_reset_zoom_button = QPushButton("Сбросить масштаб")
+        self.beta_reset_zoom_button.setObjectName("resetZoomButton")
+        self.beta_reset_zoom_button.clicked.connect(self.reset_beta_zoom)
 
         # Компоновка вкладки "Beta chart"
         beta_layout = QVBoxLayout()
         beta_layout.addWidget(self.beta_chart_view)
 
-        # Горизонтальный layout для кнопки и логарифмического чекбокса
+        # Горизонтальный layout для переключателя и кнопок
         controls_layout = QHBoxLayout()
         controls_layout.addWidget(self.beta_log_checkbox)
         controls_layout.addStretch()  # Растяжка для выравнивания
         controls_layout.addWidget(self.toggle_checkboxes_button)
+        controls_layout.addWidget(self.beta_reset_zoom_button)
         beta_layout.addLayout(controls_layout)
 
         # Добавляем виджет с чекбоксами
@@ -563,7 +622,6 @@ class SpectrumWindow(QMainWindow):
 
         # Добавляем кнопку калибровки
         add_beta_calibration_button(self)
-        self.add_beta_reset_zoom_button()
         # =========================================================================
         # Блок 6: Создание вкладки "Report"
         # =========================================================================
