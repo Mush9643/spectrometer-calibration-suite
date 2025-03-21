@@ -1,4 +1,4 @@
- def __init__(self, modbus):
+    def __init__(self, modbus):
         """
         Инициализация основного окна приложения SpectrumWindow.
         """
@@ -161,7 +161,7 @@
 
         # Поле для ввода имени папки с кнопкой выбора папки
         folder_layout = QHBoxLayout()
-        self.folder_input = QLineEdit("098")  # По умолчанию папка "098"
+        self.folder_input = QLineEdit("")  # По умолчанию папка "098"
         self.folder_input.setReadOnly(True)  # Запрещаем ручное редактирование
         self.folder_input.setStyleSheet("""
                     QLineEdit {
@@ -209,11 +209,11 @@
         # =========================================================================
         # Первая вкладка
         self.tab1 = QWidget()
-        self.tabs.addTab(self.tab1, "Alfa chart")
+        self.tabs.addTab(self.tab1, "Alfa")
 
         # Создание графика для первой вкладки
         self.chart = QChart()
-        self.chart.setTitle("Спектр импульсов (0-1023)")
+        self.chart.setTitle("Alfa")
         # Устанавливаем шрифт для заголовка
         title_font = QFont()
         title_font.setPointSize(14)
@@ -265,10 +265,7 @@
         self.axis_x.setGridLineVisible(True)
         self.axis_y.setGridLineVisible(True)
 
-        self.chart_view = QChartView(self.chart)
-        self.chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
-        # Исправление: Включаем зум с правильным перечислением
-        self.chart_view.setRubberBand(QChartView.RubberBand.RectangleRubberBand)
+        self.chart_view = CustomChartView(self.chart)
 
         # Чекбокс для логарифмического масштаба
         self.log_checkbox = QCheckBox("Логарифмический масштаб")
@@ -325,27 +322,26 @@
         controls_layout.addWidget(self.clear_button)
 
         layout.addLayout(controls_layout)
-
         # Добавляем виджет с чекбоксами
         layout.addWidget(self.alfa_checkboxes_widget)
 
-        layout.addLayout(controls_layout)
+        self.tab1.setLayout(layout)
 
         # Добавляем кнопку "Калибровка" после создания chart_view
         add_calibration_button(self)
+        self.add_reset_zoom_button()
 
-        self.tab1.setLayout(layout)
 
         # =========================================================================
         # Блок 5: Создание вкладки "Beta chart"
         # =========================================================================
         # Вторая вкладка (Beta chart)
         self.tab2 = QWidget()
-        self.tabs.addTab(self.tab2, "Beta chart")
+        self.tabs.addTab(self.tab2, "Beta")
 
         # Создание графика для второй вкладки
         self.beta_chart = QChart()
-        self.beta_chart.setTitle("Beta chart")
+        self.beta_chart.setTitle("Beta")
         # Устанавливаем шрифт для заголовка, как в Alfa chart
         title_font = QFont()
         title_font.setPointSize(14)
@@ -376,8 +372,7 @@
         self.beta_series.attachAxis(self.beta_axis_x)
         self.beta_series.attachAxis(self.beta_axis_y)
 
-        self.beta_chart_view = QChartView(self.beta_chart)
-        self.beta_chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
+        self.beta_chart_view = CustomChartView(self.beta_chart)
 
         # Чекбокс для логарифмического масштаба
         self.beta_log_checkbox = QCheckBox("Логарифмический масштаб")
@@ -435,7 +430,7 @@
 
         # Добавляем кнопку калибровки
         add_beta_calibration_button(self)
-
+        self.add_beta_reset_zoom_button()
         # =========================================================================
         # Блок 6: Создание вкладки "Report"
         # =========================================================================
@@ -520,5 +515,78 @@
 
         self.update_calibration_table()
 
-        add_calibration_button(self)
         add_recalculate_button(self)
+        self.use_three_peaks = True
+
+        # =========================================================================
+        # Блок 7: Создание вкладки "Combined Report"
+        # =========================================================================
+        self.tab3 = QWidget()
+        self.tabs.addTab(self.tab3, "Combined Report")
+
+        self.reports_list = QListWidget()
+        self.reports_list.setStyleSheet("""
+            QListWidget {
+                border: 1px solid #D3D9DE;
+                border-radius: 5px;
+                background-color: #FFFFFF;
+                padding: 5px;
+                font-size: 12px;
+                color: #2D3748;
+            }
+            QListWidget::item {
+                padding: 5px;
+            }
+            QListWidget::item:selected {
+                background-color: #A3BFFA;
+                color: #FFFFFF;
+            }
+        """)
+
+        self.reports_status_label = QLabel("Проверка наличия папки 'Отчёты'...")
+        self.reports_status_label.setStyleSheet("""
+            QLabel {
+                font-size: 12px;
+                color: #4A5568;
+                padding: 5px;
+            }
+        """)
+
+        self.assembly_report_button = QPushButton("Сборочный отчёт")
+        self.assembly_report_button.clicked.connect(self.create_assembly_report)
+        self.assembly_report_button.setFixedWidth(200)
+        self.assembly_report_button.setStyleSheet("""
+            QPushButton {
+                background-color: #A3BFFA;
+                color: #2D3748;
+                border: none;
+                border-radius: 5px;
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+            QPushButton:hover {
+                background-color: #B3C9FF;
+            }
+            QPushButton:pressed {
+                background-color: #8B9FFE;
+            }
+        """)
+
+        status_layout = QHBoxLayout()
+        status_layout.addWidget(self.reports_status_label)
+
+        button_layout = QHBoxLayout()
+        button_layout.addStretch()
+        button_layout.addWidget(self.assembly_report_button)
+        button_layout.addStretch()
+
+        combined_layout = QVBoxLayout()
+        combined_layout.addLayout(status_layout)
+        combined_layout.addWidget(self.reports_list)
+        combined_layout.addLayout(button_layout)
+        combined_layout.setSpacing(10)
+        combined_layout.setContentsMargins(15, 15, 15, 15)
+        self.tab3.setLayout(combined_layout)
+
+        self.tabs.currentChanged.connect(self.update_reports_list)
+        self.reports_list.itemDoubleClicked.connect(self.open_report_file)
