@@ -2,7 +2,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from openpyxl import load_workbook
-from scipy.signal import find_peaks, savgol_filter
 import numpy as np
 from PyQt6.QtCharts import QChart, QLineSeries, QValueAxis, QChartView, QLogValueAxis, QAbstractSeries, QScatterSeries
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QMessageBox, QDialog, \
@@ -794,6 +793,34 @@ class SpectrumWindow(QMainWindow):
             workbook = load_workbook(output_file)
             worksheet = workbook.active
 
+            # Определяем стили заливки и границ
+            from openpyxl.styles import PatternFill, Border, Side
+            header_fill = PatternFill(start_color="D7CCC8", end_color="D7CCC8",
+                                      fill_type="solid")  # Тёмно-серый для заголовка
+            data_fill = PatternFill(start_color="E6EAD6", end_color="E6EAD6",
+                                    fill_type="solid")  # Светло-серый для данных
+            thin_border = Border(
+                left=Side(style='thin', color='000000'),
+                right=Side(style='thin', color='000000'),
+                top=Side(style='thin', color='000000'),
+                bottom=Side(style='thin', color='000000')
+            )
+            thick_border = Border(right=Side(style='medium', color='000000'))
+
+            # Применяем заливку к заголовку (первая строка)
+            for cell in worksheet[1]:
+                cell.fill = header_fill
+
+            # Применяем заливку к данным (все строки, начиная со второй)
+            for row in range(2, worksheet.max_row + 1):
+                for cell in worksheet[row]:
+                    cell.fill = data_fill
+
+            # Применяем тонкие границы ко всем ячейкам
+            for row in worksheet.rows:
+                for cell in row:
+                    cell.border = thin_border
+
             # Автоматическая подгонка размеров ячеек
             for column in worksheet.columns:
                 max_length = 0
@@ -819,11 +846,10 @@ class SpectrumWindow(QMainWindow):
                 adjusted_height = max_height * 15
                 worksheet.row_dimensions[row[0].row].height = adjusted_height
 
-            # Добавляем рамки для разделения отчётов
-            columns_per_report = [df.shape[1] for df in combined_data]  # Каждый отчёт — 2 столбца
+            # Добавляем толстые рамки для разделения отчётов
+            columns_per_report = [df.shape[1] for df in combined_data]
             current_column = 1
 
-            border = Border(right=Side(style='medium', color='000000'))
             for cols in columns_per_report:
                 if current_column + cols - 1 >= worksheet.max_column:
                     break
@@ -831,7 +857,14 @@ class SpectrumWindow(QMainWindow):
                 rightmost_column = current_column + cols - 1
                 for row in range(1, worksheet.max_row + 1):
                     cell = worksheet.cell(row=row, column=rightmost_column)
-                    cell.border = border
+                    # Обновляем только правую границу, сохраняя остальные тонкие
+                    new_border = Border(
+                        left=cell.border.left,
+                        right=thick_border.right,
+                        top=cell.border.top,
+                        bottom=cell.border.bottom
+                    )
+                    cell.border = new_border
 
                 current_column += cols
 
