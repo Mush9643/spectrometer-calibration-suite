@@ -699,7 +699,7 @@ class SpectrumWindow(QMainWindow):
 
         self.gamma_axis_x = QValueAxis()
         self.gamma_axis_x.setTitleText("Каналы")
-        self.gamma_axis_x.setRange(0, 100)
+        self.gamma_axis_x.setRange(500, 800)
         # Устанавливаем шрифт и стиль для оси X
         axis_font = QFont("Montserrat", 12)
         self.gamma_axis_x.setLabelsFont(axis_font)
@@ -869,7 +869,17 @@ class SpectrumWindow(QMainWindow):
         self.tabs.currentChanged.connect(self.on_tab_changed)
         self.reports_list.itemDoubleClicked.connect(self.open_report_file)
 
+        # =========================================================================
+        # Блок 9: Добавление кнопки "Калибровка"
+        # =========================================================================
+        self.calibration_button = QPushButton("Калибровка")
+        self.calibration_button.setObjectName("calibrationButton")  # Для стилизации через CSS
+        self.calibration_button.clicked.connect(self.perform_calibration)  # Подключаем метод калибровки
+        self.calibration_button.setFixedHeight(50)  # Устанавливаем высоту кнопки
+        self.calibration_button.setFont(QFont("Montserrat", 14, QFont.Weight.Bold))  # Устанавливаем шрифт
 
+        # Добавляем кнопку в основной layout
+        gamma_layout.addWidget(self.calibration_button)
 
     ##########################################################################
     # Методы всякого разного
@@ -1645,23 +1655,7 @@ class SpectrumWindow(QMainWindow):
             self.change_color(pos, 'gamma')
             self.check_color_and_load_data(pos)
 
-        # Проверяем, были ли найдены файлы для обработки
-        if not beta_files_to_process and not alfa_files_to_process and not gamma_files_to_process:
-            self.show_warning_message(
-                "Не найдено файлов с именами, содержащими 'фона', 'SrY90', 'Rad', 'Cs137', 'C14', 'Am241' (Beta), 'Rn', 'Am241' (Alfa) или 'gamma' (Gamma)."
-            )
-        elif not beta_files_to_process:
-            self.show_warning_message(
-                "Не найдено файлов для Beta с именами, содержащими 'фона', 'SrY90', 'Rad', 'Cs137', 'C14', 'Am241'."
-            )
-        elif not alfa_files_to_process:
-            self.show_warning_message(
-                "Не найдено файлов для Alfa с именами, содержащими 'Rn', 'Am241'."
-            )
-        elif not gamma_files_to_process:
-            self.show_warning_message(
-                "Не найдено файлов для Gamma с именами, содержащими 'gamma'."
-            )
+
 
     def load_xls_files(self):
         """Загружает список файлов .xls и .xlsx из указанной папки."""
@@ -2135,7 +2129,7 @@ class SpectrumWindow(QMainWindow):
 
     def update_gamma_chart(self, df, file_name, original_data):
         """
-        Обновляет график на вкладке Gamma с учетом всех графиков.
+        Обновляет график на вкладке Gamma с учетом всех графиков, игнорируя первое значение Y.
         """
         if file_name in self.gamma_series_dict:
             return
@@ -2144,8 +2138,10 @@ class SpectrumWindow(QMainWindow):
         second_word = file_name.split()[1] if len(file_name.split()) > 1 else file_name
         gamma_series.setName(f"({second_word})")
 
-        # Используем обнулённые данные для отображения
-        for _, row in df.iterrows():
+        # Используем обнулённые данные для отображения, начиная со второго значения (индекс 1)
+        for index, row in df.iterrows():
+            if index == 0:  # Пропускаем первое значение
+                continue
             gamma_series.append(row['Канал'], row['Кол-во импульсов'])
 
         color = self.get_unique_color(file_name, 'gamma')
@@ -2676,7 +2672,7 @@ class SpectrumWindow(QMainWindow):
 
     def reset_gamma_zoom(self):
         """Сбрасывает масштаб графика Gamma до исходного состояния."""
-        self.gamma_axis_x.setRange(0, 100)
+        self.gamma_axis_x.setRange(500, 800)
         if self.gamma_series_dict:
             max_y = max(
                 max(series.points(), key=lambda p: p.y()).y()
@@ -2721,6 +2717,11 @@ class SpectrumWindow(QMainWindow):
             self.gamma_axis_y.setRange(0, max_y * 1.1)
         else:
             self.update_gamma_y_axis_range()
+
+    def perform_calibration(self):
+        """Метод для выполнения калибровки (заглушка)."""
+        print("Калибровка запущена!")
+        self.show_info_message("Калибровка запущена! Функционал в разработке.")
 
     ##########################################################################
     # Методы для работы с экспортом данных и сообщениями
