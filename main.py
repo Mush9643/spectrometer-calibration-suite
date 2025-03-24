@@ -24,6 +24,7 @@ from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from fon_math import NUD_b, VUD_b
 from openpyxl.styles import Font, Border, Side, PatternFill, Alignment
 import os
+import logging
 
 ##########################################################################
 # Класс Зума
@@ -188,171 +189,177 @@ class SpectrumWindow(QMainWindow):
         # Применение стилей с постельными тонами
 
         self.setStyleSheet("""
-                /* Основные стили окна */
-                QMainWindow {
-                    background-color: #FFFFFF; /* Белый фон */
-                    font-family: 'Montserrat', sans-serif; /* Устанавливаем шрифт Montserrat */
-                }
-                QTabWidget::pane {
-                    border: 1px solid #4A4A4A; /* Тёмно-серая граница */
-                    background-color: #FFFFFF; /* Белый фон */
-                    border-radius: 5px;
-                }
-                QTabBar::tab {
-                    background-color: #F5F5F5; /* Очень светлый серый для вкладок */
-                    color: #4A4A4A; /* Тёмно-серый текст */
-                    padding: 8px 16px;
-                    border-top-left-radius: 5px;
-                    border-top-right-radius: 5px;
-                    font-size: 14px;
-                    font-weight: 600; /* Montserrat SemiBold */
-                }
-                QTabBar::tab:selected {
-                    background-color: #FFFFFF; /* Белый фон для активной вкладки */
-                    color: #C0392B; /* Красный текст для активной вкладки (соответствует логотипу) */
-                    border-bottom: 2px solid #C0392B; /* Красный акцент */
-                }
-                QLineEdit {
-                    border: 1px solid #4A4A4A; /* Тёмно-серая граница */
-                    border-radius: 5px;
-                    padding: 5px;
-                    background-color: #FFFFFF; /* Белый фон */
-                    color: #000000; /* Чёрный текст */
-                    font-size: 12px;
-                    font-weight: 400; /* Montserrat Regular */
-                }
-                QLineEdit:read-only {
-                    background-color: #F5F5F5; /* Очень светлый серый для read-only */
-                }
-                QListWidget {
-                    background-color: #FFFFFF; /* Белый фон */
-                    border: 1px solid #4A4A4A; /* Тёмно-серая граница */
-                    border-radius: 5px;
-                    padding: 5px;
-                    color: #000000; /* Чёрный текст */
-                    font-size: 12px;
-                    font-weight: 400; /* Montserrat Regular */
-                }
-                QListWidget::item {
-                    padding: 5px;
-                }
-                QListWidget::item:selected {
-                    background-color: #C0392B; /* Красный фон для выбранного элемента (соответствует логотипу) */
-                    color: #FFFFFF; /* Белый текст */
-                }
-                QPushButton {
-                    background-color: #C0392B; /* Красный для основных кнопок (соответствует логотипу) */
-                    color: #FFFFFF; /* Белый текст */
-                    border: none;
-                    border-radius: 5px;
-                    padding: 8px 16px;
-                    font-size: 12px;
-                    font-weight: 600; /* Montserrat SemiBold */
-                }
-                QPushButton:hover {
-                    background-color: #A93226; /* Более тёмный красный при наведении */
-                }
-                QPushButton:pressed {
-                    background-color: #922B21; /* Ещё более тёмный красный при нажатии */
-                }
-                QPushButton#folderButton {
-                    background-color: transparent; /* Прозрачный фон для кнопки папки */
-                    border: none;
-                    padding: 2px;
-                    color: #4A4A4A; /* Тёмно-серый цвет текста */
-                    font-size: 16px; /* Размер символа */
-                }
-                QPushButton#folderButton:hover {
-                    background-color: rgba(200, 16, 46, 0.1); /* Лёгкий красный оттенок при наведении */
-                }
-                QPushButton#exportButton {
-                    background-color: #C0392B; /* Красный для кнопки экспорта */
-                    color: #FFFFFF; /* Белый текст */
-                }
-                QPushButton#exportButton:hover {
-                    background-color: #A93226;
-                }
-                QPushButton#exportButton:pressed {
-                    background-color: #922B21;
-                }
-                QPushButton#toggleCheckboxesButton {
-                    background-color: #4A4A4A; /* Тёмно-серый для вторичной кнопки */
-                    color: #FFFFFF; /* Белый текст */
-                }
-                QPushButton#toggleCheckboxesButton:hover {
-                    background-color: #5A5A5A; /* Светлее при наведении */
-                }
-                QPushButton#toggleCheckboxesButton:pressed {
-                    background-color: #3A3A3A; /* Темнее при нажатии */
-                }
-                QPushButton#resetZoomButton {
-                    background-color: #4A4A4A; /* Тёмно-серый для вторичной кнопки */
-                    color: #FFFFFF; /* Белый текст */
-                }
-                QPushButton#resetZoomButton:hover {
-                    background-color: #5A5A5A; /* Светлее при наведении */
-                }
-                QPushButton#resetZoomButton:pressed {
-                    background-color: #3A3A3A; /* Темнее при нажатии */
-                }
-                QWidget#checkboxesWidget {
-                    background-color: #FFFFFF; /* Белый фон */
-                    border: 1px solid #4A4A4A; /* Тёмно-серая граница */
-                    border-radius: 5px;
-                    padding: 5px;
-                }
-                QChartView {
-                    background-color: #FFFFFF; /* Белый фон графика */
-                }
-                /* Стили для таблицы на вкладке Report */
-                QTableWidget {
-                    background-color: #F8FAFC; /* Светлый фон таблицы */
-                    border: 1px solid #4A4A4A; /* Тёмно-серая граница */
-                    border-radius: 5px;
-                    font-family: 'Montserrat', sans-serif;
-                    font-size: 12px;
-                }
-                QHeaderView::section {
-                    background-color: #C0392B; /* Красный фон для заголовка таблицы (соответствует логотипу) */
-                    color: #FFFFFF; /* Белый текст */
-                    padding: 5px;
-                    border: 1px solid #4A4A4A; /* Тёмно-серая граница */
-                    font-weight: 600; /* Montserrat SemiBold */
-                }
-                QTableWidget::item {
-                    padding: 5px;
-                }
-                QTableWidget::item:alternate {
-                    background-color: #F5F5F5; /* Чередование светло-серого фона */
-                }
-                /* Стили для кнопок на вкладке Report */
-                QPushButton#refreshButton {
-                    background-color: #C0392B; /* Красный фон (соответствует логотипу) */
-                    color: #FFFFFF; /* Белый текст */
-                    border-radius: 5px;
-                    padding: 5px;
-                    max-width: 150px;
-                }
-                QPushButton#refreshButton:hover {
-                    background-color: #A93226;
-                }
-                QPushButton#refreshButton:pressed {
-                    background-color: #922B21;
-                }
-                QPushButton#reportButton {
-                    background-color: #C0392B; /* Красный фон (соответствует логотипу) */
-                    color: #FFFFFF; /* Белый текст */
-                    border-radius: 5px;
-                    padding: 5px;
-                    max-width: 150px;
-                }
-                QPushButton#reportButton:hover {
-                    background-color: #A93226;
-                }
-                QPushButton#reportButton:pressed {
-                    background-color: #922B21;
-                }
-            """)
+            /* Основные стили окна */
+            QMainWindow {
+                background-color: #FFFFFF; /* Белый фон */
+                font-family: 'Montserrat', sans-serif; /* Устанавливаем шрифт Montserrat */
+            }
+            QTabWidget::pane {
+                border: 1px solid #4A4A4A; /* Тёмно-серая граница */
+                background-color: #FFFFFF; /* Белый фон */
+                border-radius: 5px;
+            }
+            QTabBar::tab {
+                background-color: #F5F5F5; /* Очень светлый серый для вкладок */
+                color: #4A4A4A; /* Тёмно-серый текст */
+                padding: 8px 16px;
+                border-top-left-radius: 5px;
+                border-top-right-radius: 5px;
+                font-size: 14px;
+                font-weight: 600; /* Montserrat SemiBold */
+            }
+            QTabBar::tab:selected {
+                background-color: #FFFFFF; /* Белый фон для активной вкладки */
+                color: #C0392B; /* Красный текст для активной вкладки (соответствует логотипу) */
+                border-bottom: 2px solid #C0392B; /* Красный акцент */
+            }
+            QLineEdit {
+                border: 1px solid #4A4A4A; /* Тёмно-серая граница */
+                border-radius: 5px;
+                padding: 5px;
+                background-color: #FFFFFF; /* Белый фон */
+                color: #000000; /* Чёрный текст */
+                font-size: 12px;
+                font-weight: 400; /* Montserrat Regular */
+            }
+            QLineEdit:read-only {
+                background-color: #F5F5F5; /* Очень светлый серый для read-only */
+            }
+            QListWidget {
+                background-color: #FFFFFF; /* Белый фон */
+                border: 1px solid #4A4A4A; /* Тёмно-серая граница */
+                border-radius: 5px;
+                padding: 5px;
+                color: #000000; /* Чёрный текст */
+                font-size: 12px;
+                font-weight: 400; /* Montserrat Regular */
+            }
+            QListWidget::item {
+                padding: 5px;
+            }
+            QListWidget::item:selected {
+                background-color: #C0392B; /* Красный фон для выбранного элемента (соответствует логотипу) */
+                color: #FFFFFF; /* Белый текст */
+            }
+            QPushButton {
+                background-color: #C0392B; /* Красный для основных кнопок (соответствует логотипу) */
+                color: #FFFFFF; /* Белый текст */
+                border: none;
+                border-radius: 5px;
+                padding: 8px 16px;
+                font-size: 12px;
+                font-weight: 600; /* Montserrat SemiBold */
+            }
+            QPushButton:hover {
+                background-color: #A93226; /* Более тёмный красный при наведении */
+            }
+            QPushButton:pressed {
+                background-color: #922B21; /* Ещё более тёмный красный при нажатии */
+            }
+            QPushButton#folderButton {
+                background-color: transparent; /* Прозрачный фон для кнопки папки */
+                border: none;
+                padding: 2px;
+                color: #4A4A4A; /* Тёмно-серый цвет текста */
+                font-size: 16px; /* Размер символа */
+            }
+            QPushButton#folderButton:hover {
+                background-color: rgba(200, 16, 46, 0.1); /* Лёгкий красный оттенок при наведении */
+            }
+            QPushButton#exportButton {
+                background-color: #C0392B; /* Красный для кнопки экспорта */
+                color: #FFFFFF; /* Белый текст */
+            }
+            QPushButton#exportButton:hover {
+                background-color: #A93226;
+            }
+            QPushButton#exportButton:pressed {
+                background-color: #922B21;
+            }
+            QPushButton#toggleCheckboxesButton {
+                background-color: #4A4A4A; /* Тёмно-серый для вторичной кнопки */
+                color: #FFFFFF; /* Белый текст */
+            }
+            QPushButton#toggleCheckboxesButton:hover {
+                background-color: #5A5A5A; /* Светлее при наведении */
+            }
+            QPushButton#toggleCheckboxesButton:pressed {
+                background-color: #3A3A3A; /* Темнее при нажатии */
+            }
+            QPushButton#resetZoomButton {
+                background-color: #4A4A4A; /* Тёмно-серый для вторичной кнопки */
+                color: #FFFFFF; /* Белый текст */
+            }
+            QPushButton#resetZoomButton:hover {
+                background-color: #5A5A5A; /* Светлее при наведении */
+            }
+            QPushButton#resetZoomButton:pressed {
+                background-color: #3A3A3A; /* Темнее при нажатии */
+            }
+            QWidget#checkboxesWidget {
+                background-color: #FFFFFF; /* Белый фон */
+                border: 1px solid #4A4A4A; /* Тёмно-серая граница */
+                border-radius: 5px;
+                padding: 5px;
+            }
+            QChartView {
+                background-color: #FFFFFF; /* Белый фон графика */
+            }
+            /* Стили для таблицы на вкладке Report */
+            QTableWidget {
+                background-color: #F8FAFC; /* Светлый фон таблицы */
+                border: 1px solid #4A4A4A; /* Тёмно-серая граница */
+                border-radius: 5px;
+                font-family: 'Montserrat', sans-serif;
+                font-size: 12px;
+            }
+            QHeaderView::section {
+                background-color: #C0392B; /* Красный фон для заголовка таблицы (соответствует логотипу) */
+                color: #FFFFFF; /* Белый текст */
+                padding: 5px;
+                border: 1px solid #4A4A4A; /* Тёмно-серая граница */
+                font-weight: 600; /* Montserrat SemiBold */
+            }
+            QTableWidget::item {
+                padding: 5px;
+            }
+            QTableWidget::item:alternate {
+                background-color: #F5F5F5; /* Чередование светло-серого фона */
+            }
+            /* Стили для кнопок на вкладке Report */
+            QPushButton#refreshButton {
+                background-color: #C0392B; /* Красный фон (соответствует логотипу) */
+                color: #FFFFFF; /* Белый текст */
+                border-radius: 5px;
+                padding: 5px;
+                max-width: 150px;
+            }
+            QPushButton#refreshButton:hover {
+                background-color: #A93226;
+            }
+            QPushButton#refreshButton:pressed {
+                background-color: #922B21;
+            }
+            QPushButton#reportButton {
+                background-color: #C0392B; /* Красный фон (соответствует логотипу) */
+                color: #FFFFFF; /* Белый текст */
+                border-radius: 5px;
+                padding: 5px;
+                max-width: 150px;
+            }
+            QPushButton#reportButton:hover {
+                background-color: #A93226;
+            }
+            QPushButton#reportButton:pressed {
+                background-color: #922B21;
+            }
+            /* Стиль для меток (QLabel) */
+            QLabel {
+                color: #4A4A4A; /* Тёмно-серый текст для согласованности */
+                font-size: 12px;
+                padding: 5px;
+            }
+        """)
 
         # Настройка окна
         self.setWindowTitle("Спектр импульсов")
@@ -671,8 +678,76 @@ class SpectrumWindow(QMainWindow):
 
         # Добавляем кнопку калибровки
         add_beta_calibration_button(self)
+
         # =========================================================================
-        # Блок 6: Создание вкладки "Report"
+        # Блок 6: Создание вкладки "Gamma chart"
+        # =========================================================================
+        self.tab_gamma = QWidget()
+        self.tabs.addTab(self.tab_gamma, "Gamma")
+
+        # Создание графика для вкладки "Gamma"
+        self.gamma_chart = QChart()
+        self.gamma_chart.setTitle("Gamma")
+        # Устанавливаем шрифт для заголовка
+        title_font = QFont("Montserrat", 14, QFont.Weight.Bold)
+        self.gamma_chart.setTitleFont(title_font)
+        self.gamma_chart.setTitleBrush(QColor("#000000"))  # Чёрный цвет заголовка
+
+        self.gamma_series = QLineSeries()
+        self.gamma_series.setName("Gamma данные")
+        self.gamma_chart.addSeries(self.gamma_series)
+
+        self.gamma_axis_x = QValueAxis()
+        self.gamma_axis_x.setTitleText("Каналы")
+        self.gamma_axis_x.setRange(0, 100)
+        # Устанавливаем шрифт и стиль для оси X
+        axis_font = QFont("Montserrat", 12)
+        self.gamma_axis_x.setLabelsFont(axis_font)
+        self.gamma_axis_x.setTitleFont(axis_font)
+        self.gamma_axis_x.setTitleBrush(QColor("#000000"))  # Чёрный цвет текста
+        self.gamma_axis_x.setLabelsColor(QColor("#000000"))  # Чёрный цвет меток
+        self.gamma_axis_x.setGridLineColor(QColor("#F5F5F5"))  # Светло-серая сетка
+
+        self.gamma_axis_y = QValueAxis()
+        self.gamma_axis_y.setTitleText("Импульсы")
+        self.gamma_axis_y.setLabelsFont(axis_font)
+        self.gamma_axis_y.setTitleFont(axis_font)
+        self.gamma_axis_y.setTitleBrush(QColor("#000000"))  # Чёрный цвет текста
+        self.gamma_axis_y.setLabelsColor(QColor("#000000"))  # Чёрный цвет меток
+        self.gamma_axis_y.setGridLineColor(QColor("#F5F5F5"))  # Светло-серая сетка
+
+        self.gamma_chart.addAxis(self.gamma_axis_x, Qt.AlignmentFlag.AlignBottom)
+        self.gamma_chart.addAxis(self.gamma_axis_y, Qt.AlignmentFlag.AlignLeft)
+        self.gamma_series.attachAxis(self.gamma_axis_x)
+        self.gamma_series.attachAxis(self.gamma_axis_y)
+
+        self.gamma_chart_view = QChartView(self.gamma_chart)
+        self.gamma_chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
+        self.gamma_chart_view.setRubberBand(QChartView.RubberBand.RectangleRubberBand)  # Включаем зум
+
+        # Переключатель для логарифмического масштаба
+        self.gamma_log_checkbox = QCheckBox("Логарифмический масштаб")
+        self.gamma_log_checkbox.stateChanged.connect(self.toggle_gamma_log_scale)
+
+        # Кнопка "Калибровка" (без функционала)
+        self.gamma_calibration_button = QPushButton("Калибровка")
+        # Стили унаследуются из setStyleSheet (красный фон, белый текст)
+
+        # Компоновка вкладки "Gamma chart"
+        gamma_layout = QVBoxLayout()
+        gamma_layout.addWidget(self.gamma_chart_view)
+
+        # Горизонтальный layout для переключателя и кнопки
+        controls_layout = QHBoxLayout()
+        controls_layout.addWidget(self.gamma_log_checkbox)
+        controls_layout.addStretch()  # Растяжка для выравнивания
+        controls_layout.addWidget(self.gamma_calibration_button)
+        gamma_layout.addLayout(controls_layout)
+
+        self.tab_gamma.setLayout(gamma_layout)
+
+        # =========================================================================
+        # Блок 7: Создание вкладки "Report"
         # =========================================================================
         self.tab4 = QWidget()
         self.tabs.addTab(self.tab4, "Report")
@@ -720,12 +795,6 @@ class SpectrumWindow(QMainWindow):
         buttons_layout = QHBoxLayout()
         buttons_layout.addStretch()
 
-        # Кнопка "Обновить данные"
-        self.refresh_button = QPushButton("Обновить данные")
-        self.refresh_button.setObjectName("refreshButton")
-        self.refresh_button.clicked.connect(self.update_calibration_table)
-        buttons_layout.addWidget(self.refresh_button)
-
         # Кнопка "Создание отчёта"
         self.report_button = QPushButton("Создание отчёта")
         self.report_button.setObjectName("reportButton")
@@ -738,67 +807,27 @@ class SpectrumWindow(QMainWindow):
 
         self.tab4.setLayout(calibration_layout)
 
-        self.update_calibration_table()
-
         add_recalculate_button(self)
         self.use_three_peaks = True
 
         # =========================================================================
-        # Блок 7: Создание вкладки "Combined Report"
+        # Блок 8: Создание вкладки "Combined Report"
         # =========================================================================
         self.tab3 = QWidget()
         self.tabs.addTab(self.tab3, "Combined Report")
 
         self.reports_list = QListWidget()
-        self.reports_list.setStyleSheet("""
-            QListWidget {
-                border: 1px solid #D3D9DE;
-                border-radius: 5px;
-                background-color: #FFFFFF;
-                padding: 5px;
-                font-size: 12px;
-                color: #2D3748;
-            }
-            QListWidget::item {
-                padding: 5px;
-            }
-            QListWidget::item:selected {
-                background-color: #A3BFFA;
-                color: #FFFFFF;
-            }
-        """)
 
         self.reports_status_label = QLabel("Проверка наличия папки 'Отчёты'...")
-        self.reports_status_label.setStyleSheet("""
-            QLabel {
-                font-size: 12px;
-                color: #4A5568;
-                padding: 5px;
-            }
-        """)
 
         self.assembly_report_button = QPushButton("Сборочный отчёт")
         self.assembly_report_button.clicked.connect(self.create_assembly_report)
         self.assembly_report_button.setFixedWidth(200)
-        self.assembly_report_button.setStyleSheet("""
-            QPushButton {
-                background-color: #A3BFFA;
-                color: #2D3748;
-                border: none;
-                border-radius: 5px;
-                padding: 8px 16px;
-                font-size: 12px;
-            }
-            QPushButton:hover {
-                background-color: #B3C9FF;
-            }
-            QPushButton:pressed {
-                background-color: #8B9FFE;
-            }
-        """)
 
         status_layout = QHBoxLayout()
+        status_layout.addStretch()  # Растяжка слева для центрирования
         status_layout.addWidget(self.reports_status_label)
+        status_layout.addStretch()  # Растяжка справа для центрирования
 
         button_layout = QHBoxLayout()
         button_layout.addStretch()
@@ -810,11 +839,56 @@ class SpectrumWindow(QMainWindow):
         combined_layout.addWidget(self.reports_list)
         combined_layout.addLayout(button_layout)
         combined_layout.setSpacing(10)
-        combined_layout.setContentsMargins(15, 15, 15, 15)
+        combined_layout.setContentsMargins(20, 20, 20, 20)  # Увеличенные отступы
+
         self.tab3.setLayout(combined_layout)
 
-        self.tabs.currentChanged.connect(self.update_reports_list)
+        self.tabs.currentChanged.connect(self.on_tab_changed)
         self.reports_list.itemDoubleClicked.connect(self.open_report_file)
+
+    ##########################################################################
+    # Методы для работы Gamma
+    ##########################################################################
+
+    def load_gamma_data(self):
+        selected_items = self.file_list.selectedItems()
+        if not selected_items:
+            logging.warning("Файл для загрузки Gamma не выбран")
+            return
+
+        selected_file = selected_items[0].text()
+        file_path = os.path.join(self.folder_input.text(), selected_file)
+
+        try:
+            # Читаем данные из файла .xls
+            df = pd.read_excel(file_path)
+            # Предположим, что данные импульсов находятся в столбце "Кол-во импульсов"
+            # и каналы — это индексы от 0 до длины данных
+            if "Кол-во импульсов" not in df.columns:
+                logging.error(f"Столбец 'Кол-во импульсов' не найден в файле {selected_file}")
+                return
+
+            impulses = df["Кол-во импульсов"].tolist()
+            channels = list(range(len(impulses)))
+
+            # Очищаем текущую серию
+            self.gamma_series.clear()
+
+            # Добавляем новые данные в серию
+            for channel, impulse in zip(channels, impulses):
+                self.gamma_series.append(channel, impulse)
+
+            # Обновляем диапазон осей
+            self.gamma_axis_x.setRange(0, len(impulses) - 1)
+            self.gamma_axis_y.setRange(min(impulses), max(impulses))
+
+            logging.info(f"Данные Gamma успешно загружены из файла {selected_file}")
+        except Exception as e:
+            logging.error(f"Ошибка при загрузке данных Gamma из файла {selected_file}: {str(e)}")
+
+    ##########################################################################
+    # Методы всякого разного
+    ##########################################################################
 
     def open_report_file(self, item):
         """Открывает выбранный файл Excel."""
@@ -1480,6 +1554,18 @@ class SpectrumWindow(QMainWindow):
         self.chart_view.update()
         self.beta_chart_view.update()
 
+    def on_tab_changed(self, index):
+        logging.debug(f"Переключение на вкладку с индексом: {index}")
+        try:
+            # Обновление списка отчётов на вкладке "Combined Report"
+            if index == 5:
+                self.update_reports_list(index)
+            # Обновление таблицы на вкладке "Report"
+            elif index == 4:
+                self.update_calibration_table()
+        except Exception as e:
+            logging.error(f"Ошибка в on_tab_changed: {str(e)}")
+
     ##########################################################################
     # Методы для работы с файлами и контекстным меню
     ##########################################################################
@@ -1568,23 +1654,25 @@ class SpectrumWindow(QMainWindow):
             # Если папка не существует, выводим сообщение
             self.show_warning_message(f"Папка '{folder_name}' не найдена.")
 
-    def show_context_menu(self, pos):
-        """Отображает контекстное меню при правом клике на файл."""
-        context_menu = QMenu(self)  # Создаем меню
-        open_action = context_menu.addAction("Открыть")  # Добавляем кнопку "Открыть"
-        load_alfa_action = context_menu.addAction("Загрузить Alfa")  # Добавляем кнопку "Загрузить Alfa"
-        load_beta_action = context_menu.addAction("Загрузить Beta")  # Добавляем кнопку "Загрузить Beta"
-        disable_action = context_menu.addAction("Отключить")  # Добавляем кнопку "Отключить"
+    def show_context_menu(self, position):
+        menu = QMenu()
+        open_action = menu.addAction("Открыть")
+        load_alfa_action = menu.addAction("Загрузить Alfa")
+        load_beta_action = menu.addAction("Загрузить Beta")
+        load_gamma_action = menu.addAction("Загрузить Gamma")  # Новая опция
+        disable_action = menu.addAction("Отключить")
 
-        # Связываем действия с методами
-        open_action.triggered.connect(lambda: self.open_xls_file(pos))
-        load_alfa_action.triggered.connect(lambda: self.change_color(pos, 'alfa'))
-        load_beta_action.triggered.connect(lambda: self.change_color(pos, 'beta'))
-        load_alfa_action.triggered.connect(lambda: self.check_color_and_load_data(pos))  # Загрузка данных для Alfa
-        load_beta_action.triggered.connect(lambda: self.check_color_and_load_data(pos))  # Загрузка данных для Beta
-        disable_action.triggered.connect(lambda: self.change_color(pos, 'disable'))
-
-        context_menu.exec(self.file_list.mapToGlobal(pos))  # Показываем меню в точке правого клика
+        action = menu.exec(self.file_list.mapToGlobal(position))
+        if action == open_action:
+            self.open_file()
+        elif action == load_alfa_action:
+            self.load_alfa_data()
+        elif action == load_beta_action:
+            self.load_beta_data()
+        elif action == load_gamma_action:
+            self.load_gamma_data()  # Вызов нового метода
+        elif action == disable_action:
+            self.disable_file()
 
     def change_color(self, pos, action_type):
         """Меняет цвет фона элемента в зависимости от действия и отображает/удаляет графики."""
@@ -2120,6 +2208,36 @@ class SpectrumWindow(QMainWindow):
     ##########################################################################
     # Методы для работы с графиками и масштабированием
     ##########################################################################
+
+    def toggle_gamma_log_scale(self, state):
+        if state == Qt.CheckState.Checked.value:
+            # Логарифмический масштаб
+            self.gamma_axis_y = QLogValueAxis()
+            self.gamma_axis_y.setTitleText("Импульсы (лог)")
+            self.gamma_axis_y.setBase(10.0)
+            self.gamma_axis_y.setMinorTickCount(9)
+            axis_font = QFont("Montserrat", 12)
+            self.gamma_axis_y.setLabelsFont(axis_font)
+            self.gamma_axis_y.setTitleFont(axis_font)
+            self.gamma_axis_y.setTitleBrush(QColor("#000000"))
+            self.gamma_axis_y.setLabelsColor(QColor("#000000"))
+            self.gamma_axis_y.setGridLineColor(QColor("#F5F5F5"))
+            self.gamma_chart.removeAxis(self.gamma_chart.axisY())
+            self.gamma_chart.addAxis(self.gamma_axis_y, Qt.AlignmentFlag.AlignLeft)
+            self.gamma_series.attachAxis(self.gamma_axis_y)
+        else:
+            # Линейный масштаб
+            self.gamma_axis_y = QValueAxis()
+            self.gamma_axis_y.setTitleText("Импульсы")
+            axis_font = QFont("Montserrat", 12)
+            self.gamma_axis_y.setLabelsFont(axis_font)
+            self.gamma_axis_y.setTitleFont(axis_font)
+            self.gamma_axis_y.setTitleBrush(QColor("#000000"))
+            self.gamma_axis_y.setLabelsColor(QColor("#000000"))
+            self.gamma_axis_y.setGridLineColor(QColor("#F5F5F5"))
+            self.gamma_chart.removeAxis(self.gamma_chart.axisY())
+            self.gamma_chart.addAxis(self.gamma_axis_y, Qt.AlignmentFlag.AlignLeft)
+            self.gamma_series.attachAxis(self.gamma_axis_y)
 
     def update_spectrum(self):
         """Обновляет спектр импульсов."""
