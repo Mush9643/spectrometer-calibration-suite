@@ -682,10 +682,10 @@ class SpectrumWindow(QMainWindow):
         # =========================================================================
         # Блок 6: Создание вкладки "Gamma chart"
         # =========================================================================
-        self.tab_gamma = QWidget()
-        self.tabs.addTab(self.tab_gamma, "Gamma")
+        self.tab5 = QWidget()
+        self.tabs.addTab(self.tab5, "Gamma")
 
-        # Создание графика для вкладки "Gamma"
+        # Создание графика для вкладки Gamma
         self.gamma_chart = QChart()
         self.gamma_chart.setTitle("Gamma")
         # Устанавливаем шрифт для заголовка
@@ -721,30 +721,53 @@ class SpectrumWindow(QMainWindow):
         self.gamma_series.attachAxis(self.gamma_axis_x)
         self.gamma_series.attachAxis(self.gamma_axis_y)
 
-        self.gamma_chart_view = QChartView(self.gamma_chart)
+        self.gamma_chart_view = CustomChartView(self.gamma_chart)
         self.gamma_chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
         self.gamma_chart_view.setRubberBand(QChartView.RubberBand.RectangleRubberBand)  # Включаем зум
 
         # Переключатель для логарифмического масштаба
-        self.gamma_log_checkbox = QCheckBox("Логарифмический масштаб")
+        self.gamma_log_checkbox = ToggleSwitch("Логарифмический масштаб")
         self.gamma_log_checkbox.stateChanged.connect(self.toggle_gamma_log_scale)
 
-        # Кнопка "Калибровка" (без функционала)
-        self.gamma_calibration_button = QPushButton("Калибровка")
-        # Стили унаследуются из setStyleSheet (красный фон, белый текст)
+        # Создаем виджет для чекбоксов Gamma
+        self.gamma_checkboxes_widget = QWidget()
+        self.gamma_checkboxes_widget.setObjectName("checkboxesWidget")  # Для специфического стиля
+        self.gamma_checkboxes_layout = QVBoxLayout()
+        self.gamma_checkboxes_widget.setLayout(self.gamma_checkboxes_layout)
+        self.gamma_checkboxes_widget.setMinimumHeight(50)  # Устанавливаем минимальную высоту
+        self.gamma_checkboxes_widget.hide()  # Изначально скрыт
+
+        # Кнопка для отображения/скрытия чекбоксов
+        self.gamma_toggle_checkboxes_button = QPushButton("📋 Чекбоксы")
+        self.gamma_toggle_checkboxes_button.setObjectName("toggleCheckboxesButton")
+        self.gamma_toggle_checkboxes_button.clicked.connect(self.toggle_gamma_checkboxes)
+
+        # Кнопка "Сбросить масштаб"
+        self.gamma_reset_zoom_button = QPushButton("Сбросить масштаб")
+        self.gamma_reset_zoom_button.setObjectName("resetZoomButton")
+        self.gamma_reset_zoom_button.clicked.connect(self.reset_gamma_zoom)
 
         # Компоновка вкладки "Gamma chart"
         gamma_layout = QVBoxLayout()
         gamma_layout.addWidget(self.gamma_chart_view)
 
-        # Горизонтальный layout для переключателя и кнопки
-        controls_layout = QHBoxLayout()
-        controls_layout.addWidget(self.gamma_log_checkbox)
-        controls_layout.addStretch()  # Растяжка для выравнивания
-        controls_layout.addWidget(self.gamma_calibration_button)
-        gamma_layout.addLayout(controls_layout)
+        # Горизонтальный layout для переключателя и кнопок
+        gamma_controls_layout = QHBoxLayout()
+        gamma_controls_layout.addWidget(self.gamma_log_checkbox)
+        gamma_controls_layout.addStretch()  # Растяжка для выравнивания
+        gamma_controls_layout.addWidget(self.gamma_toggle_checkboxes_button)
+        gamma_controls_layout.addWidget(self.gamma_reset_zoom_button)
+        gamma_layout.addLayout(gamma_controls_layout)
 
-        self.tab_gamma.setLayout(gamma_layout)
+        # Добавляем виджет с чекбоксами
+        gamma_layout.addWidget(self.gamma_checkboxes_widget)
+
+        self.tab5.setLayout(gamma_layout)
+
+        # Инициализация словарей для Gamma
+        self.gamma_series_dict = {}  # Словарь для хранения серий Gamma
+        self.gamma_checkboxes = {}  # Словарь для хранения чекбоксов Gamma
+        self.used_gamma_colors = {}  # Словарь для хранения использованных цветов Gamma
 
         # =========================================================================
         # Блок 7: Создание вкладки "Report"
@@ -846,45 +869,7 @@ class SpectrumWindow(QMainWindow):
         self.tabs.currentChanged.connect(self.on_tab_changed)
         self.reports_list.itemDoubleClicked.connect(self.open_report_file)
 
-    ##########################################################################
-    # Методы для работы Gamma
-    ##########################################################################
 
-    def load_gamma_data(self):
-        selected_items = self.file_list.selectedItems()
-        if not selected_items:
-            logging.warning("Файл для загрузки Gamma не выбран")
-            return
-
-        selected_file = selected_items[0].text()
-        file_path = os.path.join(self.folder_input.text(), selected_file)
-
-        try:
-            # Читаем данные из файла .xls
-            df = pd.read_excel(file_path)
-            # Предположим, что данные импульсов находятся в столбце "Кол-во импульсов"
-            # и каналы — это индексы от 0 до длины данных
-            if "Кол-во импульсов" not in df.columns:
-                logging.error(f"Столбец 'Кол-во импульсов' не найден в файле {selected_file}")
-                return
-
-            impulses = df["Кол-во импульсов"].tolist()
-            channels = list(range(len(impulses)))
-
-            # Очищаем текущую серию
-            self.gamma_series.clear()
-
-            # Добавляем новые данные в серию
-            for channel, impulse in zip(channels, impulses):
-                self.gamma_series.append(channel, impulse)
-
-            # Обновляем диапазон осей
-            self.gamma_axis_x.setRange(0, len(impulses) - 1)
-            self.gamma_axis_y.setRange(min(impulses), max(impulses))
-
-            logging.info(f"Данные Gamma успешно загружены из файла {selected_file}")
-        except Exception as e:
-            logging.error(f"Ошибка при загрузке данных Gamma из файла {selected_file}: {str(e)}")
 
     ##########################################################################
     # Методы всякого разного
@@ -1519,6 +1504,28 @@ class SpectrumWindow(QMainWindow):
             if item.widget():
                 item.widget().deleteLater()
 
+        # Очистка данных Gamma chart
+        self.gamma_chart.removeAllSeries()
+        self.gamma_series = QLineSeries()
+        self.gamma_series.setName("Gamma данные")
+        self.gamma_chart.addSeries(self.gamma_series)
+        self.gamma_series.attachAxis(self.gamma_axis_x)
+        self.gamma_series.attachAxis(self.gamma_axis_y)
+        self.gamma_axis_y.setRange(0, 1)
+
+        # Очистка словарей и массивов Gamma
+        self.gamma_series_dict.clear()
+        self.gamma_checkboxes.clear()
+        self.used_gamma_colors.clear()
+        if hasattr(self, 'original_gamma_series'):
+            self.original_gamma_series.clear()
+
+        # Очистка чекбоксов Gamma
+        while self.gamma_checkboxes_layout.count():
+            item = self.gamma_checkboxes_layout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
         # Очистка массивов данных
         self.fon_data = []
         self.am241_data = []
@@ -1549,10 +1556,12 @@ class SpectrumWindow(QMainWindow):
         # Сброс состояния логарифмических чекбоксов
         self.log_checkbox.setChecked(False)
         self.beta_log_checkbox.setChecked(False)
+        self.gamma_log_checkbox.setChecked(False)
 
         # Обновление интерфейса
         self.chart_view.update()
         self.beta_chart_view.update()
+        self.gamma_chart_view.update()
 
     def on_tab_changed(self, index):
         logging.debug(f"Переключение на вкладку с индексом: {index}")
@@ -1572,18 +1581,22 @@ class SpectrumWindow(QMainWindow):
     def auto_load_files(self):
         """
         Эмулирует нажатие на "Загрузить Beta" для файлов с именами, содержащими
-        "фона", "SrY90", "Rad", "Cs137", "C14", "Am241" и на "Загрузить Alfa" для файлов
-        с именами, содержащими "Rn", "Am241", в заданной последовательности.
-        Сначала загружаются Beta-файлы, затем Alfa-файлы.
+        "фона", "SrY90", "Rad", "Cs137", "C14", "Am241", на "Загрузить Alfa" для файлов
+        с именами, содержащими "Rn", "Am241", и на "Загрузить Gamma" для файлов
+        с именами, содержащими "gamma", в заданной последовательности.
+        Сначала загружаются Beta-файлы, затем Alfa-файлы, затем Gamma-файлы.
         """
         # Заданная последовательность ключевых слов для Beta
         beta_keywords = ["фона", "SrY90", "Rad", "Cs137", "C14", "Am241"]
         # Заданная последовательность ключевых слов для Alfa
         alfa_keywords = ["Rn", "Am241"]
+        # Заданная последовательность ключевых слов для Gamma
+        gamma_keywords = ["gamma"]
 
-        # Создаём списки файлов для Beta и Alfa, отсортированных по заданной последовательности
+        # Создаём списки файлов для Beta, Alfa и Gamma, отсортированных по заданной последовательности
         beta_files_to_process = []
         alfa_files_to_process = []
+        gamma_files_to_process = []
         for i in range(self.file_list.count()):
             item = self.file_list.item(i)
             file_name = item.text().lower()  # Приводим к нижнему регистру для проверки
@@ -1600,9 +1613,16 @@ class SpectrumWindow(QMainWindow):
                     alfa_files_to_process.append((keyword, item, i))
                     break
 
+            # Проверяем Gamma-файлы
+            for keyword in gamma_keywords:
+                if keyword.lower() in file_name:
+                    gamma_files_to_process.append((keyword, item, i))
+                    break
+
         # Сортируем файлы по порядку ключевых слов
         beta_files_to_process.sort(key=lambda x: beta_keywords.index(x[0]))
         alfa_files_to_process.sort(key=lambda x: alfa_keywords.index(x[0]))
+        gamma_files_to_process.sort(key=lambda x: gamma_keywords.index(x[0]))
 
         # Эмулируем нажатие на "Загрузить Beta" для Beta-файлов
         for keyword, item, row in beta_files_to_process:
@@ -1618,10 +1638,17 @@ class SpectrumWindow(QMainWindow):
             self.change_color(pos, 'alfa')
             self.check_color_and_load_data(pos)
 
+        # Эмулируем нажатие на "Загрузить Gamma" для Gamma-файлов
+        for keyword, item, row in gamma_files_to_process:
+            print(f"Авто загрузка Gamma для файла: {item.text()} (ключевое слово: {keyword})")
+            pos = self.file_list.visualItemRect(item).center()
+            self.change_color(pos, 'gamma')
+            self.check_color_and_load_data(pos)
+
         # Проверяем, были ли найдены файлы для обработки
-        if not beta_files_to_process and not alfa_files_to_process:
+        if not beta_files_to_process and not alfa_files_to_process and not gamma_files_to_process:
             self.show_warning_message(
-                "Не найдено файлов с именами, содержащими 'фона', 'SrY90', 'Rad', 'Cs137', 'C14', 'Am241' (Beta) или 'Rn', 'Am241' (Alfa)."
+                "Не найдено файлов с именами, содержащими 'фона', 'SrY90', 'Rad', 'Cs137', 'C14', 'Am241' (Beta), 'Rn', 'Am241' (Alfa) или 'gamma' (Gamma)."
             )
         elif not beta_files_to_process:
             self.show_warning_message(
@@ -1630,6 +1657,10 @@ class SpectrumWindow(QMainWindow):
         elif not alfa_files_to_process:
             self.show_warning_message(
                 "Не найдено файлов для Alfa с именами, содержащими 'Rn', 'Am241'."
+            )
+        elif not gamma_files_to_process:
+            self.show_warning_message(
+                "Не найдено файлов для Gamma с именами, содержащими 'gamma'."
             )
 
     def load_xls_files(self):
@@ -1654,25 +1685,26 @@ class SpectrumWindow(QMainWindow):
             # Если папка не существует, выводим сообщение
             self.show_warning_message(f"Папка '{folder_name}' не найдена.")
 
-    def show_context_menu(self, position):
-        menu = QMenu()
-        open_action = menu.addAction("Открыть")
-        load_alfa_action = menu.addAction("Загрузить Alfa")
-        load_beta_action = menu.addAction("Загрузить Beta")
-        load_gamma_action = menu.addAction("Загрузить Gamma")  # Новая опция
-        disable_action = menu.addAction("Отключить")
+    def show_context_menu(self, pos):
+        """Отображает контекстное меню при правом клике на файл."""
+        context_menu = QMenu(self)  # Создаем меню
+        open_action = context_menu.addAction("Открыть")  # Добавляем кнопку "Открыть"
+        load_alfa_action = context_menu.addAction("Загрузить Alfa")  # Добавляем кнопку "Загрузить Alfa"
+        load_beta_action = context_menu.addAction("Загрузить Beta")  # Добавляем кнопку "Загрузить Beta"
+        load_gamma_action = context_menu.addAction("Загрузить Gamma")  # Добавляем кнопку "Загрузить Gamma"
+        disable_action = context_menu.addAction("Отключить")  # Добавляем кнопку "Отключить"
 
-        action = menu.exec(self.file_list.mapToGlobal(position))
-        if action == open_action:
-            self.open_file()
-        elif action == load_alfa_action:
-            self.load_alfa_data()
-        elif action == load_beta_action:
-            self.load_beta_data()
-        elif action == load_gamma_action:
-            self.load_gamma_data()  # Вызов нового метода
-        elif action == disable_action:
-            self.disable_file()
+        # Связываем действия с методами
+        open_action.triggered.connect(lambda: self.open_xls_file(pos))
+        load_alfa_action.triggered.connect(lambda: self.change_color(pos, 'alfa'))
+        load_beta_action.triggered.connect(lambda: self.change_color(pos, 'beta'))
+        load_gamma_action.triggered.connect(lambda: self.change_color(pos, 'gamma'))  # Новая опция
+        load_alfa_action.triggered.connect(lambda: self.check_color_and_load_data(pos))  # Загрузка данных для Alfa
+        load_beta_action.triggered.connect(lambda: self.check_color_and_load_data(pos))  # Загрузка данных для Beta
+        load_gamma_action.triggered.connect(lambda: self.check_color_and_load_data(pos))  # Загрузка данных для Gamma
+        disable_action.triggered.connect(lambda: self.change_color(pos, 'disable'))
+
+        context_menu.exec(self.file_list.mapToGlobal(pos))  # Показываем меню в точке правого клика
 
     def change_color(self, pos, action_type):
         """Меняет цвет фона элемента в зависимости от действия и отображает/удаляет графики."""
@@ -1690,8 +1722,7 @@ class SpectrumWindow(QMainWindow):
         impulse_value = self.read_first_impulse_value(file_path)
 
         if impulse_value is not None:
-
-            self.first_impulse_values[file_name] = impulse_value # Сохраняем значение
+            self.first_impulse_values[file_name] = impulse_value  # Сохраняем значение
 
         if action_type == 'alfa':
             item.setBackground(QColor(144, 238, 144))  # Салатовый для "Загрузить Alfa"
@@ -1699,12 +1730,16 @@ class SpectrumWindow(QMainWindow):
         elif action_type == 'beta':
             item.setBackground(QColor(173, 216, 230))  # Голубой для "Загрузить Beta"
             self.add_or_remove_chart(item.text(), 'beta', True)
+        elif action_type == 'gamma':
+            item.setBackground(QColor(128, 0, 128))  # Пурпурный для "Загрузить Gamma"
+            self.add_or_remove_chart(item.text(), 'gamma', True)
         elif action_type == 'disable':
             item.setBackground(Qt.GlobalColor.white)  # Обесцвечиваем поле для "Отключить"
             file_name = item.text()
-            # Удаляем график и все связанные данные для обоих типов
+            # Удаляем график и все связанные данные для всех типов
             self.add_or_remove_chart(file_name, 'alfa', False)
             self.add_or_remove_chart(file_name, 'beta', False)
+            self.add_or_remove_chart(file_name, 'gamma', False)
             # Очищаем пики и другие зависимости, связанные с Rn
             self.cleanup_rn_data(file_name)
 
@@ -1778,17 +1813,23 @@ class SpectrumWindow(QMainWindow):
             self.alfa_series_dict = {}  # Инициализируем словарь, если его нет
         elif chart_type == 'beta' and not hasattr(self, 'beta_series_dict'):
             self.beta_series_dict = {}  # Инициализируем словарь, если его нет
+        elif chart_type == 'gamma' and not hasattr(self, 'gamma_series_dict'):
+            self.gamma_series_dict = {}  # Инициализируем словарь, если его нет
 
         if add:
             if chart_type == 'alfa' and file_name not in self.alfa_series_dict:
                 self.load_data_for_chart('alfa', file_name)
             elif chart_type == 'beta' and file_name not in self.beta_series_dict:
                 self.load_data_for_chart('beta', file_name)
+            elif chart_type == 'gamma' and file_name not in self.gamma_series_dict:
+                self.load_data_for_chart('gamma', file_name)
         else:
             if chart_type == 'alfa':
                 self.remove_specific_chart('alfa', file_name)
             elif chart_type == 'beta':
                 self.remove_specific_chart('beta', file_name)
+            elif chart_type == 'gamma':
+                self.remove_specific_chart('gamma', file_name)
 
     def open_xls_file(self, pos):
         """Открывает выбранный файл .xls при правом клике."""
@@ -1823,6 +1864,15 @@ class SpectrumWindow(QMainWindow):
 
                     del self.beta_series_dict[file_name]
                     update_calibration_button_state(self)
+            elif chart_type == 'gamma':
+                if file_name in self.gamma_series_dict:
+                    series_to_remove = self.gamma_series_dict[file_name]
+                    self.gamma_chart.removeSeries(series_to_remove)
+
+                    if file_name in self.used_gamma_colors:
+                        del self.used_gamma_colors[file_name]
+
+                    del self.gamma_series_dict[file_name]
         except Exception as e:
             self.show_error_message(f"Ошибка при удалении графика: {str(e)}")
 
@@ -1843,6 +1893,8 @@ class SpectrumWindow(QMainWindow):
             self.load_data_for_chart('alfa', item.text())
         elif background_color == QColor(173, 216, 230):  # Голубой цвет для 'Beta'
             self.load_data_for_chart('beta', item.text())
+        elif background_color == QColor(128, 0, 128):  # Пурпурный цвет для 'Gamma'
+            self.load_data_for_chart('gamma', item.text())
 
     def load_data_for_chart(self, chart_type, file_name):
         """Загружает данные из файла Excel и отображает на соответствующем графике."""
@@ -1890,6 +1942,8 @@ class SpectrumWindow(QMainWindow):
                 self.update_alfa_chart(df, file_name, original_impulses)  # Передаём original_impulses
             elif chart_type == 'beta':
                 self.update_beta_chart(df, file_name, original_impulses)  # Передаём original_impulses
+            elif chart_type == 'gamma':
+                self.update_gamma_chart(df, file_name, original_impulses)  # Передаём original_impulses
 
         except Exception as e:
             self.show_error_message(f"Ошибка при загрузке данных из файла: {str(e)}")
@@ -2079,14 +2133,64 @@ class SpectrumWindow(QMainWindow):
         self.update_beta_y_axis_range()
         update_calibration_button_state(self)
 
+    def update_gamma_chart(self, df, file_name, original_data):
+        """
+        Обновляет график на вкладке Gamma с учетом всех графиков.
+        """
+        if file_name in self.gamma_series_dict:
+            return
+
+        gamma_series = QLineSeries()
+        second_word = file_name.split()[1] if len(file_name.split()) > 1 else file_name
+        gamma_series.setName(f"({second_word})")
+
+        # Используем обнулённые данные для отображения
+        for _, row in df.iterrows():
+            gamma_series.append(row['Канал'], row['Кол-во импульсов'])
+
+        color = self.get_unique_color(file_name, 'gamma')
+        gamma_series.setColor(color)
+
+        self.gamma_series_dict[file_name] = gamma_series
+        if not hasattr(self, "original_gamma_series"):
+            self.original_gamma_series = {}
+        self.original_gamma_series[file_name] = (gamma_series, color)
+
+        self.gamma_chart.addSeries(gamma_series)
+        gamma_series.attachAxis(self.gamma_axis_x)
+        gamma_series.attachAxis(self.gamma_axis_y)
+
+        if file_name in self.gamma_checkboxes:
+            old_checkbox = self.gamma_checkboxes.pop(file_name)
+            old_checkbox.setParent(None)
+            old_checkbox.deleteLater()
+
+        checkbox = QCheckBox(f"Активировать масштаб для {second_word}")
+        checkbox.stateChanged.connect(
+            lambda state, series=gamma_series: self.adjust_gamma_y_axis_for_series(series, state))
+        self.gamma_checkboxes[file_name] = checkbox
+
+        # Добавляем чекбокс в self.gamma_checkboxes_layout
+        self.gamma_checkboxes_layout.addWidget(checkbox)
+
+        if not self.gamma_checkboxes_widget.isVisible():
+            self.gamma_checkboxes_widget.show()
+
+        self.update_gamma_y_axis_range()
+
     def get_unique_color(self, file_name, chart_type):
         """Выбирает уникальный цвет для новой серии, избегая повторений."""
         if chart_type == 'alfa':
             used_colors = self.used_alfa_colors
             available_colors = self.available_colors.copy()
-        else:  # 'beta'
+        elif chart_type == 'beta':
             used_colors = self.used_beta_colors
             available_colors = self.available_colors.copy()
+        elif chart_type == 'gamma':
+            used_colors = self.used_gamma_colors
+            available_colors = self.available_colors.copy()
+        else:
+            return QColor(0, 0, 0)  # Чёрный по умолчанию
 
         # Удаляем уже использованные цвета из доступных
         for color in used_colors.values():
@@ -2095,10 +2199,6 @@ class SpectrumWindow(QMainWindow):
 
         if not available_colors:  # Если все цвета использованы, сбрасываем или генерируем новые
             available_colors = self.available_colors.copy()  # Сбрасываем к начальному набору
-            # Можно также генерировать случайные цвета:
-            # import random
-            # r, g, b = random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
-            # return QColor(r, g, b)
 
         # Выбираем первый доступный цвет
         color = available_colors[0]
@@ -2480,6 +2580,147 @@ class SpectrumWindow(QMainWindow):
         for series in self.alfa_series_dict.values():
             highlight_am241_peak(self.chart, series, self.peak_points)
             highlight_rn_peaks(self.chart, series, self.peak_points, self)
+
+    ##########################################################################
+    # Методы для работы Gamma
+    ##########################################################################
+
+    def toggle_gamma_log_scale(self, state):
+        """Переключает между логарифмическим и линейным масштабом для всех серий Gamma."""
+        if state == Qt.CheckState.Checked.value:
+            self.apply_gamma_log_scale()
+        else:
+            self.apply_gamma_linear_scale()
+
+    def apply_gamma_log_scale(self):
+        """Применяет логарифмический масштаб ко всем сериям Gamma с началом оси Y от 1."""
+        if not hasattr(self, "original_gamma_series"):
+            self.original_gamma_series = {}
+
+        # Создаём логарифмическую ось Y
+        gamma_log_axis_y = QLogValueAxis()
+        gamma_log_axis_y.setTitleText("Импульсы (логарифмический масштаб)")
+        gamma_log_axis_y.setBase(10.0)
+        gamma_log_axis_y.setMinorTickCount(9)
+
+        # Удаляем старую ось Y
+        self.gamma_chart.removeAxis(self.gamma_axis_y)
+
+        # Удаляем все текущие серии из графика
+        for series in self.gamma_series_dict.values():
+            self.gamma_chart.removeSeries(series)
+
+        # Создаём новые логарифмические серии
+        new_series_dict = {}
+        global_max_y = float('-inf')
+        min_y_threshold = 1.0
+
+        for file_name, (original_series, color) in self.original_gamma_series.items():
+            log_series = QLineSeries()
+            log_series.setName(original_series.name())
+            log_series.setColor(color)
+
+            for point in original_series.points():
+                x, y = point.x(), point.y()
+                y_log = max(y, min_y_threshold)
+                log_series.append(x, y_log)
+                global_max_y = max(global_max_y, y_log)
+
+            new_series_dict[file_name] = log_series
+            self.gamma_chart.addSeries(log_series)
+            log_series.attachAxis(self.gamma_axis_x)
+
+        gamma_log_axis_y.setRange(min_y_threshold, global_max_y * 1.5)
+        self.gamma_chart.addAxis(gamma_log_axis_y, Qt.AlignmentFlag.AlignLeft)
+        for series in new_series_dict.values():
+            series.attachAxis(gamma_log_axis_y)
+
+        self.gamma_series_dict = new_series_dict
+        self.gamma_axis_y = gamma_log_axis_y
+
+    def apply_gamma_linear_scale(self):
+        """Применяет линейный масштаб ко всем сериям Gamma."""
+        if not hasattr(self, "original_gamma_series"):
+            return
+
+        # Создаём линейную ось Y
+        gamma_linear_axis_y = QValueAxis()
+        gamma_linear_axis_y.setTitleText("Импульсы")
+
+        # Удаляем старую ось Y
+        self.gamma_chart.removeAxis(self.gamma_axis_y)
+
+        # Удаляем все текущие серии
+        for series in self.gamma_series_dict.values():
+            self.gamma_chart.removeSeries(series)
+
+        # Восстанавливаем оригинальные серии
+        self.gamma_series_dict = {}
+        global_max_y = float('-inf')
+
+        for file_name, (original_series, color) in self.original_gamma_series.items():
+            original_series.setColor(color)
+            self.gamma_series_dict[file_name] = original_series
+            self.gamma_chart.addSeries(original_series)
+            original_series.attachAxis(self.gamma_axis_x)
+            y_values = [point.y() for point in original_series.points()]
+            if y_values:
+                global_max_y = max(global_max_y, max(y_values))
+
+        gamma_linear_axis_y.setRange(0, global_max_y * 1.1 if global_max_y > 0 else 1)
+        self.gamma_chart.addAxis(gamma_linear_axis_y, Qt.AlignmentFlag.AlignLeft)
+        for series in self.gamma_series_dict.values():
+            series.attachAxis(gamma_linear_axis_y)
+
+        self.gamma_axis_y = gamma_linear_axis_y
+
+    def reset_gamma_zoom(self):
+        """Сбрасывает масштаб графика Gamma до исходного состояния."""
+        self.gamma_axis_x.setRange(0, 100)
+        if self.gamma_series_dict:
+            max_y = max(
+                max(series.points(), key=lambda p: p.y()).y()
+                for series in self.gamma_series_dict.values()
+                if series.points()
+            )
+            self.gamma_axis_y.setRange(0, max_y * 1.1)
+        else:
+            self.gamma_axis_y.setRange(0, 1)
+        self.gamma_chart_view.update()
+
+    def toggle_gamma_checkboxes(self):
+        """Переключает видимость виджета с чекбоксами для Gamma chart и изменяет размер окна."""
+        if self.gamma_checkboxes_widget.isVisible():
+            # Скрываем виджет с чекбоксами
+            self.gamma_checkboxes_widget.hide()
+            self.gamma_toggle_checkboxes_button.setText("📋 Чекбоксы")
+            # Возвращаем исходный размер окна
+            self.resize(self.width(), self.original_height)
+        else:
+            # Показываем виджет с чекбоксами
+            self.gamma_checkboxes_widget.show()
+            self.gamma_toggle_checkboxes_button.setText("📋 Скрыть")
+            # Увеличиваем высоту окна на размер виджета с чекбоксами
+            checkboxes_height = self.gamma_checkboxes_widget.sizeHint().height()
+            new_height = self.height() + checkboxes_height
+            self.resize(self.width(), new_height)
+
+    def update_gamma_y_axis_range(self):
+        """Пересчитывает диапазон оси Y на основе всех имеющихся серий Gamma."""
+        max_y = max((max((point.y() for point in series.points()), default=0)
+                     for series in self.gamma_series_dict.values()), default=0)
+        self.gamma_axis_y.setRange(0, max_y * 1.1)
+
+    def adjust_gamma_y_axis_for_series(self, series, state):
+        """Настраивает ось Y для графика Gamma в зависимости от состояния CheckBox."""
+        if series is None or series.count() == 0:
+            return
+
+        if state == Qt.CheckState.Checked.value:
+            max_y = max(point.y() for point in series.points()) if series.count() > 0 else 0
+            self.gamma_axis_y.setRange(0, max_y * 1.1)
+        else:
+            self.update_gamma_y_axis_range()
 
     ##########################################################################
     # Методы для работы с экспортом данных и сообщениями
