@@ -11,82 +11,119 @@
 
         self.setStyleSheet("""
             QMainWindow {
-                background-color: #F5F7FA; /* Очень светло-серый пастельный фон */
+                background-color: #FFFFFF; /* Белый фон */
+                font-family: 'Montserrat', sans-serif; /* Устанавливаем шрифт Montserrat */
             }
             QTabWidget::pane {
-                border: 1px solid #D3D9DE; /* Мягкая серая граница */
-                background-color: white;
+                border: 1px solid #4A4A4A; /* Тёмно-серая граница */
+                background-color: #FFFFFF; /* Белый фон */
                 border-radius: 5px;
             }
             QTabBar::tab {
-                background-color: #E8ECEF; /* Пастельный серый для вкладок */
-                padding: 5px;
+                background-color: #F5F5F5; /* Очень светлый серый для вкладок */
+                color: #4A4A4A; /* Тёмно-серый текст */
+                padding: 8px 16px;
                 border-top-left-radius: 5px;
                 border-top-right-radius: 5px;
+                font-size: 14px;
+                font-weight: 600; /* Montserrat SemiBold */
             }
             QTabBar::tab:selected {
-                background-color: white;
-                border-bottom: 2px solid #A3BFFA; /* Мягкий пастельный голубой акцент */
-            }
-            QListWidget {
-                background-color: #F8FAFC; /* Очень светлый пастельный фон */
-                border: 1px solid #D3D9DE;
-                border-radius: 5px;
+                background-color: #FFFFFF; /* Белый фон для активной вкладки */
+                color: #C8102E; /* Красный текст для активной вкладки */
+                border-bottom: 2px solid #C8102E; /* Красный акцент */
             }
             QLineEdit {
-                border: 1px solid #D3D9DE;
+                border: 1px solid #4A4A4A; /* Тёмно-серая граница */
                 border-radius: 5px;
                 padding: 5px;
-                background-color: white;
+                background-color: #FFFFFF; /* Белый фон */
+                color: #000000; /* Чёрный текст */
+                font-size: 12px;
+                font-weight: 400; /* Montserrat Regular */
+            }
+            QLineEdit:read-only {
+                background-color: #F5F5F5; /* Очень светлый серый для read-only */
+            }
+            QListWidget {
+                background-color: #FFFFFF; /* Белый фон */
+                border: 1px solid #4A4A4A; /* Тёмно-серая граница */
+                border-radius: 5px;
+                padding: 5px;
+                color: #000000; /* Чёрный текст */
+                font-size: 12px;
+                font-weight: 400; /* Montserrat Regular */
+            }
+            QListWidget::item {
+                padding: 5px;
+            }
+            QListWidget::item:selected {
+                background-color: #C8102E; /* Красный фон для выбранного элемента */
+                color: #FFFFFF; /* Белый текст */
             }
             QPushButton {
-                background-color: #D1E0FF; /* Пастельный голубой для кнопок */
-                color: #2D3748; /* Тёмно-серый текст */
+                background-color: #C8102E; /* Красный для основных кнопок */
+                color: #FFFFFF; /* Белый текст */
+                border: none;
                 border-radius: 5px;
-                padding: 5px;
+                padding: 8px 16px;
+                font-size: 12px;
+                font-weight: 600; /* Montserrat SemiBold */
             }
             QPushButton:hover {
-                background-color: #B3C9FF; /* Более насыщенный пастельный голубой */
+                background-color: #A50F24; /* Более тёмный красный при наведении */
             }
             QPushButton:pressed {
-                background-color: #A3BFFA; /* Ещё более насыщенный акцент */
-            }
-            QPushButton#exportButton {
-                background-color: #D1E7DD; /* Пастельный зелёный для экспорта */
-            }
-            QPushButton#exportButton:hover {
-                background-color: #B9DEC7;
-            }
-            QPushButton#exportButton:pressed {
-                background-color: #A3D0B6;
+                background-color: #8C0D1F; /* Ещё более тёмный красный при нажатии */
             }
             QPushButton#folderButton {
-                background-color: rgba(0, 0, 0, 0); /* Прозрачный фон для кнопки папки */
+                background-color: transparent; /* Прозрачный фон для кнопки папки */
                 border: none;
                 padding: 2px;
-                color: #2D3748; /* Тёмно-серый цвет текста */
+                color: #4A4A4A; /* Тёмно-серый цвет текста */
                 font-size: 16px; /* Размер символа */
             }
             QPushButton#folderButton:hover {
-                background-color: rgba(209, 224, 255, 0.3); /* Лёгкий оттенок при наведении */
+                background-color: rgba(200, 16, 46, 0.1); /* Лёгкий красный оттенок при наведении */
             }
-            QPushButton#calibrationButton {
-                background-color: #D1E0FF; /* Пастельный голубой для кнопки калибровки */
+            QPushButton#exportButton {
+                background-color: #C8102E; /* Красный для кнопки экспорта */
+                color: #FFFFFF; /* Белый текст */
             }
-            QPushButton#calibrationButton:hover {
-                background-color: #B3C9FF;
+            QPushButton#exportButton:hover {
+                background-color: #A50F24;
             }
-            QPushButton#calibrationButton:pressed {
-                background-color: #A3BFFA;
+            QPushButton#exportButton:pressed {
+                background-color: #8C0D1F;
             }
-            QPushButton#clearButton {
-                background-color: #FFD1DC; /* Пастельный розовый для кнопки очистки */
+            QPushButton#toggleCheckboxesButton {
+                background-color: #4A4A4A; /* Тёмно-серый для вторичной кнопки */
+                color: #FFFFFF; /* Белый текст */
             }
-            QPushButton#clearButton:hover {
-                background-color: #FFB3C6;
+            QPushButton#toggleCheckboxesButton:hover {
+                background-color: #5A5A5A; /* Светлее при наведении */
             }
-            QPushButton#clearButton:pressed {
-                background-color: #FF99AC;
+            QPushButton#toggleCheckboxesButton:pressed {
+                background-color: #3A3A3A; /* Темнее при нажатии */
+            }
+            QPushButton#resetZoomButton {
+                background-color: #4A4A4A; /* Тёмно-серый для вторичной кнопки */
+                color: #FFFFFF; /* Белый текст */
+            }
+            QPushButton#resetZoomButton:hover {
+                background-color: #5A5A5A; /* Светлее при наведении */
+            }
+            QPushButton#resetZoomButton:pressed {
+                background-color: #3A3A3A; /* Темнее при нажатии */
+            }
+            QWidget#checkboxesWidget {
+                background-color: #FFFFFF; /* Белый фон */
+                border: 1px solid #4A4A4A; /* Тёмно-серая граница */
+                border-radius: 5px;
+                padding: 5px;
+            }
+            QChartView {
+                background-color: #FFFFFF; /* Белый фон графика */
             }
         """)
 
@@ -150,7 +187,7 @@
         # =========================================================================
         # Блок 3: Создание вкладки "Menu"
         # =========================================================================
-        # Создание вкладок
+        # Вкладка "Menu"
         self.tabs = QTabWidget()
         self.setCentralWidget(self.tabs)
 
@@ -163,14 +200,6 @@
         folder_layout = QHBoxLayout()
         self.folder_input = QLineEdit("")  # По умолчанию папка "098"
         self.folder_input.setReadOnly(True)  # Запрещаем ручное редактирование
-        self.folder_input.setStyleSheet("""
-                    QLineEdit {
-                        border: 1px solid #D3D9DE;
-                        border-radius: 5px;
-                        padding: 5px;
-                        background-color: white;
-                    }
-                """)  # Сохраняем стиль
         folder_layout.addWidget(self.folder_input)
 
         # Кнопка с иконкой папки для выбора папки
@@ -190,6 +219,7 @@
 
         # Кнопка "Авто загрузка"
         self.auto_load_button = QPushButton("Авто загрузка")
+        self.auto_load_button.setObjectName("autoLoadButton")  # Добавляем объектное имя для вторичного стиля
         self.auto_load_button.clicked.connect(self.auto_load_files)  # Подключаем метод для авто загрузки
         menu_layout.addWidget(self.auto_load_button)
 
@@ -271,10 +301,6 @@
         self.log_checkbox = QCheckBox("Логарифмический масштаб")
         self.log_checkbox.stateChanged.connect(self.toggle_log_scale)
 
-        # Кнопка очистки графика
-        self.clear_button = QPushButton("Очистить график")
-        self.clear_button.setObjectName("clearButton")
-        self.clear_button.clicked.connect(self.clear_alfa_chart)
 
         # Создаем виджет для чекбоксов Alfa chart
         self.alfa_checkboxes_widget = QWidget()
@@ -319,7 +345,6 @@
         controls_layout.addWidget(self.log_checkbox)
         controls_layout.addStretch()  # Растяжка для выравнивания
         controls_layout.addWidget(self.alfa_toggle_checkboxes_button)
-        controls_layout.addWidget(self.clear_button)
 
         layout.addLayout(controls_layout)
         # Добавляем виджет с чекбоксами
@@ -331,7 +356,6 @@
         add_calibration_button(self)
         self.add_reset_zoom_button()
 
-
         # =========================================================================
         # Блок 5: Создание вкладки "Beta chart"
         # =========================================================================
@@ -342,85 +366,75 @@
         # Создание графика для второй вкладки
         self.beta_chart = QChart()
         self.beta_chart.setTitle("Beta")
-        # Устанавливаем шрифт для заголовка, как в Alfa chart
-        title_font = QFont()
-        title_font.setPointSize(14)
-        title_font.setBold(True)
+        # Устанавливаем шрифт для заголовка
+        title_font = QFont("Montserrat", 14, QFont.Weight.Bold)
         self.beta_chart.setTitleFont(title_font)
+        self.beta_chart.setTitleBrush(QColor("#000000"))  # Чёрный цвет заголовка
 
         self.beta_series = QLineSeries()
         self.beta_series.setName("Beta данные")
         self.beta_chart.addSeries(self.beta_series)
 
         self.beta_axis_x = QValueAxis()
-        self.beta_axis_x.setTitleText("Точка")
+        self.beta_axis_x.setTitleText("Каналы")
         self.beta_axis_x.setRange(0, 100)
-        # Устанавливаем шрифт для оси X
-        axis_font = QFont()
-        axis_font.setPointSize(10)
+        # Устанавливаем шрифт и стиль для оси X
+        axis_font = QFont("Montserrat", 12)
         self.beta_axis_x.setLabelsFont(axis_font)
         self.beta_axis_x.setTitleFont(axis_font)
+        self.beta_axis_x.setTitleBrush(QColor("#000000"))  # Чёрный цвет текста
+        self.beta_axis_x.setLabelsColor(QColor("#000000"))  # Чёрный цвет меток
+        self.beta_axis_x.setGridLineColor(QColor("#F5F5F5"))  # Светло-серая сетка
 
         self.beta_axis_y = QValueAxis()
-        self.beta_axis_y.setTitleText("Значение")
-        # Устанавливаем шрифт для оси Y
+        self.beta_axis_y.setTitleText("Импульсы")
         self.beta_axis_y.setLabelsFont(axis_font)
         self.beta_axis_y.setTitleFont(axis_font)
+        self.beta_axis_y.setTitleBrush(QColor("#000000"))  # Чёрный цвет текста
+        self.beta_axis_y.setLabelsColor(QColor("#000000"))  # Чёрный цвет меток
+        self.beta_axis_y.setGridLineColor(QColor("#F5F5F5"))  # Светло-серая сетка
 
         self.beta_chart.addAxis(self.beta_axis_x, Qt.AlignmentFlag.AlignBottom)
         self.beta_chart.addAxis(self.beta_axis_y, Qt.AlignmentFlag.AlignLeft)
         self.beta_series.attachAxis(self.beta_axis_x)
         self.beta_series.attachAxis(self.beta_axis_y)
 
-        self.beta_chart_view = CustomChartView(self.beta_chart)
+        self.beta_chart_view = QChartView(self.beta_chart)
+        self.beta_chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
+        self.beta_chart_view.setRubberBand(QChartView.RubberBand.RectangleRubberBand)  # Включаем зум
 
-        # Чекбокс для логарифмического масштаба
-        self.beta_log_checkbox = QCheckBox("Логарифмический масштаб")
+        # Переключатель для логарифмического масштаба
+        self.beta_log_checkbox = ToggleSwitch("Логарифмический масштаб")
         self.beta_log_checkbox.stateChanged.connect(self.toggle_beta_log_scale)
 
         # Создаем виджет для чекбоксов
         self.checkboxes_widget = QWidget()
+        self.checkboxes_widget.setObjectName("checkboxesWidget")  # Для специфического стиля
         self.checkboxes_layout = QVBoxLayout()
         self.checkboxes_widget.setLayout(self.checkboxes_layout)
-        self.checkboxes_widget.setStyleSheet("""
-            QWidget {
-                background-color: #F8FAFC;
-                border: 1px solid #D3D9DE;
-                border-radius: 5px;
-                padding: 5px;
-            }
-        """)
         self.checkboxes_widget.setMinimumHeight(50)  # Устанавливаем минимальную высоту
         self.checkboxes_widget.hide()  # Изначально скрыт
 
         # Кнопка для отображения/скрытия чекбоксов
         self.toggle_checkboxes_button = QPushButton("📋 Чекбоксы")
         self.toggle_checkboxes_button.setObjectName("toggleCheckboxesButton")
-        self.toggle_checkboxes_button.setStyleSheet("""
-            QPushButton#toggleCheckboxesButton {
-                background-color: #D1E0FF;
-                color: #2D3748;
-                border-radius: 5px;
-                padding: 5px;
-            }
-            QPushButton#toggleCheckboxesButton:hover {
-                background-color: #B3C9FF;
-            }
-            QPushButton#toggleCheckboxesButton:pressed {
-                background-color: #A3BFFA;
-            }
-        """)
         self.toggle_checkboxes_button.clicked.connect(self.toggle_checkboxes)
+
+        # Кнопка "Сбросить масштаб"
+        self.beta_reset_zoom_button = QPushButton("Сбросить масштаб")
+        self.beta_reset_zoom_button.setObjectName("resetZoomButton")
+        self.beta_reset_zoom_button.clicked.connect(self.reset_beta_zoom)
 
         # Компоновка вкладки "Beta chart"
         beta_layout = QVBoxLayout()
         beta_layout.addWidget(self.beta_chart_view)
 
-        # Горизонтальный layout для кнопки и логарифмического чекбокса
+        # Горизонтальный layout для переключателя и кнопок
         controls_layout = QHBoxLayout()
         controls_layout.addWidget(self.beta_log_checkbox)
         controls_layout.addStretch()  # Растяжка для выравнивания
         controls_layout.addWidget(self.toggle_checkboxes_button)
+        controls_layout.addWidget(self.beta_reset_zoom_button)
         beta_layout.addLayout(controls_layout)
 
         # Добавляем виджет с чекбоксами
@@ -430,7 +444,6 @@
 
         # Добавляем кнопку калибровки
         add_beta_calibration_button(self)
-        self.add_beta_reset_zoom_button()
         # =========================================================================
         # Блок 6: Создание вкладки "Report"
         # =========================================================================

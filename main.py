@@ -188,122 +188,171 @@ class SpectrumWindow(QMainWindow):
         # Применение стилей с постельными тонами
 
         self.setStyleSheet("""
-            QMainWindow {
-                background-color: #FFFFFF; /* Белый фон */
-                font-family: 'Montserrat', sans-serif; /* Устанавливаем шрифт Montserrat */
-            }
-            QTabWidget::pane {
-                border: 1px solid #4A4A4A; /* Тёмно-серая граница */
-                background-color: #FFFFFF; /* Белый фон */
-                border-radius: 5px;
-            }
-            QTabBar::tab {
-                background-color: #F5F5F5; /* Очень светлый серый для вкладок */
-                color: #4A4A4A; /* Тёмно-серый текст */
-                padding: 8px 16px;
-                border-top-left-radius: 5px;
-                border-top-right-radius: 5px;
-                font-size: 14px;
-                font-weight: 600; /* Montserrat SemiBold */
-            }
-            QTabBar::tab:selected {
-                background-color: #FFFFFF; /* Белый фон для активной вкладки */
-                color: #C8102E; /* Красный текст для активной вкладки */
-                border-bottom: 2px solid #C8102E; /* Красный акцент */
-            }
-            QLineEdit {
-                border: 1px solid #4A4A4A; /* Тёмно-серая граница */
-                border-radius: 5px;
-                padding: 5px;
-                background-color: #FFFFFF; /* Белый фон */
-                color: #000000; /* Чёрный текст */
-                font-size: 12px;
-                font-weight: 400; /* Montserrat Regular */
-            }
-            QLineEdit:read-only {
-                background-color: #F5F5F5; /* Очень светлый серый для read-only */
-            }
-            QListWidget {
-                background-color: #FFFFFF; /* Белый фон */
-                border: 1px solid #4A4A4A; /* Тёмно-серая граница */
-                border-radius: 5px;
-                padding: 5px;
-                color: #000000; /* Чёрный текст */
-                font-size: 12px;
-                font-weight: 400; /* Montserrat Regular */
-            }
-            QListWidget::item {
-                padding: 5px;
-            }
-            QListWidget::item:selected {
-                background-color: #C8102E; /* Красный фон для выбранного элемента */
-                color: #FFFFFF; /* Белый текст */
-            }
-            QPushButton {
-                background-color: #C8102E; /* Красный для основных кнопок */
-                color: #FFFFFF; /* Белый текст */
-                border: none;
-                border-radius: 5px;
-                padding: 8px 16px;
-                font-size: 12px;
-                font-weight: 600; /* Montserrat SemiBold */
-            }
-            QPushButton:hover {
-                background-color: #A50F24; /* Более тёмный красный при наведении */
-            }
-            QPushButton:pressed {
-                background-color: #8C0D1F; /* Ещё более тёмный красный при нажатии */
-            }
-            QPushButton#folderButton {
-                background-color: transparent; /* Прозрачный фон для кнопки папки */
-                border: none;
-                padding: 2px;
-                color: #4A4A4A; /* Тёмно-серый цвет текста */
-                font-size: 16px; /* Размер символа */
-            }
-            QPushButton#folderButton:hover {
-                background-color: rgba(200, 16, 46, 0.1); /* Лёгкий красный оттенок при наведении */
-            }
-            QPushButton#exportButton {
-                background-color: #C8102E; /* Красный для кнопки экспорта */
-                color: #FFFFFF; /* Белый текст */
-            }
-            QPushButton#exportButton:hover {
-                background-color: #A50F24;
-            }
-            QPushButton#exportButton:pressed {
-                background-color: #8C0D1F;
-            }
-            QPushButton#toggleCheckboxesButton {
-                background-color: #4A4A4A; /* Тёмно-серый для вторичной кнопки */
-                color: #FFFFFF; /* Белый текст */
-            }
-            QPushButton#toggleCheckboxesButton:hover {
-                background-color: #5A5A5A; /* Светлее при наведении */
-            }
-            QPushButton#toggleCheckboxesButton:pressed {
-                background-color: #3A3A3A; /* Темнее при нажатии */
-            }
-            QPushButton#resetZoomButton {
-                background-color: #4A4A4A; /* Тёмно-серый для вторичной кнопки */
-                color: #FFFFFF; /* Белый текст */
-            }
-            QPushButton#resetZoomButton:hover {
-                background-color: #5A5A5A; /* Светлее при наведении */
-            }
-            QPushButton#resetZoomButton:pressed {
-                background-color: #3A3A3A; /* Темнее при нажатии */
-            }
-            QWidget#checkboxesWidget {
-                background-color: #FFFFFF; /* Белый фон */
-                border: 1px solid #4A4A4A; /* Тёмно-серая граница */
-                border-radius: 5px;
-                padding: 5px;
-            }
-            QChartView {
-                background-color: #FFFFFF; /* Белый фон графика */
-            }
-        """)
+                /* Основные стили окна */
+                QMainWindow {
+                    background-color: #FFFFFF; /* Белый фон */
+                    font-family: 'Montserrat', sans-serif; /* Устанавливаем шрифт Montserrat */
+                }
+                QTabWidget::pane {
+                    border: 1px solid #4A4A4A; /* Тёмно-серая граница */
+                    background-color: #FFFFFF; /* Белый фон */
+                    border-radius: 5px;
+                }
+                QTabBar::tab {
+                    background-color: #F5F5F5; /* Очень светлый серый для вкладок */
+                    color: #4A4A4A; /* Тёмно-серый текст */
+                    padding: 8px 16px;
+                    border-top-left-radius: 5px;
+                    border-top-right-radius: 5px;
+                    font-size: 14px;
+                    font-weight: 600; /* Montserrat SemiBold */
+                }
+                QTabBar::tab:selected {
+                    background-color: #FFFFFF; /* Белый фон для активной вкладки */
+                    color: #C0392B; /* Красный текст для активной вкладки (соответствует логотипу) */
+                    border-bottom: 2px solid #C0392B; /* Красный акцент */
+                }
+                QLineEdit {
+                    border: 1px solid #4A4A4A; /* Тёмно-серая граница */
+                    border-radius: 5px;
+                    padding: 5px;
+                    background-color: #FFFFFF; /* Белый фон */
+                    color: #000000; /* Чёрный текст */
+                    font-size: 12px;
+                    font-weight: 400; /* Montserrat Regular */
+                }
+                QLineEdit:read-only {
+                    background-color: #F5F5F5; /* Очень светлый серый для read-only */
+                }
+                QListWidget {
+                    background-color: #FFFFFF; /* Белый фон */
+                    border: 1px solid #4A4A4A; /* Тёмно-серая граница */
+                    border-radius: 5px;
+                    padding: 5px;
+                    color: #000000; /* Чёрный текст */
+                    font-size: 12px;
+                    font-weight: 400; /* Montserrat Regular */
+                }
+                QListWidget::item {
+                    padding: 5px;
+                }
+                QListWidget::item:selected {
+                    background-color: #C0392B; /* Красный фон для выбранного элемента (соответствует логотипу) */
+                    color: #FFFFFF; /* Белый текст */
+                }
+                QPushButton {
+                    background-color: #C0392B; /* Красный для основных кнопок (соответствует логотипу) */
+                    color: #FFFFFF; /* Белый текст */
+                    border: none;
+                    border-radius: 5px;
+                    padding: 8px 16px;
+                    font-size: 12px;
+                    font-weight: 600; /* Montserrat SemiBold */
+                }
+                QPushButton:hover {
+                    background-color: #A93226; /* Более тёмный красный при наведении */
+                }
+                QPushButton:pressed {
+                    background-color: #922B21; /* Ещё более тёмный красный при нажатии */
+                }
+                QPushButton#folderButton {
+                    background-color: transparent; /* Прозрачный фон для кнопки папки */
+                    border: none;
+                    padding: 2px;
+                    color: #4A4A4A; /* Тёмно-серый цвет текста */
+                    font-size: 16px; /* Размер символа */
+                }
+                QPushButton#folderButton:hover {
+                    background-color: rgba(200, 16, 46, 0.1); /* Лёгкий красный оттенок при наведении */
+                }
+                QPushButton#exportButton {
+                    background-color: #C0392B; /* Красный для кнопки экспорта */
+                    color: #FFFFFF; /* Белый текст */
+                }
+                QPushButton#exportButton:hover {
+                    background-color: #A93226;
+                }
+                QPushButton#exportButton:pressed {
+                    background-color: #922B21;
+                }
+                QPushButton#toggleCheckboxesButton {
+                    background-color: #4A4A4A; /* Тёмно-серый для вторичной кнопки */
+                    color: #FFFFFF; /* Белый текст */
+                }
+                QPushButton#toggleCheckboxesButton:hover {
+                    background-color: #5A5A5A; /* Светлее при наведении */
+                }
+                QPushButton#toggleCheckboxesButton:pressed {
+                    background-color: #3A3A3A; /* Темнее при нажатии */
+                }
+                QPushButton#resetZoomButton {
+                    background-color: #4A4A4A; /* Тёмно-серый для вторичной кнопки */
+                    color: #FFFFFF; /* Белый текст */
+                }
+                QPushButton#resetZoomButton:hover {
+                    background-color: #5A5A5A; /* Светлее при наведении */
+                }
+                QPushButton#resetZoomButton:pressed {
+                    background-color: #3A3A3A; /* Темнее при нажатии */
+                }
+                QWidget#checkboxesWidget {
+                    background-color: #FFFFFF; /* Белый фон */
+                    border: 1px solid #4A4A4A; /* Тёмно-серая граница */
+                    border-radius: 5px;
+                    padding: 5px;
+                }
+                QChartView {
+                    background-color: #FFFFFF; /* Белый фон графика */
+                }
+                /* Стили для таблицы на вкладке Report */
+                QTableWidget {
+                    background-color: #F8FAFC; /* Светлый фон таблицы */
+                    border: 1px solid #4A4A4A; /* Тёмно-серая граница */
+                    border-radius: 5px;
+                    font-family: 'Montserrat', sans-serif;
+                    font-size: 12px;
+                }
+                QHeaderView::section {
+                    background-color: #C0392B; /* Красный фон для заголовка таблицы (соответствует логотипу) */
+                    color: #FFFFFF; /* Белый текст */
+                    padding: 5px;
+                    border: 1px solid #4A4A4A; /* Тёмно-серая граница */
+                    font-weight: 600; /* Montserrat SemiBold */
+                }
+                QTableWidget::item {
+                    padding: 5px;
+                }
+                QTableWidget::item:alternate {
+                    background-color: #F5F5F5; /* Чередование светло-серого фона */
+                }
+                /* Стили для кнопок на вкладке Report */
+                QPushButton#refreshButton {
+                    background-color: #C0392B; /* Красный фон (соответствует логотипу) */
+                    color: #FFFFFF; /* Белый текст */
+                    border-radius: 5px;
+                    padding: 5px;
+                    max-width: 150px;
+                }
+                QPushButton#refreshButton:hover {
+                    background-color: #A93226;
+                }
+                QPushButton#refreshButton:pressed {
+                    background-color: #922B21;
+                }
+                QPushButton#reportButton {
+                    background-color: #C0392B; /* Красный фон (соответствует логотипу) */
+                    color: #FFFFFF; /* Белый текст */
+                    border-radius: 5px;
+                    padding: 5px;
+                    max-width: 150px;
+                }
+                QPushButton#reportButton:hover {
+                    background-color: #A93226;
+                }
+                QPushButton#reportButton:pressed {
+                    background-color: #922B21;
+                }
+            """)
 
         # Настройка окна
         self.setWindowTitle("Спектр импульсов")
@@ -632,24 +681,39 @@ class SpectrumWindow(QMainWindow):
 
         self.calibration_table = QTableWidget()
         self.calibration_table.setColumnCount(2)
+        self.calibration_table.setRowCount(17)  # Устанавливаем количество строк
         self.calibration_table.setHorizontalHeaderLabels(["Параметр", "Значение"])
-        self.calibration_table.setStyleSheet("""
-                    QTableWidget {
-                        background-color: #F8FAFC;
-                        border: 1px solid #D3D9DE;
-                        border-radius: 5px;
-                    }
-                    QHeaderView::section {
-                        background-color: #E8ECEF;
-                        padding: 5px;
-                        border: 1px solid #D3D9DE;
-                        font-weight: bold;
-                    }
-                    QTableWidget::item {
-                        padding: 5px;
-                    }
-                """)
+
+        # Заполнение таблицы (данные из скриншота)
+        data = [
+            ("ИМЯ ПАКЛИ", "0109"),
+            ("a (Alfa)", "Отсутствует"),
+            ("b (Alfa)", "Отсутствует"),
+            ("НУЛ α, № канала", "Отсутствует"),
+            ("БУЛ ROI 3, № канала", "Отсутствует"),
+            ("БУЛ ROI 2, № канала", "Отсутствует"),
+            ("БУЛ ROI 6, № канала", "Отсутствует"),
+            ("БУЛ ROI 4, № канала", "Отсутствует"),
+            ("БУЛ ROI 5, № канала", "Отсутствует"),
+            ("K(Po218)", "Отсутствует"),
+            ("k1p9", "Отсутствует"),
+            ("Пик Am241", "Отсутствует"),
+            ("НУЛ β", "5.000"),
+            ("БУЛ β", "200.000"),
+            ("k1c0", "Отсутствует"),
+            ("a (Beta)", "Отсутствует"),
+            ("b (Beta)", "Отсутствует"),
+        ]
+
+        for row, (param, value) in enumerate(data):
+            self.calibration_table.setItem(row, 0, QTableWidgetItem(param))
+            item = QTableWidgetItem(value)
+            if value == "Отсутствует":
+                item.setForeground(QColor("#C0392B"))  # Красный цвет для "Отсутствует"
+            self.calibration_table.setItem(row, 1, item)
+
         self.calibration_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.calibration_table.setAlternatingRowColors(True)  # Включаем чередование цветов строк
         calibration_layout.addWidget(self.calibration_table)
 
         # Горизонтальный layout для кнопок
@@ -659,42 +723,12 @@ class SpectrumWindow(QMainWindow):
         # Кнопка "Обновить данные"
         self.refresh_button = QPushButton("Обновить данные")
         self.refresh_button.setObjectName("refreshButton")
-        self.refresh_button.setStyleSheet("""
-                    QPushButton#refreshButton {
-                        background-color: #D1E0FF;
-                        color: #2D3748;
-                        border-radius: 5px;
-                        padding: 5px;
-                        max-width: 150px;
-                    }
-                    QPushButton#refreshButton:hover {
-                        background-color: #B3C9FF;
-                    }
-                    QPushButton#refreshButton:pressed {
-                        background-color: #A3BFFA;
-                    }
-                """)
         self.refresh_button.clicked.connect(self.update_calibration_table)
         buttons_layout.addWidget(self.refresh_button)
 
-        # Кнопка "Создание отчёта" (перенесена из "Report")
+        # Кнопка "Создание отчёта"
         self.report_button = QPushButton("Создание отчёта")
         self.report_button.setObjectName("reportButton")
-        self.report_button.setStyleSheet("""
-                    QPushButton#reportButton {
-                        background-color: #D4A5A5;
-                        color: #2D3748;
-                        border-radius: 5px;
-                        padding: 5px;
-                        max-width: 150px;
-                    }
-                    QPushButton#reportButton:hover {
-                        background-color: #C68B8B;
-                    }
-                    QPushButton#reportButton:pressed {
-                        background-color: #B97171;
-                    }
-                """)
         self.report_button.clicked.connect(self.generate_report)
         buttons_layout.addWidget(self.report_button)
 
