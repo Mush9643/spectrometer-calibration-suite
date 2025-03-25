@@ -25,6 +25,8 @@ from fon_math import NUD_b, VUD_b
 from openpyxl.styles import Font, Border, Side, PatternFill, Alignment
 import os
 import logging
+from gamma_math import print_gamma_impulses, calculate_peaks, plot_peaks
+
 
 ##########################################################################
 # Класс Зума
@@ -684,6 +686,8 @@ class SpectrumWindow(QMainWindow):
         # =========================================================================
         self.tab5 = QWidget()
         self.tabs.addTab(self.tab5, "Gamma")
+        # Инициализация словаря для хранения пиков Gamma
+        self.gamma_peaks = {}
 
         # Создание графика для вкладки Gamma
         self.gamma_chart = QChart()
@@ -1683,6 +1687,13 @@ class SpectrumWindow(QMainWindow):
             self.show_warning_message(
                 "Не найдено файлов для Gamma с именами, содержащими 'gamma'."
             )
+        print_gamma_impulses(self)
+        peaks = calculate_peaks(self)
+
+        # Отображаем пики на графике
+        if peaks:
+            plot_peaks(self, peaks)
+
 
     def load_xls_files(self):
         """Загружает список файлов .xls и .xlsx из указанной папки."""

@@ -1,0 +1,224 @@
+import os
+import pandas as pd
+import numpy as np
+from PyQt6.QtGui import QColor
+from PyQt6.QtCharts import QChart, QChartView, QLineSeries, QValueAxis, QScatterSeries, QLogValueAxis
+
+
+def print_gamma_impulses(main_window):
+    """
+    Выводит в консоль массивы данных из столбца 'Кол-во импульсов' для всех файлов,
+    отмеченных пурпурным цветом (Gamma-файлов).
+
+    Args:
+        main_window: Экземпляр главного окна приложения, содержащий file_list и folder_input.
+    """
+    # Новый пурпурный цвет для Gamma-файлов
+    PURPLE_COLOR = QColor(147, 112, 219)
+
+    # Получаем путь к папке с файлами
+    folder_name = main_window.folder_input.text()
+    if not folder_name:
+        print("Ошибка: Папка не выбрана.")
+        return
+
+    folder_path = os.path.join(os.getcwd(), folder_name)
+    if not os.path.exists(folder_path):
+        print(f"Ошибка: Папка '{folder_path}' не существует.")
+        return
+
+    # Счётчик найденных Gamma-файлов
+    gamma_files_found = 0
+
+    # Проходим по всем файлам в списке file_list
+    for i in range(main_window.file_list.count()):
+        item = main_window.file_list.item(i)
+        if item is None:
+            continue
+
+        # Проверяем, отмечен ли файл пурпурным цветом
+        item_background = item.background().color()
+        if item_background == PURPLE_COLOR:
+            file_name = item.text()
+            file_path = os.path.join(folder_path, file_name)
+
+            # Проверяем, существует ли файл
+            if not os.path.exists(file_path):
+                print(f"Файл '{file_name}' не найден по пути: {file_path}")
+                continue
+
+            try:
+                # Читаем Excel-файл
+                df = pd.read_excel(file_path)
+
+                # Проверяем наличие столбца 'Кол-во импульсов'
+                if 'Кол-во импульсов' not in df.columns:
+                    print(f"В файле '{file_name}' отсутствует столбец 'Кол-во импульсов'.")
+                    continue
+
+                # Извлекаем данные из столбца 'Кол-во импульсов'
+                impulses = df['Кол-во импульсов'].tolist()
+
+                # Выводим массив в консоль
+                print(f"\nМассив 'Кол-во импульсов' для файла '{file_name}':")
+                print(impulses)
+
+                gamma_files_found += 1
+
+            except Exception as e:
+                print(f"Ошибка при обработке файла '{file_name}': {str(e)}")
+                continue
+
+    # Если не найдено ни одного Gamma-файла
+    if gamma_files_found == 0:
+        print("Не найдено файлов, отмеченных пурпурным цветом (Gamma-файлов).")
+
+
+def calculate_peaks(main_window):
+    """
+    Вычисляет пики для Cs-137 и Am-241 по формулам из Mathcad для всех Gamma-файлов,
+    отмеченных пурпурным цветом.
+
+    Args:
+        main_window: Экземпляр главного окна приложения, содержащий file_list и folder_input.
+
+    Returns:
+        dict: Словарь с пиками, где ключ — имя файла, а значение — кортеж (peak_channel, peak_value).
+    """
+    # Новый пурпурный цвет для Gamma-файлов
+    PURPLE_COLOR = QColor(147, 112, 219)
+
+    # Получаем путь к папке с файлами
+    folder_name = main_window.folder_input.text()
+    if not folder_name:
+        print("Ошибка: Папка не выбрана.")
+        return {}
+
+    folder_path = os.path.join(os.getcwd(), folder_name)
+    if not os.path.exists(folder_path):
+        print(f"Ошибка: Папка '{folder_path}' не существует.")
+        return {}
+
+    peaks = {}  # Словарь для хранения пиков: {file_name: (peak_channel, peak_value)}
+
+    # Проходим по всем файлам в списке file_list
+    for i in range(main_window.file_list.count()):
+        item = main_window.file_list.item(i)
+        if item is None:
+            continue
+
+        # Проверяем, отмечен ли файл пурпурным цветом
+        item_background = item.background().color()
+        if item_background != PURPLE_COLOR:
+            continue
+
+        file_name = item.text().lower()
+        file_path = os.path.join(folder_path, item.text())
+
+        # Проверяем, существует ли файл
+        if not os.path.exists(file_path):
+            print(f"Файл '{file_name}' не найден по пути: {file_path}")
+            continue
+
+        try:
+            # Читаем Excel-файл
+            df = pd.read_excel(file_path)
+
+            # Проверяем наличие столбца 'Кол-во импульсов'
+            if 'Кол-во импульсов' not in df.columns:
+                print(f"В файле '{file_name}' отсутствует столбец 'Кол-во импульсов'.")
+                continue
+
+            # Извлекаем данные из столбца 'Кол-во импульсов'
+            impulses = df['Кол-во импульсов'].to_numpy()
+
+            # Определяем, является ли файл Cs-137 или Am-241 по имени
+            if any(keyword in file_name for keyword in ["cs", "cs137", "cs_gamma"]):
+                # Формула для Cs-137: пик в диапазоне каналов 580–790
+                submatrix = impulses[580:791]  # Индексы от 580 до 790 включительно
+                if len(submatrix) == 0:
+                    print(f"Диапазон 580–790 пуст для файла '{file_name}'.")
+                    continue
+                max_value = np.max(submatrix)
+                max_index_in_submatrix = np.argmax(submatrix)
+                peak_channel = 580 + max_index_in_submatrix  # Абсолютный индекс пика
+                peaks[item.text()] = (peak_channel, max_value)
+                main_window.gamma_peaks[item.text()] = (peak_channel, max_value)  # Сохраняем пики
+                print(f"Пик для Cs-137 (файл '{item.text()}'): канал {peak_channel}, значение {max_value}")
+
+            elif any(keyword in file_name for keyword in ["am", "am241", "am_gamma"]):
+                # Исключаем файлы '98_fon_2_gamma.xls' и '98_fon_gamma.xls'
+                if file_name in ["98_fon_2_gamma.xls", "98_fon_gamma.xls"]:
+                    continue
+                # Формула для Am-241: пик в диапазоне каналов 1–540
+                submatrix = impulses[1:541]  # Индексы от 1 до 540 включительно
+                if len(submatrix) == 0:
+                    print(f"Диапазон 1–540 пуст для файла '{file_name}'.")
+                    continue
+                max_value = np.max(submatrix)
+                max_index_in_submatrix = np.argmax(submatrix)
+                peak_channel = 1 + max_index_in_submatrix  # Абсолютный индекс пика
+                peaks[item.text()] = (peak_channel, max_value)
+                main_window.gamma_peaks[item.text()] = (peak_channel, max_value)  # Сохраняем пики
+                print(f"Пик для Am-241 (файл '{item.text()}'): канал {peak_channel}, значение {max_value}")
+
+        except Exception as e:
+            print(f"Ошибка при обработке файла '{file_name}': {str(e)}")
+            continue
+
+    if not peaks:
+        print("Не найдено Gamma-файлов с именами, содержащими 'cs', 'cs137', 'cs_gamma', 'am', 'am241' или 'am_gamma'.")
+
+    return peaks
+
+
+def plot_peaks(main_window, peaks):
+    """
+    Отображает пики на графике во вкладке Gamma, используя QChart.
+
+    Args:
+        main_window: Экземпляр главного окна приложения, содержащий график Gamma (gamma_chart).
+        peaks: Словарь с пиками, где ключ — имя файла, а значение — кортеж (peak_channel, peak_value).
+    """
+    # Проверяем, есть ли атрибут gamma_chart
+    if not hasattr(main_window, 'gamma_chart'):
+        print("Ошибка: График Gamma (gamma_chart) не найден в main_window.")
+        return
+
+    # Инициализируем список для хранения серий пиков, если он ещё не создан
+    if not hasattr(main_window, 'peak_series'):
+        main_window.peak_series = []
+
+    # Удаляем предыдущие пики (серии) с графика
+    for series in main_window.peak_series:
+        main_window.gamma_chart.removeSeries(series)
+    main_window.peak_series.clear()
+
+    # Проходим по всем пикам
+    for file_name, (peak_channel, peak_value) in peaks.items():
+        # Определяем цвет точки в зависимости от типа пика
+        if any(keyword in file_name.lower() for keyword in ["cs", "cs137", "cs_gamma"]):
+            color = QColor(255, 0, 0)  # Красный для Cs-137
+        elif any(keyword in file_name.lower() for keyword in ["am", "am241", "am_gamma"]):
+            color = QColor(0, 0, 255)  # Синий для Am-241
+        else:
+            color = QColor(0, 255, 0)  # Зелёный для остальных (на всякий случай)
+
+        # Создаём серию для точки пика
+        scatter_series = QScatterSeries()
+        scatter_series.setName(f"Пик {file_name}")
+        scatter_series.append(peak_channel, peak_value)  # Добавляем точку пика
+        scatter_series.setMarkerShape(QScatterSeries.MarkerShape.MarkerShapeCircle)  # Форма точки — круг
+        scatter_series.setMarkerSize(7)  # Уменьшаем размер на треть: 10 * (2/3) ≈ 7
+        scatter_series.setColor(color)  # Цвет точки
+        scatter_series.setBorderColor(color)  # Цвет обводки
+
+        # Добавляем серию на график
+        main_window.gamma_chart.addSeries(scatter_series)
+        scatter_series.attachAxis(main_window.gamma_axis_x)
+        scatter_series.attachAxis(main_window.gamma_axis_y)
+
+        # Сохраняем серию в список, чтобы можно было удалить её позже
+        main_window.peak_series.append(scatter_series)
+
+    print("Пики отображены на графике Gamma.")
