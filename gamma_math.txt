@@ -1,108 +1,11 @@
 import os
 import pandas as pd
 import numpy as np
-from PyQt6.QtGui import QColor, QPainter
+from PyQt6.QtGui import QColor
 from PyQt6.QtCharts import QChart, QChartView, QLineSeries, QValueAxis, QScatterSeries, QLogValueAxis
-from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget
-from PyQt6.QtGui import QFont
-from PyQt6.QtCore import Qt
+
 # Массив констант Era226
 Era226 = [661.66, 60]
-class CalibrationWindow(QMainWindow):
-    """
-    Окно для отображения графика калибровочной прямой.
-    """
-    def __init__(self, Rbntu, Era226, parent=None):
-        super().__init__(parent)
-        print("Создание CalibrationWindow...")
-        self.setWindowTitle("Калибровочная прямая")
-        self.setGeometry(100, 100, 800, 600)  # Размер окна
-
-        # Создаём центральный виджет и layout
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
-        layout = QVBoxLayout(central_widget)
-
-        # Вычисляем коэффициенты прямой
-        try:
-            print(f"Вычисление коэффициентов прямой для Rbntu={Rbntu}, Era226={Era226}...")
-            a, b = calculate_line_coefficients(Rbntu, Era226)
-            print(f"Коэффициенты: a={a:.2f}, b={b:.2f}")
-        except ValueError as e:
-            print(f"Ошибка при вычислении коэффициентов прямой: {str(e)}")
-            return
-
-        # Создаём график
-        print("Создание QChart...")
-        chart = QChart()
-        chart.setTitle("Калибровочная прямая")
-        title_font = QFont("Montserrat", 14, QFont.Weight.Bold)
-        chart.setTitleFont(title_font)
-        chart.setTitleBrush(QColor("#000000"))
-
-        # Создаём серию для прямой
-        line_series = QLineSeries()
-        line_series.setName("f(t) = a + b * t")
-
-        # Заполняем серию точками для t от 0 до 400
-        t_min, t_max = 0, 400
-        num_points = 50  # Уменьшенное количество точек
-        print(f"Добавление {num_points + 1} точек в QLineSeries...")
-        for i in range(num_points + 1):
-            t = t_min + (t_max - t_min) * i / num_points
-            f_t = a + b * t  # f(t) = a + b * t
-            line_series.append(t, f_t)
-
-        chart.addSeries(line_series)
-
-        # Настраиваем оси
-        print("Настройка осей...")
-        axis_x = QValueAxis()
-        axis_x.setTitleText("t")
-        axis_x.setRange(t_min, t_max)
-        axis_x.setTickCount(9)  # 8 интервалов (0, 50, 100, ..., 400)
-        axis_x.setLabelFormat("%d")
-        axis_font = QFont("Montserrat", 12)
-        axis_x.setLabelsFont(axis_font)
-        axis_x.setTitleFont(axis_font)
-        axis_x.setTitleBrush(QColor("#000000"))
-        axis_x.setLabelsColor(QColor("#000000"))
-        axis_x.setGridLineColor(QColor("#F5F5F5"))
-
-        axis_y = QValueAxis()
-        axis_y.setTitleText("f(t)")
-        # Определяем диапазон по значениям f(t)
-        f_min = a + b * t_min
-        f_max = a + b * t_max
-        axis_y.setRange(min(f_min, f_max), max(f_min, f_max))
-        axis_y.setLabelFormat("%.2f")
-        axis_y.setLabelsFont(axis_font)
-        axis_y.setTitleFont(axis_font)
-        axis_y.setTitleBrush(QColor("#000000"))
-        axis_y.setLabelsColor(QColor("#000000"))
-        axis_y.setGridLineColor(QColor("#F5F5F5"))
-
-        chart.addAxis(axis_x, Qt.AlignmentFlag.AlignBottom)
-        chart.addAxis(axis_y, Qt.AlignmentFlag.AlignLeft)
-        line_series.attachAxis(axis_x)
-        line_series.attachAxis(axis_y)
-
-        # Включаем сетку
-        axis_x.setGridLineVisible(True)
-        axis_y.setGridLineVisible(True)
-
-        # Создаём ChartView для отображения графика
-        print("Создание QChartView...")
-        chart_view = QChartView(chart)
-        chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
-
-        # Добавляем график в layout
-        print("Добавление графика в layout...")
-        layout.addWidget(chart_view)
-
-        print(f"Коэффициенты прямой: a = {a:.2f}, b = {b:.2f}")
-        print("CalibrationWindow успешно создан.")
-
 def print_gamma_impulses(main_window):
     """
     Выводит в консоль массивы данных из столбца 'Кол-во импульсов' для всех файлов,
@@ -181,7 +84,7 @@ def calculate_peaks(main_window):
         main_window: Экземпляр главного окна приложения, содержащий file_list и folder_input.
 
     Returns:
-        tuple: (peaks, Rbntu) — словарь пиков и массив Rbntu.
+        dict: Словарь с пиками, где ключ — имя файла, а значение — кортеж (peak_channel, peak_value).
     """
     # Новый пурпурный цвет для Gamma-файлов
     PURPLE_COLOR = QColor(147, 112, 219)
@@ -190,12 +93,12 @@ def calculate_peaks(main_window):
     folder_name = main_window.folder_input.text()
     if not folder_name:
         print("Ошибка: Папка не выбрана.")
-        return {}, [0, 0]
+        return {}
 
     folder_path = os.path.join(os.getcwd(), folder_name)
     if not os.path.exists(folder_path):
         print(f"Ошибка: Папка '{folder_path}' не существует.")
-        return {}, [0, 0]
+        return {}
 
     peaks = {}  # Словарь для хранения пиков: {file_name: (peak_channel, peak_value)}
     m_cs137 = None  # Канал пика для Cs-137
@@ -244,7 +147,7 @@ def calculate_peaks(main_window):
                 peak_channel = 580 + max_index_in_submatrix  # Абсолютный индекс пика
                 peaks[item.text()] = (peak_channel, max_value)
                 main_window.gamma_peaks[item.text()] = (peak_channel, max_value)  # Сохраняем пики
-                m_cs137 = int(peak_channel - 512)  # Преобразуем в int
+                m_cs137 = peak_channel - 512  # Вычитаем 512 из канала пика
                 print(f"Пик для Cs-137 (файл '{item.text()}'): канал {peak_channel}, значение {max_value}")
 
             elif any(keyword in file_name for keyword in ["am", "am241", "am_gamma"]):
@@ -261,7 +164,7 @@ def calculate_peaks(main_window):
                 peak_channel = 1 + max_index_in_submatrix  # Абсолютный индекс пика
                 peaks[item.text()] = (peak_channel, max_value)
                 main_window.gamma_peaks[item.text()] = (peak_channel, max_value)  # Сохраняем пики
-                m_am241 = int(peak_channel - 512)  # Преобразуем в int
+                m_am241 = peak_channel - 512  # Вычитаем 512 из канала пика
                 print(f"Пик для Am-241 (файл '{item.text()}'): канал {peak_channel}, значение {max_value}")
 
         except Exception as e:
@@ -270,35 +173,12 @@ def calculate_peaks(main_window):
 
     if not peaks:
         print("Не найдено Gamma-файлов с именами, содержащими 'cs', 'cs137', 'cs_gamma', 'am', 'am241' или 'am_gamma'.")
-        return peaks, [0, 0]
+    else:
+        # Формируем массив Rbntu
+        Rbntu = [m_cs137 if m_cs137 is not None else 0, m_am241 if m_am241 is not None else 0]
+        print(f"Массив Rbntu = [m_cs137, m_am241]: {Rbntu}")
 
-    # Формируем массив Rbntu
-    Rbntu = [m_cs137 if m_cs137 is not None else 0, m_am241 if m_am241 is not None else 0]
-    print(f"Массив Rbntu = [m_cs137, m_am241]: {Rbntu}")
-
-    return peaks, Rbntu
-
-
-def calculate_line_coefficients(Rbntu, Era226):
-    """
-    Вычисляет коэффициенты прямой y = a + b * x на основе двух точек (Rbntu, Era226).
-
-    Args:
-        Rbntu (list): Массив [m_cs137, m_am241] — каналы пиков, уменьшенные на 512.
-        Era226 (list): Массив [661.66, 60] — энергии для Cs-137 и Am-241.
-
-    Returns:
-        tuple: (a, b) — коэффициенты прямой (свободный член и наклон).
-    """
-    if Rbntu[0] == Rbntu[1]:
-        raise ValueError("Каналы пиков не могут быть одинаковыми для вычисления прямой.")
-
-    # Вычисляем наклон (b)
-    b = (Era226[1] - Era226[0]) / (Rbntu[1] - Rbntu[0])
-    # Вычисляем свободный член (a)
-    a = Era226[0] - b * Rbntu[0]
-
-    return a, b
+    return peaks
 
 
 def plot_peaks(main_window, peaks):
@@ -309,42 +189,45 @@ def plot_peaks(main_window, peaks):
         main_window: Экземпляр главного окна приложения, содержащий график Gamma (gamma_chart).
         peaks: Словарь с пиками, где ключ — имя файла, а значение — кортеж (peak_channel, peak_value).
     """
-    print("Запуск plot_peaks...")
+    # Проверяем, есть ли атрибут gamma_chart
     if not hasattr(main_window, 'gamma_chart'):
         print("Ошибка: График Gamma (gamma_chart) не найден в main_window.")
         return
 
-    if not hasattr(main_window, 'gamma_axis_x') or not hasattr(main_window, 'gamma_axis_y'):
-        print("Ошибка: Оси gamma_axis_x или gamma_axis_y не найдены в main_window.")
-        return
-
+    # Инициализируем список для хранения серий пиков, если он ещё не создан
     if not hasattr(main_window, 'peak_series'):
         main_window.peak_series = []
-        print("peak_series инициализирован.")
 
-    print(f"Удаление {len(main_window.peak_series)} предыдущих серий пиков...")
+    # Удаляем предыдущие пики (серии) с графика
     for series in main_window.peak_series:
         main_window.gamma_chart.removeSeries(series)
     main_window.peak_series.clear()
-    print("Предыдущие пики удалены.")
 
-    print(f"Обработка {len(peaks)} пиков...")
+    # Проходим по всем пикам
     for file_name, (peak_channel, peak_value) in peaks.items():
-        print(f"Добавление пика для файла '{file_name}': канал {peak_channel}, значение {peak_value}")
-        if not isinstance(peak_channel, (int, float)) or not isinstance(peak_value, (int, float)):
-            print(f"Ошибка: Некорректные типы данных для пика '{file_name}': peak_channel={type(peak_channel)}, peak_value={type(peak_value)}")
-            continue
-        peak_channel = float(peak_channel)
-        peak_value = float(peak_value)
-        print(f"Преобразовано: канал {peak_channel}, значение {peak_value}")
+        # Определяем цвет точки в зависимости от типа пика
+        if any(keyword in file_name.lower() for keyword in ["cs", "cs137", "cs_gamma"]):
+            color = QColor(255, 0, 0)  # Красный для Cs-137
+        elif any(keyword in file_name.lower() for keyword in ["am", "am241", "am_gamma"]):
+            color = QColor(0, 0, 255)  # Синий для Am-241
+        else:
+            color = QColor(0, 255, 0)  # Зелёный для остальных (на всякий случай)
 
-        # Минимальная версия для теста
+        # Создаём серию для точки пика
         scatter_series = QScatterSeries()
-        scatter_series.append(peak_channel, peak_value)
+        scatter_series.setName(f"Пик {file_name}")
+        scatter_series.append(peak_channel, peak_value)  # Добавляем точку пика
+        scatter_series.setMarkerShape(QScatterSeries.MarkerShape.MarkerShapeCircle)  # Форма точки — круг
+        scatter_series.setMarkerSize(7)  # Уменьшаем размер на треть: 10 * (2/3) ≈ 7
+        scatter_series.setColor(color)  # Цвет точки
+        scatter_series.setBorderColor(color)  # Цвет обводки
+
+        # Добавляем серию на график
         main_window.gamma_chart.addSeries(scatter_series)
         scatter_series.attachAxis(main_window.gamma_axis_x)
         scatter_series.attachAxis(main_window.gamma_axis_y)
+
+        # Сохраняем серию в список, чтобы можно было удалить её позже
         main_window.peak_series.append(scatter_series)
-        print(f"Пик для '{file_name}' добавлен (упрощённый режим).")
 
     print("Пики отображены на графике Gamma.")

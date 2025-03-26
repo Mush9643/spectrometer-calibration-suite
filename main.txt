@@ -25,6 +25,8 @@ from fon_math import NUD_b, VUD_b
 from openpyxl.styles import Font, Border, Side, PatternFill, Alignment
 import os
 import logging
+from gamma_math import print_gamma_impulses, calculate_peaks, plot_peaks
+
 
 ##########################################################################
 # Класс Зума
@@ -684,6 +686,8 @@ class SpectrumWindow(QMainWindow):
         # =========================================================================
         self.tab5 = QWidget()
         self.tabs.addTab(self.tab5, "Gamma")
+        # Инициализация словаря для хранения пиков Gamma
+        self.gamma_peaks = {}
 
         # Создание графика для вкладки Gamma
         self.gamma_chart = QChart()
@@ -1590,49 +1594,67 @@ class SpectrumWindow(QMainWindow):
     ##########################################################################
     def auto_load_files(self):
         """
-        Эмулирует нажатие на "Загрузить Beta" для файлов с именами, содержащими
-        "фона", "SrY90", "Rad", "Cs137", "C14", "Am241", на "Загрузить Alfa" для файлов
-        с именами, содержащими "Rn", "Am241", и на "Загрузить Gamma" для файлов
-        с именами, содержащими "gamma", в заданной последовательности.
-        Сначала загружаются Beta-файлы, затем Alfa-файлы, затем Gamma-файлы.
+        Эмулирует нажатие на "Загрузить Beta", "Загрузить Alfa" или "Загрузить Gamma" для файлов с определёнными именами.
+        Файлы с "gamma" в имени окрашиваются в пурпурный цвет и загружаются на график Gamma,
+        кроме файлов "98_fon_2_gamma" и "98_fon_gamma", которые только окрашиваются.
         """
-        # Заданная последовательность ключевых слов для Beta
-        beta_keywords = ["фона", "SrY90", "Rad", "Cs137", "C14", "Am241"]
-        # Заданная последовательность ключевых слов для Alfa
-        alfa_keywords = ["Rn", "Am241"]
-        # Заданная последовательность ключевых слов для Gamma
+        # Заданная последовательность ключевых слов для Beta (в нижнем регистре)
+        beta_keywords = ["фона", "sry90", "rad", "cs137", "c14", "am241"]
+        # Заданная последовательность ключевых слов для Alfa (в нижнем регистре)
+        alfa_keywords = ["rn", "am241"]
+        # Файлы для Gamma (в нижнем регистре)
         gamma_keywords = ["gamma"]
 
-        # Создаём списки файлов для Beta, Alfa и Gamma, отсортированных по заданной последовательности
+        # Создаём списки файлов для Beta, Alfa и Gamma
         beta_files_to_process = []
         alfa_files_to_process = []
-        gamma_files_to_process = []
+        gamma_files_to_process = []  # Для файлов с "gamma" в имени (кроме исключений)
+        gamma_special_files = []  # Для файлов "98_fon_2_gamma" и "98_fon_gamma"
+
         for i in range(self.file_list.count()):
             item = self.file_list.item(i)
             file_name = item.text().lower()  # Приводим к нижнему регистру для проверки
 
-            # Проверяем Beta-файлы
+            # Проверяем специальные гамма-файлы
+            if "98_fon_2_gamma" in file_name or "98_fon_gamma" in file_name:
+                gamma_special_files.append((file_name, item, i))
+                continue  # Пропускаем дальнейшую обработку для этих файлов
+
+            # Проверяем файлы с "gamma" в имени
+            for keyword in gamma_keywords:
+                if keyword in file_name:
+                    gamma_files_to_process.append((keyword, item, i))
+                    break
+
+            # Проверяем Beta-файлы (независимо от Gamma)
             for keyword in beta_keywords:
-                if keyword.lower() in file_name:
+                if keyword in file_name:
                     beta_files_to_process.append((keyword, item, i))
                     break
 
-            # Проверяем Alfa-файлы
+            # Проверяем Alfa-файлы (независимо от Gamma и Beta)
             for keyword in alfa_keywords:
-                if keyword.lower() in file_name:
+                if keyword in file_name:
                     alfa_files_to_process.append((keyword, item, i))
-                    break
-
-            # Проверяем Gamma-файлы
-            for keyword in gamma_keywords:
-                if keyword.lower() in file_name:
-                    gamma_files_to_process.append((keyword, item, i))
                     break
 
         # Сортируем файлы по порядку ключевых слов
         beta_files_to_process.sort(key=lambda x: beta_keywords.index(x[0]))
         alfa_files_to_process.sort(key=lambda x: alfa_keywords.index(x[0]))
         gamma_files_to_process.sort(key=lambda x: gamma_keywords.index(x[0]))
+
+        # Обрабатываем специальные гамма-файлы (пурпурный цвет, без графика)
+        for _, item, _ in gamma_special_files:
+            item.setBackground(QColor(147, 112, 219))  # Пурпурный цвет
+            print(f"Отмечен пурпурным (без графика): {item.text()}")
+
+        # Обрабатываем остальные гамма-файлы (пурпурный цвет и загрузка на график)
+        for keyword, item, row in gamma_files_to_process:
+            print(f"Авто загрузка Gamma для файла: {item.text()} (ключевое слово: {keyword})")
+            pos = self.file_list.visualItemRect(item).center()
+            item.setBackground(QColor(147, 112, 219))  # Пурпурный цвет
+            self.change_color(pos, 'gamma')  # Вызываем change_color для загрузки на график
+            self.check_color_and_load_data(pos)
 
         # Эмулируем нажатие на "Загрузить Beta" для Beta-файлов
         for keyword, item, row in beta_files_to_process:
@@ -1648,13 +1670,29 @@ class SpectrumWindow(QMainWindow):
             self.change_color(pos, 'alfa')
             self.check_color_and_load_data(pos)
 
-        # Эмулируем нажатие на "Загрузить Gamma" для Gamma-файлов
-        for keyword, item, row in gamma_files_to_process:
-            print(f"Авто загрузка Gamma для файла: {item.text()} (ключевое слово: {keyword})")
-            pos = self.file_list.visualItemRect(item).center()
-            self.change_color(pos, 'gamma')
-            self.check_color_and_load_data(pos)
+        # Проверяем, были ли найдены файлы для обработки
+        if not beta_files_to_process and not alfa_files_to_process and not gamma_files_to_process and not gamma_special_files:
+            self.show_warning_message(
+                "Не найдено файлов с именами, содержащими 'фона', 'SrY90', 'Rad', 'Cs137', 'C14', 'Am241' (Beta), 'Rn', 'Am241' (Alfa) или 'gamma' (Gamma)."
+            )
+        elif not beta_files_to_process:
+            self.show_warning_message(
+                "Не найдено файлов для Beta с именами, содержащими 'фона', 'SrY90', 'Rad', 'Cs137', 'C14', 'Am241'."
+            )
+        elif not alfa_files_to_process:
+            self.show_warning_message(
+                "Не найдено файлов для Alfa с именами, содержащими 'Rn', 'Am241'."
+            )
+        elif not gamma_files_to_process and not gamma_special_files:
+            self.show_warning_message(
+                "Не найдено файлов для Gamma с именами, содержащими 'gamma'."
+            )
+        print_gamma_impulses(self)
+        peaks = calculate_peaks(self)
 
+        # Отображаем пики на графике
+        if peaks:
+            plot_peaks(self, peaks)
 
 
     def load_xls_files(self):
@@ -1708,16 +1746,27 @@ class SpectrumWindow(QMainWindow):
         if item is None:
             return  # Защита от некорректного индекса
 
-        file_name = item.text()
+        file_name = item.text().lower()  # Приводим к нижнему регистру для проверки
         folder_name = self.folder_input.text()
         folder_path = os.path.join(os.getcwd(), folder_name)
         file_path = os.path.join(folder_path, file_name)
 
         impulse_value = self.read_first_impulse_value(file_path)
-
         if impulse_value is not None:
             self.first_impulse_values[file_name] = impulse_value  # Сохраняем значение
 
+        # Проверка на наличие "98_fon_2_gamma" или "98_fon_gamma" в имени файла
+        if "98_fon_2_gamma" in file_name or "98_fon_gamma" in file_name:
+            item.setBackground(QColor(147, 112, 219))  # Пурпурный цвет
+            return  # Не строим график, просто выходим из метода
+
+        # Проверка на наличие "gamma" в имени файла
+        if "gamma" in file_name and action_type == 'gamma':
+            item.setBackground(QColor(147, 112, 219))  # Пурпурный цвет
+            self.add_or_remove_chart(item.text(), 'gamma', True)  # Загружаем на график Gamma
+            return
+
+        # Оригинальная логика для Alfa и Beta
         if action_type == 'alfa':
             item.setBackground(QColor(144, 238, 144))  # Салатовый для "Загрузить Alfa"
             self.add_or_remove_chart(item.text(), 'alfa', True)
@@ -1725,7 +1774,7 @@ class SpectrumWindow(QMainWindow):
             item.setBackground(QColor(173, 216, 230))  # Голубой для "Загрузить Beta"
             self.add_or_remove_chart(item.text(), 'beta', True)
         elif action_type == 'gamma':
-            item.setBackground(QColor(128, 0, 128))  # Пурпурный для "Загрузить Gamma"
+            item.setBackground(QColor(147, 112, 219))  # Пурпурный для "Загрузить Gamma"
             self.add_or_remove_chart(item.text(), 'gamma', True)
         elif action_type == 'disable':
             item.setBackground(Qt.GlobalColor.white)  # Обесцвечиваем поле для "Отключить"
@@ -1887,7 +1936,7 @@ class SpectrumWindow(QMainWindow):
             self.load_data_for_chart('alfa', item.text())
         elif background_color == QColor(173, 216, 230):  # Голубой цвет для 'Beta'
             self.load_data_for_chart('beta', item.text())
-        elif background_color == QColor(128, 0, 128):  # Пурпурный цвет для 'Gamma'
+        elif background_color == QColor(147, 112, 219):  # Пурпурный цвет для 'Gamma'
             self.load_data_for_chart('gamma', item.text())
 
     def load_data_for_chart(self, chart_type, file_name):
