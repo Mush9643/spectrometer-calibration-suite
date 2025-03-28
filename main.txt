@@ -25,7 +25,7 @@ from fon_math import NUD_b, VUD_b
 from openpyxl.styles import Font, Border, Side, PatternFill, Alignment
 import os
 import logging
-from gamma_math import print_gamma_impulses, calculate_peaks, plot_peaks
+from gamma_math import print_gamma_impulses, calculate_peaks, plot_peaks, perform_calibration
 
 
 ##########################################################################
@@ -2768,9 +2768,7 @@ class SpectrumWindow(QMainWindow):
             self.update_gamma_y_axis_range()
 
     def perform_calibration(self):
-        """Метод для выполнения калибровки (заглушка)."""
-        print("Калибровка запущена!")
-        self.show_info_message("Калибровка запущена! Функционал в разработке.")
+        perform_calibration(self)
 
     ##########################################################################
     # Методы для работы с экспортом данных и сообщениями

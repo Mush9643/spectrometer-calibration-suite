@@ -1,3 +1,4 @@
+import math
 import os
 import pandas as pd
 import numpy as np
@@ -58,7 +59,7 @@ def print_gamma_impulses(main_window):
 def calculate_peaks(main_window):
     """
     Вычисляет пики для Cs-137 и Am-241 по формулам из Mathcad для всех Gamma-файлов,
-    отмеченных пурпурным цветом.
+    отмеченных пурпурным цветом, и вычисляет границы пика для Cs-137 по формуле.
     """
     PURPLE_COLOR = QColor(147, 112, 219)
     folder_name = main_window.folder_input.text()
@@ -105,6 +106,18 @@ def calculate_peaks(main_window):
                 main_window.gamma_peaks[item.text()] = (peak_channel, max_value)
                 m_cs137 = peak_channel - 512
                 print(f"Пик для Cs-137 (файл '{item.text()}'): канал {peak_channel}, значение {max_value}")
+
+                # Вычисляем границы пика P для Cs-137 по формуле
+                if m_cs137 is not None:
+                    Pm = m_cs137
+                    sqrt_Pm = math.sqrt(Pm)  # Вычисляем квадратный корень из Pm
+                    P = [
+                        math.floor(Pm - 1.5 * 0.63 * sqrt_Pm),  # Первая строка формулы
+                        math.floor(Pm - 0.63 * sqrt_Pm),        # Вторая строка формулы
+                        math.floor(Pm + 0.63 * sqrt_Pm),        # Третья строка формулы
+                        math.floor(Pm + 1.5 * 0.63 * sqrt_Pm)   # Четвёртая строка формулы
+                    ]
+                    print(f"Границы пика P для Cs-137 (файл '{item.text()}'): {P}")
 
             elif any(keyword in file_name for keyword in ["am", "am241", "am_gamma"]):
                 if file_name in ["98_fon_2_gamma.xls", "98_fon_gamma.xls", "th232_gamma.xls"]:
