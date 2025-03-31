@@ -10,6 +10,9 @@ from PyQt6.QtCore import Qt
 # Массив констант Era226
 Era226 = [661.66, 60]
 
+# Массив энергий Ep (в кэВ)
+Ep = np.array([80, 146, 400, 850, 1500, 2515])
+
 def print_gamma_impulses(main_window):
     """
     Выводит в консоль массивы данных из столбца 'Кол-во импульсов' для всех файлов,
@@ -60,6 +63,7 @@ def calculate_peaks(main_window):
     """
     Вычисляет пики для Cs-137 и Am-241 по формулам из Mathcad для всех Gamma-файлов,
     отмеченных пурпурным цветом, и вычисляет границы пика для Cs-137 по формуле.
+    Также вычисляет S1 и S2 для Cs-137 по формулам из Mathcad.
     """
     PURPLE_COLOR = QColor(147, 112, 219)
     folder_name = main_window.folder_input.text()
@@ -109,15 +113,52 @@ def calculate_peaks(main_window):
 
                 # Вычисляем границы пика P для Cs-137 по формуле
                 if m_cs137 is not None:
-                    Pm = m_cs137
+                    Pm = m_cs137 + 512
                     sqrt_Pm = math.sqrt(Pm)  # Вычисляем квадратный корень из Pm
                     P = [
-                        math.floor(Pm - 1.5 * 0.63 * sqrt_Pm),  # Первая строка формулы
-                        math.floor(Pm - 0.63 * sqrt_Pm),        # Вторая строка формулы
-                        math.floor(Pm + 0.63 * sqrt_Pm),        # Третья строка формулы
-                        math.floor(Pm + 1.5 * 0.63 * sqrt_Pm)   # Четвёртая строка формулы
+                        math.floor(Pm - 1.5 * 0.63 * sqrt_Pm),  # P_0
+                        math.floor(Pm - 0.63 * sqrt_Pm),        # P_1
+                        math.floor(Pm + 0.63 * sqrt_Pm),        # P_2
+                        math.floor(Pm + 1.5 * 0.63 * sqrt_Pm)   # P_3
                     ]
-                    print(f"Границы пика P для Cs-137 (файл '{item.text()}'): {P}")
+                    print(f"Считаем разрешение по цезию")
+                    print(f"###############################")
+                    print(f"P для Cs-137 (файл '{item.text()}'): {P}")
+
+                    # Вычисляем S1 и S2 для файла 'cs_gamma.xls'
+                    if "cs_gamma.xls" in file_name:
+                        # Нормализация: Sp_i = Cs_i / Cs_0
+                        Cs = impulses  # Массив 'Кол-во импульсов'
+                        if len(Cs) == 0 or Cs[0] == 0:
+                            print(f"Ошибка: Массив 'Кол-во импульсов' пуст или Cs_0 = 0 для файла '{file_name}'.")
+                            continue
+                        Sp = Cs / Cs[0]  # Нормализованный массив
+
+                        # Вычисляем S1 = (сумма Sp_i от P_0 до P_1) / (P_1 - P_0 + 1)
+                        P_0 = P[0]
+                        P_1 = P[1]
+                        P_2 = P[2]
+                        P_3 = P[3]
+                        print(f"P0: {P_0}")
+                        print(f"P1: {P_1}")
+                        print(f"P2: {P_2}")
+                        print(f"P3: {P_3}")
+                        if P_1 < P_0 or P_1 >= len(Sp) or P_0 < 0:
+                            print(f"Ошибка: Неверные границы P_0={P_0} или P_1={P_1} для файла '{file_name}'.")
+                            continue
+                        sum_Sp1 = np.sum(Sp[P_0:P_1 + 1])  # Сумма от P_0 до P_1 включительно
+                        S1 = sum_Sp1 / (P_1 - P_0 + 1)
+                        print(f"S1 для Cs-137 (файл '{item.text()}'): {S1}")
+                        if P_3 < P_2 or P_3 >= len(Sp) or P_2 < 0:
+                            print(f"Ошибка: Неверные границы P_2={P_2} или P_3={P_3} для файла '{file_name}'.")
+                            continue
+                        sum_Sp2 = np.sum(Sp[P_2:P_3 + 1])  # Сумма от P_2 до P_3 включительно
+                        S2 = sum_Sp2 / (P_3 - P_2 + 1)
+                        print(f"S2 для Cs-137 (файл '{item.text()}'): {S2}")
+                        Sa = (S1 - S2) * 2 / (P_1 + P_0 - P_2 - P_3)
+                        Sb = S1-Sa * (P_1+P_0)/2
+                        print(f"a = {Sa}")
+                        print(f"b = {Sb}")
 
             elif any(keyword in file_name for keyword in ["am", "am241", "am_gamma"]):
                 if file_name in ["98_fon_2_gamma.xls", "98_fon_gamma.xls", "th232_gamma.xls"]:
@@ -149,32 +190,43 @@ def calculate_peaks(main_window):
 
 def plot_peaks(main_window, peaks):
     """
-    Отображает пики на графике во вкладке Gamma, используя QChart.
+    Отображает пики на графике во вкладке Gamma, используя QChart, с учетом текущего масштаба.
     """
     if not hasattr(main_window, 'gamma_chart'):
         print("Ошибка: График Gamma (gamma_chart) не найден в main_window.")
         return
 
-    if not hasattr(main_window, 'peak_series'):
-        main_window.peak_series = []
-
-    for series in main_window.peak_series:
+    # Удаляем старые серии пиков
+    if not hasattr(main_window, 'gamma_peak_series'):
+        main_window.gamma_peak_series = {}
+    for series in main_window.gamma_peak_series.values():
         main_window.gamma_chart.removeSeries(series)
-    main_window.peak_series.clear()
+    main_window.gamma_peak_series.clear()
 
+    # Проверяем текущий масштаб
+    is_log_scale = isinstance(main_window.gamma_axis_y, QLogValueAxis)
+    min_y_threshold = 1.0 if is_log_scale else 0.0
+
+    # Добавляем новые пики
     for file_name, (peak_channel, peak_value) in peaks.items():
-        color = QColor(255, 0, 0) if any(keyword in file_name.lower() for keyword in ["cs", "cs137", "cs_gamma"]) else QColor(0, 0, 255)
+        color = QColor(255, 0, 0) if any(
+            keyword in file_name.lower() for keyword in ["cs", "cs137", "cs_gamma"]) else QColor(0, 0, 255)
         scatter_series = QScatterSeries()
         scatter_series.setName(f"Пик {file_name}")
-        scatter_series.append(peak_channel, peak_value)
+
+        # Корректируем Y-координату для логарифмического масштаба
+        display_value = max(peak_value, min_y_threshold) if is_log_scale else peak_value
+        scatter_series.append(peak_channel, display_value)
+
         scatter_series.setMarkerShape(QScatterSeries.MarkerShape.MarkerShapeCircle)
         scatter_series.setMarkerSize(7)
         scatter_series.setColor(color)
         scatter_series.setBorderColor(color)
+
         main_window.gamma_chart.addSeries(scatter_series)
         scatter_series.attachAxis(main_window.gamma_axis_x)
         scatter_series.attachAxis(main_window.gamma_axis_y)
-        main_window.peak_series.append(scatter_series)
+        main_window.gamma_peak_series[file_name] = scatter_series
 
     print("Пики отображены на графике Gamma.")
 
@@ -279,9 +331,13 @@ class CalibrationWindow(QDialog):
             # Компоновка
             layout = QVBoxLayout()
             layout.addWidget(self.chart_view)
-
+            ka = b
+            kb = a
+            Pn = np.round((Ep - kb) / ka).astype(int)
+            print(f"Pn для Ep = {Ep}: {Pn}")
             # Формируем текст для QLabel
-            label_text = f"Коэффициенты прямой: a = {a:.2f}, b = {b:.4f}"
+            label_text = f"Энергии наших окон компенсационных Pn для Ep = {Ep}: {Pn}"
+            label_text += f"\nКоэффициенты прямой: b = {a:.2f}, a = {b:.4f}"
             if cs137_x is not None:
                 label_text += f"\nX-координата пика Cs-137: {cs137_x:.2f}"
             if am241_x is not None:
@@ -322,3 +378,4 @@ def perform_calibration(main_window):
     except Exception as e:
         print(f"Ошибка в perform_calibration: {str(e)}")
         QMessageBox.critical(main_window, "Ошибка", f"Не удалось открыть окно калибровки: {str(e)}")
+

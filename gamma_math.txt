@@ -1,3 +1,4 @@
+import math
 import os
 import pandas as pd
 import numpy as np
@@ -58,7 +59,7 @@ def print_gamma_impulses(main_window):
 def calculate_peaks(main_window):
     """
     Вычисляет пики для Cs-137 и Am-241 по формулам из Mathcad для всех Gamma-файлов,
-    отмеченных пурпурным цветом.
+    отмеченных пурпурным цветом, и вычисляет границы пика для Cs-137 по формуле.
     """
     PURPLE_COLOR = QColor(147, 112, 219)
     folder_name = main_window.folder_input.text()
@@ -106,6 +107,20 @@ def calculate_peaks(main_window):
                 m_cs137 = peak_channel - 512
                 print(f"Пик для Cs-137 (файл '{item.text()}'): канал {peak_channel}, значение {max_value}")
 
+                # Вычисляем границы пика P для Cs-137 по формуле
+                if m_cs137 is not None:
+                    Pm = m_cs137 + 512
+                    sqrt_Pm = math.sqrt(Pm)  # Вычисляем квадратный корень из Pm
+                    P = [
+                        math.floor(Pm - 1.5 * 0.63 * sqrt_Pm),  # Первая строка формулы
+                        math.floor(Pm - 0.63 * sqrt_Pm),        # Вторая строка формулы
+                        math.floor(Pm + 0.63 * sqrt_Pm),        # Третья строка формулы
+                        math.floor(Pm + 1.5 * 0.63 * sqrt_Pm)   # Четвёртая строка формулы
+                    ]
+                    print(f"Считаем разрешение по цезию")
+                    print(f"###############################")
+                    print(f"P для Cs-137 (файл '{item.text()}'): {P}")
+
             elif any(keyword in file_name for keyword in ["am", "am241", "am_gamma"]):
                 if file_name in ["98_fon_2_gamma.xls", "98_fon_gamma.xls", "th232_gamma.xls"]:
                     continue
@@ -136,32 +151,43 @@ def calculate_peaks(main_window):
 
 def plot_peaks(main_window, peaks):
     """
-    Отображает пики на графике во вкладке Gamma, используя QChart.
+    Отображает пики на графике во вкладке Gamma, используя QChart, с учетом текущего масштаба.
     """
     if not hasattr(main_window, 'gamma_chart'):
         print("Ошибка: График Gamma (gamma_chart) не найден в main_window.")
         return
 
-    if not hasattr(main_window, 'peak_series'):
-        main_window.peak_series = []
-
-    for series in main_window.peak_series:
+    # Удаляем старые серии пиков
+    if not hasattr(main_window, 'gamma_peak_series'):
+        main_window.gamma_peak_series = {}
+    for series in main_window.gamma_peak_series.values():
         main_window.gamma_chart.removeSeries(series)
-    main_window.peak_series.clear()
+    main_window.gamma_peak_series.clear()
 
+    # Проверяем текущий масштаб
+    is_log_scale = isinstance(main_window.gamma_axis_y, QLogValueAxis)
+    min_y_threshold = 1.0 if is_log_scale else 0.0
+
+    # Добавляем новые пики
     for file_name, (peak_channel, peak_value) in peaks.items():
-        color = QColor(255, 0, 0) if any(keyword in file_name.lower() for keyword in ["cs", "cs137", "cs_gamma"]) else QColor(0, 0, 255)
+        color = QColor(255, 0, 0) if any(
+            keyword in file_name.lower() for keyword in ["cs", "cs137", "cs_gamma"]) else QColor(0, 0, 255)
         scatter_series = QScatterSeries()
         scatter_series.setName(f"Пик {file_name}")
-        scatter_series.append(peak_channel, peak_value)
+
+        # Корректируем Y-координату для логарифмического масштаба
+        display_value = max(peak_value, min_y_threshold) if is_log_scale else peak_value
+        scatter_series.append(peak_channel, display_value)
+
         scatter_series.setMarkerShape(QScatterSeries.MarkerShape.MarkerShapeCircle)
         scatter_series.setMarkerSize(7)
         scatter_series.setColor(color)
         scatter_series.setBorderColor(color)
+
         main_window.gamma_chart.addSeries(scatter_series)
         scatter_series.attachAxis(main_window.gamma_axis_x)
         scatter_series.attachAxis(main_window.gamma_axis_y)
-        main_window.peak_series.append(scatter_series)
+        main_window.gamma_peak_series[file_name] = scatter_series
 
     print("Пики отображены на графике Gamma.")
 
@@ -309,3 +335,4 @@ def perform_calibration(main_window):
     except Exception as e:
         print(f"Ошибка в perform_calibration: {str(e)}")
         QMessageBox.critical(main_window, "Ошибка", f"Не удалось открыть окно калибровки: {str(e)}")
+

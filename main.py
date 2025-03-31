@@ -39,30 +39,23 @@ class CustomChartView(QChartView):
         self._is_panning = False  # Флаг для режима перемещения
         self._last_pos = None  # Последняя позиция мыши для расчета смещения
 
+    # В классе CustomChartView в main.py
     def wheelEvent(self, event):
         """Обработка прокрутки колесика мыши для зума относительно центра графика."""
-        # Коэффициент масштабирования
-        factor = 1.05  # Увеличение/уменьшение на 5% за шаг
-        if event.angleDelta().y() < 0:
-            factor = 0.95
+        factor = 1.05 if event.angleDelta().y() > 0 else 0.95
 
-        # Текущие диапазоны осей
         x_axis = self.chart().axes(Qt.Orientation.Horizontal)[0]
         y_axis = self.chart().axes(Qt.Orientation.Vertical)[0]
         x_min, x_max = x_axis.min(), x_axis.max()
         y_min, y_max = y_axis.min(), y_axis.max()
 
-        # Вычисляем новые диапазоны
         new_x_range = (x_max - x_min) * factor
         new_y_range = (y_max - y_min) * factor
 
-        # Ограничения на масштаб
         if 10 < new_x_range < 2048:
-            # Находим центр текущего диапазона
             x_center = (x_min + x_max) / 2
             y_center = (y_min + y_max) / 2
 
-            # Новые границы относительно центра
             x_half_range = new_x_range / 2
             y_half_range = new_y_range / 2
 
@@ -71,19 +64,24 @@ class CustomChartView(QChartView):
             new_y_min = y_center - y_half_range
             new_y_max = y_center + y_half_range
 
-            # Применяем новые диапазоны
             x_axis.setRange(new_x_min, new_x_max)
             y_axis.setRange(new_y_min, new_y_max)
 
+            # Перерисовываем пики для Gamma
+            if hasattr(self.parent(), 'reapply_gamma_peaks'):
+                self.parent().reapply_gamma_peaks()
+
         event.accept()
 
-    def mousePressEvent(self, event):
-        """Начало перемещения при нажатии левой кнопки."""
-        if event.button() == Qt.MouseButton.LeftButton and not self.rubberBandRect().isValid():
-            self._is_panning = True
-            self._last_pos = event.position().toPoint()
-            self.setCursor(Qt.CursorShape.ClosedHandCursor)  # Курсор "сжатая рука"
-        super().mousePressEvent(event)
+    def mouseReleaseEvent(self, event):
+        """Окончание перемещения."""
+        if event.button() == Qt.MouseButton.LeftButton:
+            self._is_panning = False
+            self.setCursor(Qt.CursorShape.ArrowCursor)
+            # Перерисовываем пики для Gamma после зума или перемещения
+            if hasattr(self.parent(), 'reapply_gamma_peaks'):
+                self.parent().reapply_gamma_peaks()
+        super().mouseReleaseEvent(event)
 
     def mouseMoveEvent(self, event):
         """Перемещение графика при зажатой левой кнопке."""
@@ -2637,25 +2635,25 @@ class SpectrumWindow(QMainWindow):
         else:
             self.apply_gamma_linear_scale()
 
+    def reapply_gamma_peaks(self):
+        """Перерисовывает пики на графике Gamma после смены масштаба или зума."""
+        if hasattr(self, 'gamma_peaks'):
+            plot_peaks(self, self.gamma_peaks)
+
     def apply_gamma_log_scale(self):
         """Применяет логарифмический масштаб ко всем сериям Gamma с началом оси Y от 1."""
         if not hasattr(self, "original_gamma_series"):
             self.original_gamma_series = {}
 
-        # Создаём логарифмическую ось Y
         gamma_log_axis_y = QLogValueAxis()
         gamma_log_axis_y.setTitleText("Импульсы (логарифмический масштаб)")
         gamma_log_axis_y.setBase(10.0)
         gamma_log_axis_y.setMinorTickCount(9)
 
-        # Удаляем старую ось Y
         self.gamma_chart.removeAxis(self.gamma_axis_y)
-
-        # Удаляем все текущие серии из графика
         for series in self.gamma_series_dict.values():
             self.gamma_chart.removeSeries(series)
 
-        # Создаём новые логарифмические серии
         new_series_dict = {}
         global_max_y = float('-inf')
         min_y_threshold = 1.0
@@ -2683,23 +2681,21 @@ class SpectrumWindow(QMainWindow):
         self.gamma_series_dict = new_series_dict
         self.gamma_axis_y = gamma_log_axis_y
 
+        # Перерисовываем пики
+        self.reapply_gamma_peaks()
+
     def apply_gamma_linear_scale(self):
         """Применяет линейный масштаб ко всем сериям Gamma."""
         if not hasattr(self, "original_gamma_series"):
             return
 
-        # Создаём линейную ось Y
         gamma_linear_axis_y = QValueAxis()
         gamma_linear_axis_y.setTitleText("Импульсы")
 
-        # Удаляем старую ось Y
         self.gamma_chart.removeAxis(self.gamma_axis_y)
-
-        # Удаляем все текущие серии
         for series in self.gamma_series_dict.values():
             self.gamma_chart.removeSeries(series)
 
-        # Восстанавливаем оригинальные серии
         self.gamma_series_dict = {}
         global_max_y = float('-inf')
 
@@ -2718,6 +2714,9 @@ class SpectrumWindow(QMainWindow):
             series.attachAxis(gamma_linear_axis_y)
 
         self.gamma_axis_y = gamma_linear_axis_y
+
+        # Перерисовываем пики
+        self.reapply_gamma_peaks()
 
     def reset_gamma_zoom(self):
         """Сбрасывает масштаб графика Gamma до исходного состояния."""
