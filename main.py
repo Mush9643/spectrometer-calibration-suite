@@ -1395,6 +1395,18 @@ class SpectrumWindow(QMainWindow):
             report_data.append(["a (Beta)", "Отсутствует"])
             report_data.append(["b (Beta)", "Отсутствует"])
 
+        # Добавляем массив Pn из CalibrationWindow в формате Gamma[1], Gamma[2], ..., Gamma[6]
+        if hasattr(self, 'pn_values') and self.pn_values:
+            pn_values = self.pn_values  # [18, 32, 84, 176, 308, 516]
+            for i in range(6):  # Ожидаем 6 значений
+                if i < len(pn_values):
+                    report_data.append([f"Gamma[{i+1}]", f"{pn_values[i]}"])
+                else:
+                    report_data.append([f"Gamma[{i+1}]", "Отсутствует"])
+        else:
+            for i in range(1, 7):
+                report_data.append([f"Gamma[{i}]", "Отсутствует"])
+
         # Создаём DataFrame
         df = pd.DataFrame(report_data[1:], columns=report_data[0])
 

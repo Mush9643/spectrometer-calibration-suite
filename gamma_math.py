@@ -232,11 +232,10 @@ def plot_peaks(main_window, peaks):
 
 
 class CalibrationWindow(QDialog):
-    """
-    Окно калибровки с графиком для вкладки Gamma.
-    """
+
     def __init__(self, parent=None, peaks=None, rbntu=None):
         super().__init__(parent)
+        self.pn_values = None
         self.setWindowTitle("Калибровка Gamma")
         self.setGeometry(100, 100, 800, 600)
 
@@ -333,8 +332,13 @@ class CalibrationWindow(QDialog):
             layout.addWidget(self.chart_view)
             ka = b
             kb = a
-            Pn = np.round((Ep - kb) / ka).astype(int)
-            print(f"Pn для Ep = {Ep}: {Pn}")
+            if ka != 0:
+                Pn = np.round((Ep - kb) / ka).astype(int)
+                self.pn_values = Pn.tolist()
+                print(f"Вычислен и сохранён массив Pn: {self.pn_values}")
+
+            else:
+                print("Коэффициент ka равен 0, Pn не вычислен.")
             # Формируем текст для QLabel
             label_text = f"Энергии наших окон компенсационных Pn для Ep = {Ep}: {Pn}"
             label_text += f"\nКоэффициенты прямой: b = {a:.2f}, a = {b:.4f}"
@@ -351,13 +355,15 @@ class CalibrationWindow(QDialog):
             print(f"Ошибка при создании CalibrationWindow: {str(e)}")
             QMessageBox.critical(self, "Ошибка", f"Не удалось создать окно калибровки: {str(e)}")
 
+    def get_pn_values(self):
+        return self.pn_values
 
 def perform_calibration(main_window):
     """
     Открывает окно калибровки с графиком для вкладки Gamma.
     """
     try:
-        print("Открытие окна калибровки...")
+
         # Получаем Rbntu из calculate_peaks
         peaks = main_window.gamma_peaks
         rbntu = None
@@ -374,8 +380,15 @@ def perform_calibration(main_window):
 
         calibration_window = CalibrationWindow(parent=None, peaks=peaks, rbntu=rbntu)
         calibration_window.exec()
+        # Получаем Pn после закрытия окна
+        pn_values = calibration_window.get_pn_values()
+        if pn_values is not None:
+            main_window.gamma_pn_values = pn_values
+            print(f"Pn сохранён в main_window: {main_window.gamma_pn_values}")
         print("Окно калибровки закрыто.")
     except Exception as e:
         print(f"Ошибка в perform_calibration: {str(e)}")
         QMessageBox.critical(main_window, "Ошибка", f"Не удалось открыть окно калибровки: {str(e)}")
+
+
 
