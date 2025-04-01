@@ -26,7 +26,7 @@ from openpyxl.styles import Font, Border, Side, PatternFill, Alignment
 import os
 import logging
 from gamma_math import print_gamma_impulses, calculate_peaks, plot_peaks, perform_calibration
-
+from side_window_filler import SideWindow
 
 ##########################################################################
 # Класс Зума
@@ -1501,132 +1501,9 @@ class SpectrumWindow(QMainWindow):
         """Открывает дополнительное окно справа от основного."""
         # Получаем геометрию основного окна
         main_geometry = self.geometry()
-        main_x = main_geometry.x()
-        main_y = main_geometry.y()
-        main_width = main_geometry.width()
-        main_height = main_geometry.height()
 
-        # Вычисляем параметры для нового окна
-        side_width = (main_width // 2) * 0.8  # Ширина в два раза меньше, затем уменьшаем на 20%
-        side_x = main_x + main_width  # Располагаем справа от основного окна
-        side_y = main_y  # Та же высота, что у основного окна
-        side_height = main_height
-
-        # Создаем новое окно
-        self.side_window = QWidget()
-        self.side_window.setWindowTitle("Дополнительное окно")
-        self.side_window.setGeometry(side_x, side_y, int(side_width), side_height)
-
-        # Применяем улучшенный стиль
-        self.side_window.setStyleSheet("""
-            QWidget {
-                background-color: #F8FAFC; /* Очень светлый серо-голубой фон */
-                font-family: 'Montserrat', sans-serif;
-            }
-            QLabel#titleLabel {
-                font-size: 18px; /* Увеличенный размер шрифта */
-                font-weight: 600; /* Montserrat SemiBold */
-                color: #4A4A4A; /* Серый цвет, как в логотипе */
-                padding: 10px 10px 5px 10px; /* Отступы */
-                border-bottom: 1px solid #E2E8F0; /* Тонкая линия снизу */
-            }
-            QTableWidget {
-                background-color: #FFFFFF; /* Белый фон таблицы */
-                border: 1px solid #4A4A4A; /* Тонкий акцентный бордер */
-                border-radius: 8px;
-                font-family: 'Montserrat', sans-serif;
-                font-size: 13px; /* Увеличенный размер шрифта для читаемости */
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Тень для эффекта поднятия */
-            }
-            QHeaderView::section {
-                background-color: #4A4A4A; /* Серый фон для заголовка таблицы */
-                color: #FFFFFF; /* Белый текст */
-                padding: 10px; /* Увеличенные отступы */
-                border: none;
-                border-bottom: 1px solid #E2E8F0; /* Светлая граница снизу */
-                font-weight: 600; /* Montserrat SemiBold */
-                font-size: 15px; /* Увеличенный размер шрифта */
-                border-top-left-radius: 8px;
-                border-top-right-radius: 8px;
-            }
-            QTableWidget::item {
-                padding: 10px; /* Увеличенные отступы для "воздушности" */
-                border-bottom: 1px solid #E2E8F0; /* Светлая граница между строками */
-                color: #1A202C; /* Более тёмный цвет текста для лучшей читаемости */
-            }
-            QTableWidget::item:alternate {
-                background-color: #F8FAFC; /* Чередование очень светлого фона */
-            }
-            QTableWidget::item:selected {
-                background-color: #E2E8F0; /* Светло-серый фон при выделении */
-                color: #1A202C;
-            }
-        """)
-
-        # Создаем layout для окна
-        side_layout = QVBoxLayout()
-        side_layout.setContentsMargins(20, 20, 20, 20)  # Увеличиваем отступы
-        side_layout.setSpacing(20)  # Увеличиваем расстояние между элементами
-
-        # Добавляем заголовок
-        title_label = QLabel("Дополнительное окно")
-        title_label.setObjectName("titleLabel")
-        side_layout.addWidget(title_label)
-
-        # Создаем таблицу
-        side_table = QTableWidget()
-        side_table.setColumnCount(2)
-        side_table.setRowCount(22)  # Количество строк из предыдущего дизайна
-        side_table.setHorizontalHeaderLabels(["Параметр", "Значение"])
-
-        # Данные для таблицы (столбец "Значение" пустой)
-        data = [
-            ("a (Alfa)", ""),
-            ("b (Alfa)", ""),
-            ("НУД α, № канала (2700)", ""),
-            ("ВУД ROI 3, № канала (4385.6)", ""),
-            ("НУД ROI 2, № канала (5687.5)", ""),
-            ("НУД ROI 6, № канала (6192.35)", ""),
-            ("НУД ROI 4, № канала (6337.7)", ""),
-            ("НУД ROI 5, № канала (8044.6)", ""),
-            ("K(Po218)", ""),
-            ("k1p9", ""),
-            ("Пик Am241", ""),
-            ("НУД β", ""),
-            ("ВУД β", ""),
-            ("k1c0", ""),
-            ("a (Beta)", ""),
-            ("b (Beta)", ""),
-            ("Pn (80 кэВ)", ""),
-            ("Pn (146 кэВ)", ""),
-            ("Pn (400 кэВ)", ""),
-            ("Pn (850 кэВ)", ""),
-            ("Pn (1500 кэВ)", ""),
-            ("Pn (2515 кэВ)", ""),
-        ]
-
-        # Заполняем таблицу
-        for row, (param, value) in enumerate(data):
-            # Столбец "Параметр"
-            param_item = QTableWidgetItem(param)
-            param_item.setFlags(param_item.flags() & ~Qt.ItemFlag.ItemIsEditable)  # Запрещаем редактирование
-            side_table.setItem(row, 0, param_item)
-
-            # Столбец "Значение" (пустой, но редактируемый)
-            value_item = QTableWidgetItem(value)
-            side_table.setItem(row, 1, value_item)
-
-        # Настраиваем таблицу
-        side_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        side_table.setAlternatingRowColors(True)  # Включаем чередование цветов строк
-        side_table.setShowGrid(False)  # Отключаем стандартную сетку
-        side_table.verticalHeader().setVisible(False)  # Скрываем вертикальный заголовок (нумерацию строк)
-
-        # Добавляем таблицу в layout
-        side_layout.addWidget(side_table)
-
-        # Устанавливаем layout для окна
-        self.side_window.setLayout(side_layout)
+        # Создаем новое окно с помощью класса SideWindow
+        self.side_window = SideWindow(main_geometry)
 
         # Показываем окно
         self.side_window.show()
