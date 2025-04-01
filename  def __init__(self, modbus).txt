@@ -505,6 +505,8 @@
         # =========================================================================
         self.tab5 = QWidget()
         self.tabs.addTab(self.tab5, "Gamma")
+        # Инициализация словаря для хранения пиков Gamma
+        self.gamma_peaks = {}
 
         # Создание графика для вкладки Gamma
         self.gamma_chart = QChart()

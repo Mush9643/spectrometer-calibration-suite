@@ -1299,8 +1299,8 @@ class SpectrumWindow(QMainWindow):
             self.resize(self.width(), new_height)
 
     def generate_report(self):
-        """Метод для создания отчёта: создаёт Excel-файл в папке 'Отчёты' с параметрами."""
-        # Проверяем, была ли выполнена калибровка
+        """Метод для создания отчёта: создаёт Excel-файл в папке 'Отчёты' с параметрами, включая массив Pn."""
+        # Проверяем, была ли выполнена калибровка (оставляем как есть для Alfa chart)
         if not self.calibration_performed:
             self.show_warning_message("Сначала выполните калибровку на вкладке Alfa chart.")
             print("Предупреждение: Калибровка не выполнена. Нажмите кнопку 'Калибровка' на вкладке Alfa chart.")
@@ -1387,13 +1387,15 @@ class SpectrumWindow(QMainWindow):
             report_data.append(["k1c0", "Отсутствует"])
 
         # AB и BB (Beta) переименованы в intercept и slope
-        if hasattr(self, 'beta_calibration_coefficients') and self.beta_calibration_coefficients:
+        if hasattr(self, 'beta_calibration_coequettes') and self.beta_calibration_coefficients:
             intercept, slope = self.beta_calibration_coefficients
             report_data.append(["a (Beta)", f"{intercept:.3f}"])  # intercept как a
             report_data.append(["b (Beta)", f"{slope:.3f}"])  # slope как b
         else:
             report_data.append(["a (Beta)", "Отсутствует"])
             report_data.append(["b (Beta)", "Отсутствует"])
+
+
 
         # Создаём DataFrame
         df = pd.DataFrame(report_data[1:], columns=report_data[0])
@@ -1442,7 +1444,6 @@ class SpectrumWindow(QMainWindow):
         ws.column_dimensions['A'].width = 30  # Колонка "Параметр"
         ws.column_dimensions['B'].width = 15  # Колонка "Значение"
 
-        # Сохраняем файл с обработкой ошибки
         # Сохраняем файл с обработкой ошибки
         try:
             wb.save(report_path)
@@ -1691,7 +1692,6 @@ class SpectrumWindow(QMainWindow):
         # Отображаем пики на графике
         if peaks:
             plot_peaks(self, peaks)
-
 
     def load_xls_files(self):
         """Загружает список файлов .xls и .xlsx из указанной папки."""

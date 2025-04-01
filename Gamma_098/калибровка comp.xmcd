@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?validation-md5-digest 5a72ee89dc292bf7b8b7ed431ab43e59?>
+<?validation-md5-digest 08031f36b14f861dbe442b9e816f3326?>
 <worksheet version="3.0.3" xmlns="http://schemas.mathsoft.com/worksheet30" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ws="http://schemas.mathsoft.com/worksheet30" xmlns:ml="http://schemas.mathsoft.com/math30" xmlns:u="http://schemas.mathsoft.com/units10" xmlns:p="http://schemas.mathsoft.com/provenance10">
 	<pointReleaseData/>
 	<metadata>
@@ -13,9 +13,9 @@
 			<revisedBy>Михаил</revisedBy>
 		</userData>
 		<identityInfo>
-			<revision>26</revision>
+			<revision>27</revision>
 			<documentID>B3831516-1F42-4DE0-AFDE-D94DA14B7BB5</documentID>
-			<versionID>16F4E33F-F5C7-485B-AD4A-354D3FA8A215</versionID>
+			<versionID>F0DAB557-1FBE-4F2D-A851-B03902A7E1D5</versionID>
 			<parentVersionID>00000000-0000-0000-0000-000000000000</parentVersionID>
 			<branchID>00000000-0000-0000-0000-000000000000</branchID>
 		</identityInfo>
@@ -152,10 +152,10 @@
 		<region region-id="535" left="534" top="33" width="60" height="12.75" align-x="570" align-y="42" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="B3831516-1F42-4DE0-AFDE-D94DA14B7BB5" version-id="9882BF3E-3022-43F7-9AFA-77E4DD45320F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="214578116" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 12.2023\082\csi\калибровка comp.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="B3831516-1F42-4DE0-AFDE-D94DA14B7BB5" version-id="9882BF3E-3022-43F7-9AFA-77E4DD45320F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="214235052" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 12.2023\082\csi\калибровка comp.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="B3831516-1F42-4DE0-AFDE-D94DA14B7BB5" version-id="9882BF3E-3022-43F7-9AFA-77E4DD45320F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="214578516" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 12.2023\082\csi\калибровка comp.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="B3831516-1F42-4DE0-AFDE-D94DA14B7BB5" version-id="9882BF3E-3022-43F7-9AFA-77E4DD45320F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="214234932" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 12.2023\082\csi\калибровка comp.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -376,18 +376,13 @@
 			</math>
 			<rendering item-idref="16"/>
 		</region>
-		<region region-id="552" left="168" top="404.25" width="204.75" height="12" align-x="185.25" align-y="414" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
-			<text use-page-width="false" push-down="false" lock-width="true">
-				<p style="Normal" margin-left="inherit" margin-right="inherit" text-indent="inherit" text-align="inherit" list-style-type="inherit" tabs="inherit">Энергии которые при этом должны быть</p>
-			</text>
-		</region>
 		<region region-id="524" left="474" top="363" width="140.25" height="18" align-x="515.25" align-y="372" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="B3831516-1F42-4DE0-AFDE-D94DA14B7BB5" version-id="F9A3F623-62B6-44BE-A333-AA845DF1D475" branch-id="00000000-0000-0000-0000-000000000000" revision-num="214578236" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 07.2023\065\csi\калибровка 0065comp.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="B3831516-1F42-4DE0-AFDE-D94DA14B7BB5" version-id="F9A3F623-62B6-44BE-A333-AA845DF1D475" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053540" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 07.2023\065\csi\калибровка 0065comp.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="B3831516-1F42-4DE0-AFDE-D94DA14B7BB5" version-id="F9A3F623-62B6-44BE-A333-AA845DF1D475" branch-id="00000000-0000-0000-0000-000000000000" revision-num="214577836" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 07.2023\065\csi\калибровка 0065comp.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="B3831516-1F42-4DE0-AFDE-D94DA14B7BB5" version-id="F9A3F623-62B6-44BE-A333-AA845DF1D475" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053500" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 07.2023\065\csi\калибровка 0065comp.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -418,6 +413,11 @@
 				</element-image-map>
 			</rendering>
 		</region>
+		<region region-id="552" left="168" top="404.25" width="204.75" height="12" align-x="185.25" align-y="414" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
+			<text use-page-width="false" push-down="false" lock-width="true">
+				<p style="Normal" margin-left="inherit" margin-right="inherit" text-indent="inherit" text-align="inherit" list-style-type="inherit" tabs="inherit">Энергии которые при этом должны быть</p>
+			</text>
+		</region>
 		<region region-id="549" left="378" top="402.75" width="83.25" height="29.25" align-x="411.75" align-y="420" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:define xmlns:ml="http://schemas.mathsoft.com/math30">
@@ -438,10 +438,10 @@
 		<region region-id="541" left="540" top="391.5" width="100.5" height="111.75" align-x="555.75" align-y="450" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="30E2D752-B9D5-440B-879B-BE7E61368A63" version-id="ACC24B01-B2E0-4D15-9FEE-07D8E9AA8591" branch-id="00000000-0000-0000-0000-000000000000" revision-num="214578876" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\UGM-SrI - 16.01.25\калибровки 16.01.25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="30E2D752-B9D5-440B-879B-BE7E61368A63" version-id="ACC24B01-B2E0-4D15-9FEE-07D8E9AA8591" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052700" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\UGM-SrI - 16.01.25\калибровки 16.01.25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="30E2D752-B9D5-440B-879B-BE7E61368A63" version-id="ACC24B01-B2E0-4D15-9FEE-07D8E9AA8591" branch-id="00000000-0000-0000-0000-000000000000" revision-num="214578516" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\UGM-SrI - 16.01.25\калибровки 16.01.25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="30E2D752-B9D5-440B-879B-BE7E61368A63" version-id="ACC24B01-B2E0-4D15-9FEE-07D8E9AA8591" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053500" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\UGM-SrI - 16.01.25\калибровки 16.01.25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -503,10 +503,10 @@
 		<region region-id="546" left="168" top="513" width="234.75" height="18" align-x="190.5" align-y="522" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="B32CE215-7DE3-4879-9284-478B45132692" version-id="AA5D882B-01DA-499D-B748-AE7BF9F5419C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845780" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\matcad\калибровка даи-5 - 17.10.19\calibration template alpha.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="B32CE215-7DE3-4879-9284-478B45132692" version-id="AA5D882B-01DA-499D-B748-AE7BF9F5419C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052820" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\matcad\калибровка даи-5 - 17.10.19\calibration template alpha.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="B32CE215-7DE3-4879-9284-478B45132692" version-id="AA5D882B-01DA-499D-B748-AE7BF9F5419C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845860" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\matcad\калибровка даи-5 - 17.10.19\calibration template alpha.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="B32CE215-7DE3-4879-9284-478B45132692" version-id="AA5D882B-01DA-499D-B748-AE7BF9F5419C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053660" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\matcad\калибровка даи-5 - 17.10.19\calibration template alpha.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -572,10 +572,10 @@
 		<region region-id="332" left="186" top="543" width="213.75" height="18" align-x="208.5" align-y="552" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="B32CE215-7DE3-4879-9284-478B45132692" version-id="AA5D882B-01DA-499D-B748-AE7BF9F5419C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="1243692" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\matcad\калибровка даи-5 - 17.10.19\calibration template alpha.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="B32CE215-7DE3-4879-9284-478B45132692" version-id="AA5D882B-01DA-499D-B748-AE7BF9F5419C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052500" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\matcad\калибровка даи-5 - 17.10.19\calibration template alpha.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="B32CE215-7DE3-4879-9284-478B45132692" version-id="AA5D882B-01DA-499D-B748-AE7BF9F5419C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845500" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\matcad\калибровка даи-5 - 17.10.19\calibration template alpha.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="B32CE215-7DE3-4879-9284-478B45132692" version-id="AA5D882B-01DA-499D-B748-AE7BF9F5419C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053660" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\matcad\калибровка даи-5 - 17.10.19\calibration template alpha.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -836,13 +836,13 @@
 			</math>
 			<rendering item-idref="35"/>
 		</region>
-		<region region-id="460" left="702" top="838.5" width="151.5" height="66.75" align-x="718.5" align-y="888" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
+		<region region-id="558" left="702" top="832.5" width="151.5" height="66.75" align-x="718.5" align-y="882" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846260" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053140" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845500" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053380" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -909,13 +909,13 @@
 				</element-image-map>
 			</rendering>
 		</region>
-		<region region-id="461" left="882" top="838.5" width="99.75" height="66.75" align-x="898.5" align-y="888" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
+		<region region-id="560" left="882" top="832.5" width="99.75" height="66.75" align-x="898.5" align-y="882" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846380" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052620" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845860" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053620" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -987,18 +987,13 @@
 				</element-image-map>
 			</rendering>
 		</region>
-		<region region-id="354" left="30" top="920.25" width="179.25" height="12" align-x="47.25" align-y="930" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
-			<text use-page-width="false" push-down="false" lock-width="false">
-				<p style="Normal" margin-left="inherit" margin-right="inherit" text-indent="inherit" text-align="inherit" list-style-type="inherit" tabs="inherit">Энергии наших окон компенсационных:</p>
-			</text>
-		</region>
-		<region region-id="462" left="732" top="914.25" width="162.75" height="33" align-x="743.25" align-y="930" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
+		<region region-id="557" left="732" top="902.25" width="162.75" height="33" align-x="743.25" align-y="918" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845580" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053700" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845860" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053620" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -1066,13 +1061,18 @@
 				</element-image-map>
 			</rendering>
 		</region>
+		<region region-id="354" left="30" top="920.25" width="197.25" height="12" align-x="47.25" align-y="930" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
+			<text use-page-width="false" push-down="false" lock-width="true">
+				<p style="Normal" margin-left="inherit" margin-right="inherit" text-indent="inherit" text-align="inherit" list-style-type="inherit" tabs="inherit">Энергии наших окон компенсационных:</p>
+			</text>
+		</region>
 		<region region-id="463" left="732" top="939" width="126" height="33" align-x="744.75" align-y="960" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845860" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053620" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845940" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053580" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -1119,13 +1119,44 @@
 				</element-image-map>
 			</rendering>
 		</region>
-		<region region-id="464" left="702" top="987" width="108" height="18" align-x="741.75" align-y="996" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
+		<region region-id="355" left="18" top="957.75" width="60" height="95.25" align-x="36" align-y="1008" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845500" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="13F4167C-044D-4FB2-A9F6-7142712E786A" version-id="7E552F81-6DAC-4EEE-B012-F73066BD11E5" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053500" is-modified="false" region-id="0" href="G:\Other computers\My Laptop\google drive\Новые ДАИ\ДАИ 00041\csi\калибровка компенсационного детектора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846060" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="13F4167C-044D-4FB2-A9F6-7142712E786A" version-id="7E552F81-6DAC-4EEE-B012-F73066BD11E5" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053140" is-modified="false" region-id="0" href="G:\Other computers\My Laptop\google drive\Новые ДАИ\ДАИ 00041\csi\калибровка компенсационного детектора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+						<hash/>
+					</parentRef>
+					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
+					<originComment xmlns="http://schemas.mathsoft.com/provenance10"/>
+					<contentHash xmlns="http://schemas.mathsoft.com/provenance10">258ba7ef2ca55ce04340587595e9c4e7</contentHash>
+					<ml:define>
+						<ml:id xml:space="preserve">Ep</ml:id>
+						<ml:matrix rows="6" cols="1">
+							<ml:real>80</ml:real>
+							<ml:real>146</ml:real>
+							<ml:real>400</ml:real>
+							<ml:real>850</ml:real>
+							<ml:real>1500</ml:real>
+							<ml:real>2515</ml:real>
+						</ml:matrix>
+					</ml:define>
+				</ml:provenance>
+			</math>
+			<rendering item-idref="40">
+				<element-image-map>
+					<box left="1.5" top="0.75" width="58.5" height="93.75" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
+				</element-image-map>
+			</rendering>
+		</region>
+		<region region-id="566" left="1080" top="1005" width="108" height="18" align-x="1119.75" align-y="1014" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
+			<math optimize="false" disable-calc="false">
+				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
+					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053660" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+						<hash/>
+					</originRef>
+					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053180" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -1159,40 +1190,9 @@
 					</ml:define>
 				</ml:provenance>
 			</math>
-			<rendering item-idref="40">
-				<element-image-map>
-					<box left="1.5" top="0.75" width="106.5" height="16.5" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
-				</element-image-map>
-			</rendering>
-		</region>
-		<region region-id="355" left="18" top="957.75" width="60" height="95.25" align-x="36" align-y="1008" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
-			<math optimize="false" disable-calc="false">
-				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="13F4167C-044D-4FB2-A9F6-7142712E786A" version-id="7E552F81-6DAC-4EEE-B012-F73066BD11E5" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845700" is-modified="false" region-id="0" href="G:\Other computers\My Laptop\google drive\Новые ДАИ\ДАИ 00041\csi\калибровка компенсационного детектора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
-						<hash/>
-					</originRef>
-					<parentRef doc-id="13F4167C-044D-4FB2-A9F6-7142712E786A" version-id="7E552F81-6DAC-4EEE-B012-F73066BD11E5" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845900" is-modified="false" region-id="0" href="G:\Other computers\My Laptop\google drive\Новые ДАИ\ДАИ 00041\csi\калибровка компенсационного детектора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
-						<hash/>
-					</parentRef>
-					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
-					<originComment xmlns="http://schemas.mathsoft.com/provenance10"/>
-					<contentHash xmlns="http://schemas.mathsoft.com/provenance10">258ba7ef2ca55ce04340587595e9c4e7</contentHash>
-					<ml:define>
-						<ml:id xml:space="preserve">Ep</ml:id>
-						<ml:matrix rows="6" cols="1">
-							<ml:real>80</ml:real>
-							<ml:real>146</ml:real>
-							<ml:real>400</ml:real>
-							<ml:real>850</ml:real>
-							<ml:real>1500</ml:real>
-							<ml:real>2515</ml:real>
-						</ml:matrix>
-					</ml:define>
-				</ml:provenance>
-			</math>
 			<rendering item-idref="41">
 				<element-image-map>
-					<box left="1.5" top="0.75" width="58.5" height="93.75" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
+					<box left="1.5" top="0.75" width="106.5" height="16.5" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
 			</rendering>
 		</region>
@@ -1203,10 +1203,10 @@
 		<region region-id="489" left="132" top="975.75" width="144" height="95.25" align-x="149.25" align-y="1026" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="13F4167C-044D-4FB2-A9F6-7142712E786A" version-id="62363CE4-5178-4B2A-86A8-CE7E62577135" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846300" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040011\csi\калибровка компенсационного детектора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="13F4167C-044D-4FB2-A9F6-7142712E786A" version-id="62363CE4-5178-4B2A-86A8-CE7E62577135" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052740" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040011\csi\калибровка компенсационного детектора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="13F4167C-044D-4FB2-A9F6-7142712E786A" version-id="62363CE4-5178-4B2A-86A8-CE7E62577135" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846260" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040011\csi\калибровка компенсационного детектора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="13F4167C-044D-4FB2-A9F6-7142712E786A" version-id="62363CE4-5178-4B2A-86A8-CE7E62577135" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053660" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040011\csi\калибровка компенсационного детектора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -1276,10 +1276,10 @@
 		<region region-id="466" left="1098" top="1077" width="63.75" height="18" align-x="1109.25" align-y="1086" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845940" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053580" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845860" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053500" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -1315,10 +1315,10 @@
 		<region region-id="528" left="72" top="1101" width="45.75" height="18" align-x="93.75" align-y="1110" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="B3831516-1F42-4DE0-AFDE-D94DA14B7BB5" version-id="578421F8-5D7B-4669-9301-1BB9216DD01C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845500" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 12.2023\082\csi\калибровка comp.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="B3831516-1F42-4DE0-AFDE-D94DA14B7BB5" version-id="578421F8-5D7B-4669-9301-1BB9216DD01C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052940" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 12.2023\082\csi\калибровка comp.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="B3831516-1F42-4DE0-AFDE-D94DA14B7BB5" version-id="578421F8-5D7B-4669-9301-1BB9216DD01C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845580" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 12.2023\082\csi\калибровка comp.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="B3831516-1F42-4DE0-AFDE-D94DA14B7BB5" version-id="578421F8-5D7B-4669-9301-1BB9216DD01C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052540" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 12.2023\082\csi\калибровка comp.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -1343,10 +1343,10 @@
 		<region region-id="467" left="1104" top="1119" width="48.75" height="18" align-x="1118.25" align-y="1128" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845500" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052940" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845700" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053620" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -1376,66 +1376,13 @@
 				</element-image-map>
 			</rendering>
 		</region>
-		<region region-id="529" left="66" top="1123.5" width="116.25" height="43.5" align-x="85.5" align-y="1146" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
-			<math optimize="false" disable-calc="false">
-				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="13F4167C-044D-4FB2-A9F6-7142712E786A" version-id="62363CE4-5178-4B2A-86A8-CE7E62577135" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845860" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040011\csi\калибровка компенсационного детектора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
-						<hash/>
-					</originRef>
-					<parentRef doc-id="B3831516-1F42-4DE0-AFDE-D94DA14B7BB5" version-id="578421F8-5D7B-4669-9301-1BB9216DD01C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845500" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 12.2023\082\csi\калибровка comp.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
-						<hash/>
-					</parentRef>
-					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
-					<originComment xmlns="http://schemas.mathsoft.com/provenance10"/>
-					<contentHash xmlns="http://schemas.mathsoft.com/provenance10">fb859dccccaa8d9ffb5957d2972068e0</contentHash>
-					<ml:define>
-						<ml:id xml:space="preserve">Sig</ml:id>
-						<ml:eval placeholderMultiplicationStyle="default">
-							<ml:apply>
-								<ml:summation/>
-								<ml:lambda>
-									<ml:boundVars>
-										<ml:id xml:space="preserve">j</ml:id>
-									</ml:boundVars>
-									<ml:apply>
-										<ml:div/>
-										<ml:apply>
-											<ml:indexer/>
-											<ml:id xml:space="preserve">fon</ml:id>
-											<ml:id xml:space="preserve">j</ml:id>
-										</ml:apply>
-										<ml:apply>
-											<ml:indexer/>
-											<ml:id xml:space="preserve">fon</ml:id>
-											<ml:real>0</ml:real>
-										</ml:apply>
-									</ml:apply>
-								</ml:lambda>
-								<ml:bounds>
-									<ml:real>10</ml:real>
-									<ml:real>230</ml:real>
-								</ml:bounds>
-							</ml:apply>
-							<result xmlns="http://schemas.mathsoft.com/math30">
-								<ml:real>0.44615585432711236</ml:real>
-							</result>
-						</ml:eval>
-					</ml:define>
-				</ml:provenance>
-			</math>
-			<rendering item-idref="49">
-				<element-image-map>
-					<box left="1.5" top="0.75" width="114.75" height="42" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
-				</element-image-map>
-			</rendering>
-		</region>
 		<region region-id="468" left="1104" top="1137" width="73.5" height="19.5" align-x="1119.75" align-y="1146" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846260" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053140" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845580" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052540" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -1463,7 +1410,7 @@
 					</ml:define>
 				</ml:provenance>
 			</math>
-			<rendering item-idref="50">
+			<rendering item-idref="49">
 				<element-image-map>
 					<box left="1.5" top="0.75" width="72" height="18" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
@@ -1472,10 +1419,10 @@
 		<region region-id="469" left="1086" top="1160.25" width="187.5" height="35.25" align-x="1161.75" align-y="1182" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846300" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052500" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845540" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052700" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -1541,141 +1488,9 @@
 					</ml:define>
 				</ml:provenance>
 			</math>
-			<rendering item-idref="51">
+			<rendering item-idref="50">
 				<element-image-map>
 					<box left="1.5" top="0.75" width="186" height="33.75" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
-				</element-image-map>
-			</rendering>
-		</region>
-		<region region-id="530" left="66" top="1176" width="213" height="46.5" align-x="91.5" align-y="1200" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
-			<math optimize="false" disable-calc="false">
-				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="13F4167C-044D-4FB2-A9F6-7142712E786A" version-id="62363CE4-5178-4B2A-86A8-CE7E62577135" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845780" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040011\csi\калибровка компенсационного детектора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
-						<hash/>
-					</originRef>
-					<parentRef doc-id="B3831516-1F42-4DE0-AFDE-D94DA14B7BB5" version-id="578421F8-5D7B-4669-9301-1BB9216DD01C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846100" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 12.2023\082\csi\калибровка comp.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
-						<hash/>
-					</parentRef>
-					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
-					<originComment xmlns="http://schemas.mathsoft.com/provenance10"/>
-					<contentHash xmlns="http://schemas.mathsoft.com/provenance10">0c6643f4d341d10c8108fd0d8f114b48</contentHash>
-					<ml:define>
-						<ml:id xml:space="preserve">CsIg</ml:id>
-						<ml:eval placeholderMultiplicationStyle="default">
-							<ml:apply>
-								<ml:summation/>
-								<ml:lambda>
-									<ml:boundVars>
-										<ml:id xml:space="preserve">n</ml:id>
-									</ml:boundVars>
-									<ml:parens>
-										<ml:apply>
-											<ml:mult style="auto-select"/>
-											<ml:apply>
-												<ml:indexer/>
-												<ml:id xml:space="preserve">K</ml:id>
-												<ml:id xml:space="preserve">n</ml:id>
-											</ml:apply>
-											<ml:parens>
-												<ml:apply>
-													<ml:summation/>
-													<ml:lambda>
-														<ml:boundVars>
-															<ml:id xml:space="preserve">j</ml:id>
-														</ml:boundVars>
-														<ml:apply>
-															<ml:div/>
-															<ml:apply>
-																<ml:indexer/>
-																<ml:id xml:space="preserve">fon</ml:id>
-																<ml:id xml:space="preserve">j</ml:id>
-															</ml:apply>
-															<ml:apply>
-																<ml:indexer/>
-																<ml:id xml:space="preserve">fon</ml:id>
-																<ml:real>0</ml:real>
-															</ml:apply>
-														</ml:apply>
-													</ml:lambda>
-													<ml:bounds>
-														<ml:apply>
-															<ml:plus/>
-															<ml:apply>
-																<ml:indexer/>
-																<ml:id xml:space="preserve">Pn</ml:id>
-																<ml:id xml:space="preserve">n</ml:id>
-															</ml:apply>
-															<ml:real>512</ml:real>
-														</ml:apply>
-														<ml:apply>
-															<ml:plus/>
-															<ml:apply>
-																<ml:indexer/>
-																<ml:id xml:space="preserve">Pn</ml:id>
-																<ml:apply>
-																	<ml:plus/>
-																	<ml:id xml:space="preserve">n</ml:id>
-																	<ml:real>1</ml:real>
-																</ml:apply>
-															</ml:apply>
-															<ml:real>511</ml:real>
-														</ml:apply>
-													</ml:bounds>
-												</ml:apply>
-											</ml:parens>
-										</ml:apply>
-									</ml:parens>
-								</ml:lambda>
-								<ml:bounds>
-									<ml:real>0</ml:real>
-									<ml:real>4</ml:real>
-								</ml:bounds>
-							</ml:apply>
-							<result xmlns="http://schemas.mathsoft.com/math30">
-								<ml:real>0.24854278880041764</ml:real>
-							</result>
-						</ml:eval>
-					</ml:define>
-				</ml:provenance>
-			</math>
-			<rendering item-idref="52">
-				<element-image-map>
-					<box left="1.5" top="0.75" width="211.5" height="45" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
-				</element-image-map>
-			</rendering>
-		</region>
-		<region region-id="531" left="90" top="1245" width="90.75" height="12.75" align-x="138.75" align-y="1254" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
-			<math optimize="false" disable-calc="false">
-				<ml:eval placeholderMultiplicationStyle="default" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<ml:provenance expr-id="1">
-						<originRef doc-id="13F4167C-044D-4FB2-A9F6-7142712E786A" version-id="29E742FB-8C8F-4A2D-83CA-B2AB0183C819" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846100" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\новые УДА 2022\УДА 040017\csi\калибровка компенсационного детектора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
-							<hash/>
-						</originRef>
-						<parentRef doc-id="B3831516-1F42-4DE0-AFDE-D94DA14B7BB5" version-id="578421F8-5D7B-4669-9301-1BB9216DD01C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845700" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\ДАИ 12.2023\082\csi\калибровка comp.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
-							<hash/>
-						</parentRef>
-						<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
-						<originComment xmlns="http://schemas.mathsoft.com/provenance10"/>
-						<contentHash xmlns="http://schemas.mathsoft.com/provenance10">06da49bb3b2e8be979c3b6af279a68b0</contentHash>
-						<ml:apply>
-							<ml:minus/>
-							<ml:id xml:space="preserve">Sig</ml:id>
-							<ml:id xml:space="preserve">CsIg</ml:id>
-						</ml:apply>
-					</ml:provenance>
-					<result xmlns="http://schemas.mathsoft.com/math30">
-						<ml:real>0.19761306552669472</ml:real>
-					</result>
-				</ml:eval>
-				<resultFormat numeric-only="true">
-					<decimal precision="4" show-trailing-zeros="false" radix="dec" complex-threshold="10" zero-threshold="15" imaginary-value="i"/>
-					<matrix display-style="auto" expand-nested-arrays="false"/>
-					<unit format-units="true" simplify-units="true" fractional-unit-exponent="false"/>
-				</resultFormat>
-			</math>
-			<rendering item-idref="53">
-				<element-image-map>
-					<box left="1.5" top="0.75" width="42.75" height="11.25" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
 			</rendering>
 		</region>
@@ -1701,15 +1516,15 @@
 					</ml:matrix>
 				</ml:define>
 			</math>
-			<rendering item-idref="54"/>
+			<rendering item-idref="51"/>
 		</region>
 		<region region-id="471" left="1092" top="1218.75" width="184.5" height="125.25" align-x="1149" align-y="1284" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845900" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052940" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845980" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053620" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -1812,7 +1627,7 @@
 					</ml:define>
 				</ml:provenance>
 			</math>
-			<rendering item-idref="55">
+			<rendering item-idref="52">
 				<element-image-map>
 					<box left="1.5" top="0.75" width="183" height="123.75" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
@@ -1826,16 +1641,16 @@
 			</text>
 		</region>
 		<region region-id="472" left="756" top="1362" width="329.25" height="189.75" align-x="756" align-y="1362" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
-			<plot disable-calc="false" item-idref="56"/>
-			<rendering item-idref="57"/>
+			<plot disable-calc="false" item-idref="53"/>
+			<rendering item-idref="54"/>
 		</region>
 		<region region-id="517" left="84" top="1365" width="222" height="138.75" align-x="159.75" align-y="1374" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="EFFFDE83-6224-485F-8D21-6B7560FCD05F" version-id="56D02D11-FBE0-49C3-8031-8BEAADDE1D2E" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845500" is-modified="false" region-id="0" href="C:\Program Files (x86)\Mathcad\Mathcad 15\Resource Center\en\qsheet\Techniques\charstr7.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="EFFFDE83-6224-485F-8D21-6B7560FCD05F" version-id="56D02D11-FBE0-49C3-8031-8BEAADDE1D2E" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053660" is-modified="false" region-id="0" href="C:\Program Files (x86)\Mathcad\Mathcad 15\Resource Center\en\qsheet\Techniques\charstr7.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="E81480C1-D7A7-4C68-A634-57779F9618B9" version-id="8FAB82FC-77B7-47B9-8F45-6C492B9D939A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845980" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040014\все прокачки 040014\все прокачки 040014.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="E81480C1-D7A7-4C68-A634-57779F9618B9" version-id="8FAB82FC-77B7-47B9-8F45-6C492B9D939A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053620" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040014\все прокачки 040014\все прокачки 040014.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -1924,7 +1739,7 @@
 					</ml:define>
 				</ml:provenance>
 			</math>
-			<rendering item-idref="58">
+			<rendering item-idref="55">
 				<element-image-map>
 					<box left="1.5" top="0.75" width="220.5" height="137.25" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
@@ -1933,10 +1748,10 @@
 		<region region-id="473" left="1140" top="1389" width="127.5" height="12.75" align-x="1176.75" align-y="1398" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845860" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052580" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846180" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052780" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -1956,7 +1771,7 @@
 					</ml:define>
 				</ml:provenance>
 			</math>
-			<rendering item-idref="59">
+			<rendering item-idref="56">
 				<element-image-map>
 					<box left="1.5" top="0.75" width="126" height="11.25" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
@@ -1975,15 +1790,15 @@
 					</ml:apply>
 				</ml:define>
 			</math>
-			<rendering item-idref="60"/>
+			<rendering item-idref="57"/>
 		</region>
 		<region region-id="474" left="1146" top="1419" width="98.25" height="18" align-x="1160.25" align-y="1428" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845540" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053140" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845900" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053180" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2004,7 +1819,7 @@
 					</ml:define>
 				</ml:provenance>
 			</math>
-			<rendering item-idref="61">
+			<rendering item-idref="58">
 				<element-image-map>
 					<box left="1.5" top="0.75" width="96.75" height="16.5" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
@@ -2013,10 +1828,10 @@
 		<region region-id="475" left="1146" top="1443" width="97.5" height="18" align-x="1159.5" align-y="1452" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846060" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052540" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845700" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053500" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2042,7 +1857,7 @@
 					<unit format-units="true" simplify-units="true" fractional-unit-exponent="false"/>
 				</resultFormat>
 			</math>
-			<rendering item-idref="62">
+			<rendering item-idref="59">
 				<element-image-map>
 					<box left="1.5" top="0.75" width="96" height="16.5" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
@@ -2051,10 +1866,10 @@
 		<region region-id="476" left="1332" top="1443" width="25.5" height="12.75" align-x="1344.75" align-y="1452" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845540" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052700" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845500" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052660" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2066,7 +1881,7 @@
 					</ml:globalDefine>
 				</ml:provenance>
 			</math>
-			<rendering item-idref="63">
+			<rendering item-idref="60">
 				<element-image-map>
 					<box left="1.5" top="0.75" width="24" height="11.25" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
@@ -2075,10 +1890,10 @@
 		<region region-id="477" left="1146" top="1467" width="96.75" height="18" align-x="1158.75" align-y="1476" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845860" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053620" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845700" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053500" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2099,23 +1914,23 @@
 					</ml:define>
 				</ml:provenance>
 			</math>
-			<rendering item-idref="64">
+			<rendering item-idref="61">
 				<element-image-map>
 					<box left="1.5" top="0.75" width="95.25" height="16.5" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
 			</rendering>
 		</region>
 		<region region-id="478" left="1122" top="1524" width="283.5" height="189.75" align-x="1122" align-y="1524" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
-			<plot disable-calc="false" item-idref="65"/>
-			<rendering item-idref="66"/>
+			<plot disable-calc="false" item-idref="62"/>
+			<rendering item-idref="63"/>
 		</region>
 		<region region-id="519" left="96" top="1539" width="300.75" height="18" align-x="112.5" align-y="1548" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="E81480C1-D7A7-4C68-A634-57779F9618B9" version-id="62AA9668-1FA8-46DB-A30D-2E7A3782084D" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845780" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040011\все прокачки 040011\все прокачки 040011.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="E81480C1-D7A7-4C68-A634-57779F9618B9" version-id="62AA9668-1FA8-46DB-A30D-2E7A3782084D" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052740" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040011\все прокачки 040011\все прокачки 040011.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="E81480C1-D7A7-4C68-A634-57779F9618B9" version-id="8FAB82FC-77B7-47B9-8F45-6C492B9D939A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846140" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040014\все прокачки 040014\все прокачки 040014.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="E81480C1-D7A7-4C68-A634-57779F9618B9" version-id="8FAB82FC-77B7-47B9-8F45-6C492B9D939A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053580" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040014\все прокачки 040014\все прокачки 040014.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2154,7 +1969,7 @@
 					</ml:define>
 				</ml:provenance>
 			</math>
-			<rendering item-idref="67">
+			<rendering item-idref="64">
 				<element-image-map>
 					<box left="1.5" top="0.75" width="299.25" height="16.5" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
@@ -2163,10 +1978,10 @@
 		<region region-id="520" left="96" top="1557" width="337.5" height="18" align-x="112.5" align-y="1566" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="F805D024-DF96-4ADD-AB9B-3069A4BAB52C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846100" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050020\калибровка 050020 после резистора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="F805D024-DF96-4ADD-AB9B-3069A4BAB52C" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052620" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\ДАИ\ДАИ 050020\калибровка 050020 после резистора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="E81480C1-D7A7-4C68-A634-57779F9618B9" version-id="8FAB82FC-77B7-47B9-8F45-6C492B9D939A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845940" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040014\все прокачки 040014\все прокачки 040014.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="E81480C1-D7A7-4C68-A634-57779F9618B9" version-id="8FAB82FC-77B7-47B9-8F45-6C492B9D939A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053380" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040014\все прокачки 040014\все прокачки 040014.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2205,7 +2020,7 @@
 					</ml:define>
 				</ml:provenance>
 			</math>
-			<rendering item-idref="68">
+			<rendering item-idref="65">
 				<element-image-map>
 					<box left="1.5" top="0.75" width="336" height="16.5" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
@@ -2215,10 +2030,10 @@
 			<math optimize="false" disable-calc="false">
 				<ml:eval placeholderMultiplicationStyle="default" xmlns:ml="http://schemas.mathsoft.com/math30">
 					<ml:provenance expr-id="1">
-						<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846180" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+						<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053500" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 							<hash/>
 						</originRef>
-						<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846060" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+						<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052780" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 							<hash/>
 						</parentRef>
 						<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2251,7 +2066,7 @@
 					<unit format-units="true" simplify-units="true" fractional-unit-exponent="false"/>
 				</resultFormat>
 			</math>
-			<rendering item-idref="69">
+			<rendering item-idref="66">
 				<element-image-map>
 					<box left="1.5" top="0.75" width="115.5" height="11.25" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
@@ -2261,10 +2076,10 @@
 			<math optimize="false" disable-calc="false">
 				<ml:eval placeholderMultiplicationStyle="default" xmlns:ml="http://schemas.mathsoft.com/math30">
 					<ml:provenance expr-id="1">
-						<originRef doc-id="E81480C1-D7A7-4C68-A634-57779F9618B9" version-id="8FAB82FC-77B7-47B9-8F45-6C492B9D939A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846060" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040014\все прокачки 040014\все прокачки 040014.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+						<originRef doc-id="E81480C1-D7A7-4C68-A634-57779F9618B9" version-id="8FAB82FC-77B7-47B9-8F45-6C492B9D939A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052780" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040014\все прокачки 040014\все прокачки 040014.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 							<hash/>
 						</originRef>
-						<parentRef doc-id="E81480C1-D7A7-4C68-A634-57779F9618B9" version-id="8FAB82FC-77B7-47B9-8F45-6C492B9D939A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846380" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040014\все прокачки 040014\все прокачки 040014.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+						<parentRef doc-id="E81480C1-D7A7-4C68-A634-57779F9618B9" version-id="8FAB82FC-77B7-47B9-8F45-6C492B9D939A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052820" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040014\все прокачки 040014\все прокачки 040014.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 							<hash/>
 						</parentRef>
 						<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2283,7 +2098,7 @@
 					</result>
 				</ml:eval>
 			</math>
-			<rendering item-idref="70">
+			<rendering item-idref="67">
 				<element-image-map>
 					<box left="1.5" top="0.75" width="114" height="11.25" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
@@ -2292,10 +2107,10 @@
 		<region region-id="522" left="96" top="1599" width="159" height="12.75" align-x="112.5" align-y="1608" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math error="Не удается открыть файл данных." optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="E81480C1-D7A7-4C68-A634-57779F9618B9" version-id="8FAB82FC-77B7-47B9-8F45-6C492B9D939A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846060" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040014\все прокачки 040014\все прокачки 040014.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="E81480C1-D7A7-4C68-A634-57779F9618B9" version-id="8FAB82FC-77B7-47B9-8F45-6C492B9D939A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052780" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040014\все прокачки 040014\все прокачки 040014.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="E81480C1-D7A7-4C68-A634-57779F9618B9" version-id="8FAB82FC-77B7-47B9-8F45-6C492B9D939A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846180" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040014\все прокачки 040014\все прокачки 040014.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="E81480C1-D7A7-4C68-A634-57779F9618B9" version-id="8FAB82FC-77B7-47B9-8F45-6C492B9D939A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053700" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040014\все прокачки 040014\все прокачки 040014.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2316,24 +2131,24 @@
 					</ml:define>
 				</ml:provenance>
 			</math>
-			<rendering item-idref="71">
+			<rendering item-idref="68">
 				<element-image-map>
 					<box left="1.5" top="0.75" width="157.5" height="11.25" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
 			</rendering>
 		</region>
 		<region region-id="480" left="774" top="1608" width="315.75" height="192.75" align-x="774" align-y="1608" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
-			<plot disable-calc="false" item-idref="72"/>
-			<rendering item-idref="73"/>
+			<plot disable-calc="false" item-idref="69"/>
+			<rendering item-idref="70"/>
 		</region>
 		<region region-id="481" left="1446" top="1608" width="141.75" height="42" align-x="1551" align-y="1632" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:eval placeholderMultiplicationStyle="default" xmlns:ml="http://schemas.mathsoft.com/math30">
 					<ml:provenance expr-id="1">
-						<originRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846180" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+						<originRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053700" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 							<hash/>
 						</originRef>
-						<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845500" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+						<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052620" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 							<hash/>
 						</parentRef>
 						<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2374,7 +2189,7 @@
 					</result>
 				</ml:eval>
 			</math>
-			<rendering item-idref="74">
+			<rendering item-idref="71">
 				<element-image-map>
 					<box left="1.5" top="0.75" width="99" height="40.5" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
@@ -2383,10 +2198,10 @@
 		<region region-id="523" left="102" top="1629" width="61.5" height="18" align-x="118.5" align-y="1638" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math error="Эта переменная не определена." optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="B824B09A-2B0B-46E6-B0B6-E2972AED55F3" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845860" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040014\калибровка 040014.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="764E75D6-34C9-4D2D-8E5A-59C89214A5FD" version-id="B824B09A-2B0B-46E6-B0B6-E2972AED55F3" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053580" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040014\калибровка 040014.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="E81480C1-D7A7-4C68-A634-57779F9618B9" version-id="8FAB82FC-77B7-47B9-8F45-6C492B9D939A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845940" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040014\все прокачки 040014\все прокачки 040014.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="E81480C1-D7A7-4C68-A634-57779F9618B9" version-id="8FAB82FC-77B7-47B9-8F45-6C492B9D939A" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053660" is-modified="false" region-id="0" href="C:\Users\shuu\Desktop\новые УДА\УДА 040014\все прокачки 040014\все прокачки 040014.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2409,7 +2224,7 @@
 					<unit format-units="true" simplify-units="true" fractional-unit-exponent="false"/>
 				</resultFormat>
 			</math>
-			<rendering item-idref="75">
+			<rendering item-idref="72">
 				<element-image-map>
 					<box left="1.5" top="0.75" width="60" height="16.5" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
@@ -2418,10 +2233,10 @@
 		<region region-id="482" left="1122" top="1729.5" width="132.75" height="14.25" align-x="1159.5" align-y="1740" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845900" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="55682C76-F92F-4342-8D4F-42971B3E26DC" version-id="7551F530-DF5E-4AE8-A9F8-E21A5CCFBCBD" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052540" is-modified="true" region-id="0" href="C:\Users\shuu\Desktop\matcad\все детектора от 1 до 11\Вычитание спектров_mod_25.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846380" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053700" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2456,7 +2271,7 @@
 					</ml:define>
 				</ml:provenance>
 			</math>
-			<rendering item-idref="76">
+			<rendering item-idref="73">
 				<element-image-map>
 					<box left="1.5" top="0.75" width="131.25" height="12.75" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
@@ -2491,15 +2306,15 @@
 					<unit format-units="true" simplify-units="true" fractional-unit-exponent="false"/>
 				</resultFormat>
 			</math>
-			<rendering item-idref="77"/>
+			<rendering item-idref="74"/>
 		</region>
 		<region region-id="484" left="1440" top="1737" width="40.5" height="12.75" align-x="1456.5" align-y="1746" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846140" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052780" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845900" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053380" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2511,7 +2326,7 @@
 					</ml:define>
 				</ml:provenance>
 			</math>
-			<rendering item-idref="78">
+			<rendering item-idref="75">
 				<element-image-map>
 					<box left="1.5" top="0.75" width="39" height="11.25" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
@@ -2520,10 +2335,10 @@
 		<region region-id="485" left="1536" top="1737" width="40.5" height="12.75" align-x="1552.5" align-y="1746" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846180" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053500" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213845700" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="7C3B2232-1280-4345-9E05-2A2F221D4936" version-id="4A1BCE6C-0B63-4CDD-8D71-648996871B5F" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052940" is-modified="false" region-id="0" href="D:\микасенсор\отгрузки\Новый низкий порог под Йод 129\калибровка_I129.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2535,7 +2350,7 @@
 					</ml:define>
 				</ml:provenance>
 			</math>
-			<rendering item-idref="79">
+			<rendering item-idref="76">
 				<element-image-map>
 					<box left="1.5" top="0.75" width="39" height="11.25" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
@@ -2550,15 +2365,15 @@
 					</result>
 				</ml:eval>
 			</math>
-			<rendering item-idref="80"/>
+			<rendering item-idref="77"/>
 		</region>
 		<region region-id="397" left="48" top="1953" width="121.5" height="12.75" align-x="65.25" align-y="1962" show-border="false" show-highlight="false" is-protected="true" z-order="0" background-color="inherit" tag="">
 			<math optimize="false" disable-calc="false">
 				<ml:provenance expr-id="1" xmlns:ml="http://schemas.mathsoft.com/math30">
-					<originRef doc-id="13F4167C-044D-4FB2-A9F6-7142712E786A" version-id="57FBC940-938B-4522-B5E9-FB1AF19D5C9D" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846140" is-modified="false" region-id="0" href="G:\Other computers\My Laptop\google drive\Новые ДАИ\ДАИ 00041\csi\калибровка компенсационного детектора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<originRef doc-id="13F4167C-044D-4FB2-A9F6-7142712E786A" version-id="57FBC940-938B-4522-B5E9-FB1AF19D5C9D" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295052780" is-modified="false" region-id="0" href="G:\Other computers\My Laptop\google drive\Новые ДАИ\ДАИ 00041\csi\калибровка компенсационного детектора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</originRef>
-					<parentRef doc-id="13F4167C-044D-4FB2-A9F6-7142712E786A" version-id="57FBC940-938B-4522-B5E9-FB1AF19D5C9D" branch-id="00000000-0000-0000-0000-000000000000" revision-num="213846180" is-modified="false" region-id="0" href="G:\Other computers\My Laptop\google drive\Новые ДАИ\ДАИ 00041\csi\калибровка компенсационного детектора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
+					<parentRef doc-id="13F4167C-044D-4FB2-A9F6-7142712E786A" version-id="57FBC940-938B-4522-B5E9-FB1AF19D5C9D" branch-id="00000000-0000-0000-0000-000000000000" revision-num="295053500" is-modified="false" region-id="0" href="G:\Other computers\My Laptop\google drive\Новые ДАИ\ДАИ 00041\csi\калибровка компенсационного детектора.xmcd" xmlns="http://schemas.mathsoft.com/provenance10">
 						<hash/>
 					</parentRef>
 					<comment xmlns="http://schemas.mathsoft.com/provenance10"/>
@@ -2577,7 +2392,7 @@
 					</ml:define>
 				</ml:provenance>
 			</math>
-			<rendering item-idref="81">
+			<rendering item-idref="78">
 				<element-image-map>
 					<box left="1.5" top="0.75" width="120" height="11.25" expr-idref="1" xmlns="http://schemas.mathsoft.com/worksheet30"/>
 				</element-image-map>
@@ -2606,7 +2421,7 @@
 					</ml:apply>
 				</ml:eval>
 			</math>
-			<rendering item-idref="82"/>
+			<rendering item-idref="79"/>
 		</region>
 	</regions>
 	<binaryContent>
@@ -2999,20 +2814,20 @@ ZSJw5mv8X6A/EYgOXLySkPLLD5FvgF91tV5nHeUTMv6SX7fvL+GHnvWt13Y3EHPX0R9zSATa
 4I0AAACAnwWJQBskAgAAAH4X/EagCRIBAAAAPwx/ZRAf/pIU4OsaCxIBAAAAvw0lAOE3bj3/
 j8D9QCIAAAAA3BgkAgAAAMCNQSIAAAAA3BgkAgAAAMBtmaZ/omqvhx+Om2AAAAAASUVORK5C
 YII=</item>
-		<item item-id="14" content-encoding="gzip">H4sIAAAAAAAA/2xUXVMSYRQ+7+7CLgjyYVKwGkhZWqawagplgTlNF2YzdJ+zwqo0IYZr4yXT
-Vf+im35C033TRb+oq6ah88EiNb7M4Zz32ec857wfuzEAUGiv0aIc6/hvee8b3lG7exICGmto
-kVa3KZjBWIVonearg7de02cEGpyv4X/47Ph0u3sh8C6aiUBjRHyJVqB8rNxB/i91OaexPfQa
-aDp3lx4Vr/t+r31w7ntCqaIlYHwY1eI/8xALGH7P82wGHLT4KYdhJ/sdoB8ync/oa2FLvBkR
-b0XFRyYcDYv4uD+G0kuwDGWAGGNfEdOUKpEmk/uRSYc62o5TZxx+jHOxpBP9gc+tlPPpJ4om
-0475G31qyjH+oE9fY8HWFICuPYMzgGkGvkxRhTYKZJjYT18XYmZEvCGtZEatQJa1+6mcaGdt
-ScnhAvRD6MIJwIyo5wL1WVHP3hTq7Bg1L/qzl/pQ4EX0k3OyiEJRCs3dkuwi9VaHDsBtKVMM
-ysxLmbk7QpwfEe9KkfnLIguyiMKiaC/ck5TFsc7ui/pioL4k6gsPhLo0Rl0W/aWxRQCsyJmZ
-JTnolbL4ksPkD+WAvMrzb6M5rEliaV0Om16Qh3LYayy8IZMVnmwKOVwR9c2q+MojuVZ4h0PK
-KEMJr+YqwGNptMqXbR2vGl3YLZGoPGHd2hZCT2XtGFpmB/ahiVehjAIbVLJWk6ebwc7U6vxi
-JlrO/lHPPT3eP+z2Oq5vcoPT9H4zvOP6rmxNDoJ3EIcO8pWguhmOaRZ1L9pnz1lHvgkzaG/U
-kCtjgD9QM3tXortXoIG46ffcpufs6PzIHhLzKgnKVsiz8SQwwiyMNIoGhOn8lDCDsUFehZSt
-9WuYGla2zhqmso0BBZYo5FUEOSiQV1HkDAiZQA6nx5DD6XHiUNYkczBIEIfI0nJi77zj9dpN
-951sisWtv0BrQRt/VJw+VtHhjv43YuOTvwAAAP//AwBA39OumAUAAA==</item>
+		<item item-id="14" content-encoding="gzip">H4sIAAAAAAAA/2xUXVMSYRQ+7+7CLgiCmBSsBlKUlimsmkJZYE7ThdmM3cessCpNCMHaeMl0
+1b/opp/QdN900S/qqmnofABS47tz9j3vs895znm/NgIACu01Wph9Hd+W9/7QO2m2zwJAbQMt
+1GjXBTMYKxGtVX919Nar+4zAIcdr+A72Tju77QuB99FMBA7HxJdoWYrHzC3k/1KXY2q7SorS
+QNPZSYyTV32/2zw69z2hltFiMNmMcu6fcYAFDL/reTYDDlq0w27QSX0H6AdM5zP2laAlvRmS
+3gpLH5pyNEzi4/oYSi/AKhQBIox9RUxTqkCaTO6Hph2qaDdKlbH7McrJ4k74B363ZpxPP1E0
+nnDM39jPzDrGH+wT11iwMQuga8+gBzDHwJdZytBEgSQT+4nrQkyOiTeklOS4FEixdn8mLdop
+W0LSOAH9GNpwBjAv6umR+oKop24KdWGCmhH9hUt9yPIk+vFFmUQ2J4kWb0l0jmqrQgvgtqTJ
+jdLkJc3iHSHmx8S7kiR/mWRJJpFdFu2lexKyPFHZfVFfHqmviPrSA6GuTFBXRX9lYhIAa7Jn
+ZkE2eq0ofcFh8ofiiLzO42/jMWxIYGFTNpsuyEPZ7A0W3pLBGg+2hRwsifp2WfrSIzlWeIYD
+yihCAY/mOsBjKbTMh20Tjxod2B2RKD1h3coOQk9l7uhaZgtqUMejUESBLUpZqcjX7dHKVKp8
+MWMNp3bSdTunteN2t+X6Jhc4R/eb4T3Xd2Vp0sMloij+J9A1orxJ9mkUdi+aveesI/+EebQ3
+asiVNsAH1PzBlej+FehI3PS7bt1z9nT+ZA+JGRUHZSvk2bgT6GEUehp5A8J0/kqYwdggowLK
+1voVDA0qW2cNU9nGgBxLFDIqhBwUyKgwcgaETCGHwyPI4fAocShqmjnoxIhDZCk5dnDe8rrN
+uvtOFsXi0l+gNaCJDyWnn1V4uKL/tcjk4C8AAAD//wMAd7pQp5gFAAA=</item>
 		<item item-id="15">iVBORw0KGgoAAAANSUhEUgAAAk0AAADtCAYAAACieUGfAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAB1fSURBVHhe7d3htaMqFIbh1GVB1mMB
 U4e/bicpJhdQ4tYjSlAUtu+TxSwFEplIxm/Uk/P6AAAAYBehCQAAIAKhCQAAIAKhCQAAIAKh
@@ -7731,18 +7546,18 @@ ClloqWp/AyvxXMhrGmfazO6Lo7Uc703R2f+7/wyg+9t0v/GPFR2GJ/eMspDfVHASvXhAH1/r
 +MSDU84/IZ5qy3+9r282KDoAgFNB0QEAnAqKDgDgVFB0AAAnMs8/41AWO23MBY0AAAAASUVO
 RK5CYII=</item>
 		<item item-id="26" content-encoding="gzip">H4sIAAAAAAAA/4xUzVITQRDu2WR3k00gEE0ENgIJokA0kgEp5BQptKzyryo+ALUkC8QSEpeN
-xTHFA3jz7MVHsLxb3izLV4rfdJOAN2ert6e/+bp7umdns0SkIG8hHs8TeKfCD83wqNM9tcmM
-TUi63W0JlmTssaGdtN4cvAtbMSPUZH8Lb+fsuLfbPRf4JcQF0BwTX0F4EbkK4E8nr2wzlizR
-FlkJ3l1+nPxJHEedg34cKmbsQHJ0fSR3Kv/YNgdIxlEY+gxoyESPp46e/UE0sF39BbrhpES7
-adEpT3Q6o51fRLteVltIFmfgqew61dCETdpGOG3/RpzMpKxPoBBl1Wkde2PkGxBLqQ3Tnyn9
-+QXRhUfTsjTFwbYRzIQym6M8px2kb2hT224e0E2eXuR52wXt/cR6qsi6UbjFkdpFtNl5ShEF
-CKNpi2hG5/+AWJwVwozZxSHRnP6E+gcz5DP+dc7gcjQl8SjcFo+SWTkimhePEi2Ix/yVBy3K
-bt2yNGuxIrq8xNSPFS4drbjD9vexTcviWL4rZS4DuidlLnPgFTEW2VgVsrMm0VerotfuS5Yq
-jlglNtFyRH4gmarjTDVxXnsomWqA1iV4jYPXpaGrWhpa35DqcRiO3aQDOqWY+rgGUrweFf9I
-7Pq4GVv88efaev8oCnrH+4fd6CSIXTk0c4cY3gviQFo3R6Pv/PLbN5/qCsTnubG84Lxz9ozj
-yL0rmRulLrkyhnhIlf4fHQV34yhohXpPrp1/SVxQU6R8wyu5CsMHOFxQlpkMsZpQfnJokCQj
-mNjKtwYNLDnKT3AElzmYpEbuaXDY3QOH3TPgsHsWHHafMBzjNckcTHKGY8iy4dzr/kkYdVrB
-e2lJijf+HNKmDh6T3PwOPBr/S66P7HXjLwAAAP//AwCz5Oob+gQAAA==</item>
+xTHFA3jz7MVHsLxb3izLV4rfdJOAN2erd7q/+bp7umdns0SkIG8hHusJvFPhh2Z41Ome2mTG
+JiTd7rYESzL22NBOWm8O3oWtmBFqsr+Ft3N23Nvtngv8EuICaI6JryC8iFwF8KeTV7YZS5Zs
+yiIrwUp+nPxJHEedg34cKmbuQHJ0fSR3Kv/YNgdIxlEY+gxoyESPVUfP/iAa2K7+grnhpGR2
+0zKnPJnTGe38Itr1stpCsjgDT2XXqYYmbNI2wmn7N+JkJmV9AoUoq07r2Bsj34BYSm2Y/kzp
+zy+ILjyalqUpDraNYCaU2RzlOe0gfUOb2nbzgG6yepHnbRe09xPrqSLPjcItjtQuos3OU4oo
+QBhNW0QzOv8HxOKsEGbMLg6J5vQn1D+YIZ/xr3MGl6MpiUfhtniUzMoR0bx4lGhBPOavPGhR
+duuWpVmLFZnLS0z9WOHS0Yo7bH8f27QsjuW7UuYyoHtS5jIHXhFjkY1VITtrEn21KvPafclS
+xRGrxCZajsgPJFN1nKkmzmsPJVMN0LoEr3HwujR0VUtD6xtSPQ7DsZt0QKcUUx/XQIrXo+If
+iV0fN2OLP/5cW+8fRUHveP+wG50EsSuHZu4Qw3tBHEjr5i6/UWv07ZtPdQXis24sLzjvnD3j
+OHLvSuZGqUuujCEeUqX/R0fB3TgKWqHek2vnXxIX1BQp3/BKrsLwAQ4XlGWUIVYTyk8ODZJk
+BIqtfGvQwJKj/ARHcJkDJTVyT4PD7h447J4Bh92z4LD7hOEYr0nmQMkZjiHLhnOv+ydh1GkF
+76UlKd74c0ibOnhMcvM78Gj8L7k+steNvwAAAP//AwB19C/d+gQAAA==</item>
 		<item item-id="27">iVBORw0KGgoAAAANSUhEUgAAAZ0AAAERCAYAAACgrXoBAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAABNKSURBVHhe7d2LdapKGIBR67Ig67Ea
 mrEYzgwwigoGPYj8sHcW6yb4yHV8fGcAzaEGgIWIDgCLER0AFiM6ACxGdABYjOgAsBjRAWAx
@@ -8488,22 +8303,7 @@ hwe+xESkLIdIUEWf1B3PO86WhqllDXACXxT7eNzCGunz0JzaOTlI5z4ciPWT7bZ57zv3QXW6
 T5jagkUMAOWBoKBrIGhtthUrLTgT/y8J7EDQmpzVvaVq6o8AQSsSffQHkoCgzTB3Peo/+HgX
 ELQVOt0jej4Ggjbi+OgPpABBG3D26A+kAUErc/noDyQBQSty9+gP3ANBQddAUNA1EBR0DQQF
 HbOuf+kVjPw/qwq7AAAAAElFTkSuQmCC</item>
-		<item item-id="40">iVBORw0KGgoAAAANSUhEUgAAAJAAAAAYCAYAAAAVpXQNAAAAAXNSR0IArs4c6QAAAARnQU1B
-AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAK2SURBVGhD7ZgJkqwgDIY9lwfiPJ7G
-y3gYhgTCZmDY7HZq8lVRrxWBLH+i8zYtCBOIgIQpREDCFCIgYYpUQKfS27aZsevjuvShDn25
-qSGuQ++4l7uOwTmlT3f5dVb7PsypVXdcYM2m1Ypg1nIG5+xpXIKAkoUmgLsJZvZwH9YpmxB3
-y0NzLxHQct9HgbiUkvcJajlzZIWfCShO6D/qQE/4PsCpFnURlkafajkjoFs7Q6NXmKs8bjFt
-esK/8Eyjo8y6nTaPknYdO875qvevkzD8uiK2esYS8IDvvcA5TNcDUfk4lA4mG6sh6hQQlzMP
-xMuel31EUyBhUEVSWzPDOWgT3tA90Jiwjq4xDvjb7WGMDTambRzP6spY7EM2qvss9r0T1k+I
-URI77tyG1w7SI6DgL13nplG3zAREkFHOYNwkNtDO/5rX2zp7MCraze2QtGSjoG686hbQLCt8
-7xcx+Fnssr4jp8L2WzFxtlTsIIHk1HIWQfYm30AqecgejkayQeQMzqgZ4+aUMgLJncE5cra3
-2vuT94jvnfACcmJGQ+B3IRZMnO8Ynwa/gZoFVAwUzkWKh4ooKTgm3xOv48q2v1MDzbnFvZ9J
-3rjv6+zhOm16D876goCiPMVAzsC0rAOdSfV6210QQzUXHLmRdwNaF92HQ5IWna+xI4stAwS4
-5TmGR3zvBM6pdmI3bsUVxata1I0CivfDwfkLz1iRFb6BMtCRNZX2O5c+z+wgOH9IGQv4oO9U
-1a8HCt4Z+joBcd8CcM/a+9ArrEbV99X2fMG/XjAeoSs1CMi+Gth2hpvF7S4eo4G4v8JIUFCh
-4/uOUPHd8Iw94P9Dr8lpIB6pbW0d6DWEd+87eJs9n0cENIUISAQ0hQjoTwkI/18Evkeqf65+
-jrfZ8w3+WAcS3oYISJhCBCRMIQISJtD6ByiBZ+3io0TFAAAAAElFTkSuQmCC</item>
-		<item item-id="41">iVBORw0KGgoAAAANSUhEUgAAAFAAAAB/CAYAAAB460VOAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="40">iVBORw0KGgoAAAANSUhEUgAAAFAAAAB/CAYAAAB460VOAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAXmSURBVHhe7Z3hdaQgEIDTwPWRGuzi
 mtg+0oHV+Os6sRhvBgYYEFCcJIs433u8dy6Lu3wZwDDR+9gUEbcQuC7zNi8rHf0+tc/vXuDy
 em2vhQ7eyLrA95j3ErsWuM59yPOAxCmR2K/Add6mC/YwUqaPj+3DlCmOmnXZXhPVTfN2ZVJY
@@ -8533,6 +8333,21 @@ K0fkBR63i8HpwEZohwLDlzsEhzPfPYbhbyKSl+RcWYEn2sXg7rX93A4F2k5GAVJgmUvDLpOV
 c5CsdA60VNpx2DzdpUATWQcG14UNM3i/v0MpwWflHFWBgV07hpv/kD4FgpraMC6tmPZ1NodF
 WTlLezYvJa7rVCCAwyTTib08KG4exBW8mJULC0VbuxgefUi/AgGMlmIgvAP4oaZyuxaILK8+
 JOIN3bnI7F4ggv+N97yUh9VPs8JqX/r8Wwjsl237Dzz0wNl+6DDAAAAAAElFTkSuQmCC</item>
+		<item item-id="41">iVBORw0KGgoAAAANSUhEUgAAAJAAAAAYCAYAAAAVpXQNAAAAAXNSR0IArs4c6QAAAARnQU1B
+AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAK2SURBVGhD7ZgJkqwgDIY9lwfiPJ7G
+y3gYhgTCZmDY7HZq8lVRrxWBLH+i8zYtCBOIgIQpREDCFCIgYYpUQKfS27aZsevjuvShDn25
+qSGuQ++4l7uOwTmlT3f5dVb7PsypVXdcYM2m1Ypg1nIG5+xpXIKAkoUmgLsJZvZwH9YpmxB3
+y0NzLxHQct9HgbiUkvcJajlzZIWfCShO6D/qQE/4PsCpFnURlkafajkjoFs7Q6NXmKs8bjFt
+esK/8Eyjo8y6nTaPknYdO875qvevkzD8uiK2esYS8IDvvcA5TNcDUfk4lA4mG6sh6hQQlzMP
+xMuel31EUyBhUEVSWzPDOWgT3tA90Jiwjq4xDvjb7WGMDTambRzP6spY7EM2qvss9r0T1k+I
+URI77tyG1w7SI6DgL13nplG3zAREkFHOYNwkNtDO/5rX2zp7MCraze2QtGSjoG686hbQLCt8
+7xcx+Fnssr4jp8L2WzFxtlTsIIHk1HIWQfYm30AqecgejkayQeQMzqgZ4+aUMgLJncE5cra3
+2vuT94jvnfACcmJGQ+B3IRZMnO8Ynwa/gZoFVAwUzkWKh4ooKTgm3xOv48q2v1MDzbnFvZ9J
+3rjv6+zhOm16D876goCiPMVAzsC0rAOdSfV6210QQzUXHLmRdwNaF92HQ5IWna+xI4stAwS4
+5TmGR3zvBM6pdmI3bsUVxata1I0CivfDwfkLz1iRFb6BMtCRNZX2O5c+z+wgOH9IGQv4oO9U
+1a8HCt4Z+joBcd8CcM/a+9ArrEbV99X2fMG/XjAeoSs1CMi+Gth2hpvF7S4eo4G4v8JIUFCh
+4/uOUPHd8Iw94P9Dr8lpIB6pbW0d6DWEd+87eJs9n0cENIUISAQ0hQjoTwkI/18Evkeqf65+
+jrfZ8w3+WAcS3oYISJhCBCRMIQISJtD6ByiBZ+3io0TFAAAAAElFTkSuQmCC</item>
 		<item item-id="42" content-encoding="gzip">H4sIAAAAAAAA/3RUS28SURQ+d4AZoFAeSrUMD63ah1ahlwoWN9g0xkXVhsadCRlgpKhIpVPt
 krjzV+jCn2DcGxcm7vxBBs9jwNqkl5w5j/t955x77gwxAFAo+yhRtgP4DLtvm26vP3wTAlqb
 KJHusCOxIMe2CDboPG2/dDseR6DJfAOf5tHB4fbwRMK7KBYGmjPgY5TPWGcP079HeWb+82n9
@@ -8749,33 +8564,7 @@ K6WUqVzxWnNOmIfALoiL5WC+5Qag1CsTgdPm/RAE6hZcIwy5nkNuCyM/kSKi70rWO4UxO0CG
 +pMRCBJL95/VemPrpJFe/JFi4OK4vOHpTU+FqqOOASM+/HGlljwDgXNH8krP1zU0DyF/pB5i
 1tE8BFE+1Z0rfj+m6ZpA54Z7ClSpsbZmu4McnlK7GW2ZC4g3NMbUnBP+WxsCaUMgbQiIeAOJ
 fQAzAYn5UAAAAABJRU5ErkJggg==</item>
-		<item item-id="49">iVBORw0KGgoAAAANSUhEUgAAAJsAAAA6CAYAAACnISvHAAAAAXNSR0IArs4c6QAAAARnQU1B
-AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAATwSURBVHhe7ZuLkYQgDEC3LgvaeqzG
-ZizGIyTR8HFRDwUkb8aZE++UlWcScO+zKMpDqGzKY6hsymOobMpjNCHbPH6X4fNZPp9hGWdq
-NMzT1v6VB2T7RG1KceqXzYjzseLQNoyL1WoajUjw07yMAxz7LujVtHzN71nJ7N9yu1Ka6mWb
-x3FBp1CiQB5u5xBmBaMIOI82wuWNbtwPcU3lEE3VbNPXH+Bt4Adqn8chkG2QKfZfQBSV53bT
-uvKbhmQTAy2ByGbTKEawW2VTwf5FO7LZGo1+9hFS3SYbnWutHdfOiLQqRVzF1LTLNCLbtIzr
-KE7LFIwZThLsWN5Zs60C0b68rsGmeVtTSgGpxpT96pQmZMNB5A0GjGagZmaKkwcjAc9SaaA3
-8TLORn3Zfu2nfrdDqpcN06KUDeWR7cOXRSOMZJjyMq+z+cL40Upl+0lDE4QKCIShdLnl0W0d
-MCnbzoTnxahsh5F1mKgDrUTczimb0vzaJvbXdN8fKpvyGCpbIbaZaz+obMWAtKyyKY+gslWH
-u8Z2fsv3XjQ3KluFyJnd8XWzecJZospWD42kUbnscGJtChZ3VbZqcGWzK+I8oCairCvzONhZ
-V+PPEl3PSiHfqdbGzbKJb8McXduDkmXv4dw7BhnkO+DbnNSDvcnmrHBT6qptAXJ9GCrs22lA
-hrs+A44ff8fP1r2pa9G9jQoTPTabZvyGDVzHxKYknmzySZORrR6cd6VFQ+1VMEtA/2/rPmUB
-Pr/ztasoWxQMZYsfS58zRKRRLsQjJ3CinkFGGNriIRRvbO6bKmeo8et2Do2PK9veOFBQ2Yle
-0WNc0pj0iaWN9w9HO3gTBBYONo5y/CSybLC/iWc/SNImeV5vu2Sie77cMtfF+Xvny/VLNvjP
-NTuWEdl2jzn73L90lPNkY1gwEi6o587Kdgfcx2Mf9D/gNe7fskEyJGUz47pGpEj02jt2RmaJ
-U7O5oRCNtSdwZON9vklHZlTnn85DyH6Y88jev4cL947uCx9GGcIHkiXxN5Dq17GUfHs4srnf
-txLp0jlm2muaCZoP7k5sFDNgKCiNvpyNsniBGH5kkwTHKKvQOXFWmh4DL7JNzlOEHRJPlj15
-/EmLW42dShl/HehL+MQqAAQFGh8RHPLIZnDW8ai2S3ChUJiXyX7xXwCR7z6jdoEnqsBllYuc
-lg2eDN9+aHt60GP9UOrmUmTz0+jjgw51WpGQRrUKbBpST3NBtsJAyi4yQRH1YTCZUo7QmGxQ
-lJ6ceU5jHilUsH/TkGxXZp7wNxmWRaxoonRYU6hIq1LEVUxNu5JmZDs98zQDPR5c/zlEENmw
-duU+4ftauJYUkK5tlw40KjYhG64N8QCe3HLVd75sv/ZTv9sp9ctGC4qXt1zpyxfGj1YqW5LG
-JggFCYShdLnl0S2KHpENlm/sA9HPwrTKdghZh4nXb1YibufaUK5DQpvYX1M6ns+ex0bITHVl
-5ahsJZApmITtIbqpbAXgl+FSth5evalsBVDZquPKIm4MUx8FNRNRqEhX2V4NFemObAWLdK3Z
-3kxEtqIDrrPRqthe/+QglK14KiuUwktScWSDpz8mm1i38rfdUatQtg5pULYrqGw10G1k67VI
-L0m3kQ3P31+RXpL3y0ZRa4uA4pwdFukl6SSyKTVQt2xO2lNap0LZsJaClKep7V1UHNmUd7Es
-fzcoMaZas0D3AAAAAElFTkSuQmCC</item>
-		<item item-id="50">iVBORw0KGgoAAAANSUhEUgAAAGIAAAAaCAYAAABM1ImiAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="49">iVBORw0KGgoAAAANSUhEUgAAAGIAAAAaCAYAAABM1ImiAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJNSURBVGhD7VeJjcQgDNy6UhD1pBqa
 STGcbWwwTzjCJRG6ZSSkTQhgZsaG/biFKbCEmARLiEmwhJgE8whhjft8PtA2tx+H283uDu4a
 wrG7jebiZw3qM87y4wyYQ4iENBBhA0G2vwhhnQmi8qsA6VtClCgc+rUZIS5RTqFgrzjHz2GG
@@ -8788,7 +8577,7 @@ lhXV0lR+F52Czs1jfRQvCoGHc+5WfOf5aHHQK4SvGs2MIKXgo2oNA3FksIUD7h13InzgvkRk
 JakoWbqNxhjJlhZIa3LQFkLPd+mMKCCbfvMAnw0FB6VoNbLz0qSBguL3WPr6hGDQvRoGnk38
 Dahz0FuaFMLtjwXl123of58qRb8KTQ6uC0GCjghB/0Ip9Xqvj/8MTQ5qQjDB9H15QNPZcVmI
 hdsxlhEL92PojFh4BMO3poXnsISYBEuIKeDcD3kXDevynicmAAAAAElFTkSuQmCC</item>
-		<item item-id="51">iVBORw0KGgoAAAANSUhEUgAAAPoAAAAvCAYAAADKH9ehAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="50">iVBORw0KGgoAAAANSUhEUgAAAPoAAAAvCAYAAADKH9ehAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAdASURBVHhe7Z07cq04EIbPBiaeaHKv
 4exiNkF5EQ7G+Q1Yyw2Irvfg1EXkHXgHTP8SAklIIAk46Ej9VanMQzzU9K9uQBzfBoZhioeF
 zhRENzS323CzStONqyuga5btv5EBWOhMQZDQa1J1ENImLHSmIFjoS1joTHHUKfS+bYa7SNPv
@@ -8825,74 +8614,7 @@ TrIMTd91e+rTilDbptkppX0s9GJZc8alI1LZuOdDHZXGI5pjfg3lxPiLgmj1GFKFTiAlDthW
 b7tth1jbxtopPpoDFnrRKCdUf+tgh9AJvBIL2fwS22JgT7zKCRZ60YhoUpXIwT6hg67ZFvuj
 bdsnixyw0IunSqGPItRLrPbxdWK78Xnio2yLXzTeOhcd10+pYXQeC71gHuWMNfJcth2G/wHd
 uMrqOG19YAAAAABJRU5ErkJggg==</item>
-		<item item-id="52">iVBORw0KGgoAAAANSUhEUgAAARwAAAA+CAYAAAD556RpAAAAAXNSR0IArs4c6QAAAARnQU1B
-AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAApzSURBVHhe7Z3NleMqEEY7gVm/FDoG
-ZzFJOImZTWfgaLSaTByMXn1QIEAlBJLQn+ueozNt2UaoKK4Aa+yvXlEUZSdUOIvo+ufXV/+V
-bM+On96Qd/fqX92bHylXZKoNu+c4h75aJNGJUOEsgoSzQ2J0z2cTiSn78+6oLV9zF4598upI
-VDiLaJ8Y75fK5naQdB5Z6ahwFJHGifF+9Y+o/Hf/epx4+I36BvWynYpi5Or8eNEZOKb2fwbd
-89FPO0eFo4i0TAySC02lpNIx5/eH5U6ev2Luw/v18LL5+go7FItyJJap/R8A2m3yvFU49yLb
-2DU0TAzUcUIikXAIs+i4W4JChFLsaP9rqg4qHInpUY4K50ZsmeTtEgOjhalBSywcqoMf4eBv
-GhV1z4ZTlQnh+OnUg6aBrz7+MEaFIzK5lqPCuQ1YhDUd49TCQUeUp1Ng9DGqqQN3Xv8Y8smt
-EyxlQjhOcn674pTKynuIYWvoeOK5q3BuQmeG/dsleavEyJebTqkG0GGcqNCZFwrHj1bccQKZ
-pVtakfe771jqw9X7CsIJ4mXOv4WsU3BM6cKiwrkF3QuJvWWSN0oMSvjcvRrNhQNYOuPjULni
-Gk4MpoSXEs5ukomR13FUONfH3OWJPy4gnJn7NKqFg+kOScKct3/eYiUsUCkc+wnVg16PZ2iU
-g3Uc+xRxcuHwuY5HbYin2x+IwcspeH5hHmCKr8K5IfFHtnbLdeoy2glHLpY76ET9/doOvdmf
-7+Nv/8e8x3YY7A/L3ko47vWmXuHzaWd2wpvafxReIvyYY+3O38YWdQwlxHU261fhe8tJ28Oi
-wrkRW15V9xbOQtCZuECb4LG47JZ0GBbCzfN+IBVO7vHcaytQ4dweFU5Ydv0I56ak0khHLeHz
-6WvTxxWocJQKriEcOx1Ah6D6YjQTyFYUjulsbuTzIdIZSYNj5U4eMXFxmxUOLmplAlLhKBX8
-9N/fP/z3hvx89y2KVaZguaSCNSJx+90aUzgdxb7g8YJR87/fv4S2prz671ld1pVQ4SziGiMc
-5bxMjnA2mfKfFxXOIlQ4ypjhE615VDhKBSocRYLyQoWTRYWzCBWOIqHCmeM2wvE3vy3c6m4G
-vLZw9o3VJ6HCmeNGI5zwUwSpMWXwBdf4ROKThLNvrD4JFc4cN5tSocGHjlTcL6ijf5ZwwF6x
-+iRUOHOMhINA2CSkDRGZ6QTR8Hy/3jKNeA/FHPj6irXCCUcNLhaV92rsKhxil1h9EicTDm74
-LMk/XEQ4D6L/D5eAvh5dbCh/hvLpvAsqHgln9LEeVQSFzXWCUUWOhus9G+jFSMKxxLGAcEo7
-MrG3cEDzWH0S5cJoLxx7sXP/tcX0bans6KLDm5SEnCdDblNd/WO+sBbUfRCOObAwtC7oBKcT
-DjEaqW1KmXDy39AvcIRwiLax+gRs50P8SsPXXDgsEncM28bjfAy/JgN/mxwY1QH1sufn+3ki
-IJdDc+fvhWPfkL8aR4kZVGoknPCqyZssJNtQrXLcWD17/KXMCwf/Vp/XQcIB7WKlSDQXDvdB
-d4wyIdj+GLc/jV4wzUoE48p3j6uFYxIue7KozCCkd4f/TWJxnYwf0esGk5qKzPaiYK0j3Wbf
-myMud1VREXnh2ONVjm7AgcJpFytFok449f0jFUCREDAqSo7vR0CpcNxUjF9fLRzzhhm7us4U
-G9DuH/YhOLXCaYm1Nuq9SAIieeEgFrYBKtZvwKHCAS1idU7sObbfpkB+jNt6SjgLYEG4Y5QI
-YfQNAiQV/5W3qXAI/8MElCsPI8T5fB8iYgoUkiw8qMEl5VB4LBzC2S953TStRjhMWB8qLz3F
-euaF4/6uks7hwiE2j5UiUSecBf2D29E9bYUzfREJZyx4L76W10kq3aK+DvhYo/0CkYLHHSQM
-QPxxaLggGgtnQ0tvCXXmR03nz1ImHFAlnTMIB2waK0Wi+QjHSYoPYvKQy3byiWVkZWI3oe3N
-gCSRCn6pgzxgZFOYuKMxn+0g0oEpGH4/beGJRPtkG8v1sWUW1nUF8TRvPZJwkvOW4jPXiU8h
-nK1jpUi0Fw5AeZx7QbmhcMayiV/rSYTjyrA/flhe4+lJ5mLIeukdQBhyHdiTYOFtDy8JZwNO
-IJztY6VI7COc87G5cBDIdC4nB3cfpPqsZ61w6P0Y7fBVw19RDhZOm1gpEiqczRhPqQ5LYurA
-bUZWa4QTxMeUAfnwFOZI4TSL1dlB/MP22AcVzt3ANK5Z460RDkCSu/WcYM3kKOE0jdWZCWJv
-PmnZb+1KhXMr0HAzC7Qp+IXO4pa+k3Bax+rE7CyZEBXObQg6cDF4T02nu4tw9ojVSTGy4alU
-NJ1C27j9QWy8nILnVzSWCucmVH/KQgn0ovcU3ytjWCcc/1E5lYHEM38j0XYWzj6xOjGjEQ5k
-OtymYdsJ5xpKiM+d2ip3I90cKpwb4Dvvkq2qodcJZ5IdhbNfrE5MKpzc47nXVqLCuTrmiiN0
-jtKtqqdfXDi7xurEpNJIRy0qnM256aJxa64/wlGIkTSoXUOhQkBOACXCodfbdaH5qaoKR6lA
-hXN9WC68+bgbkbj9bq3Kru0M+4LHXhC2PFOOGSnl17lUOEoFKhwlwUiGRzwsrVxbqnCUCn76
-7/Ev0a/n51v4gXvlCkAgqXByd9j/+/1LaGvKq/+eKhwlRUc4SkytcCZHODdPABVOCHX4skW/
-qwpnyY1+KeF6RrC1qni0puI6MaYevC+ZgoTfQrfuPOtQ4ZShwvFQY1OSmPY28/Hcot9VhbMd
-uCnO17Wggy3FdmQnnFAiLL5QOKbd3GuT51pjjh0LJ9eWKpxPpyphVDiRcAhzV+7iypM8xB9g
-o/34rkuRsXDeL3wZFP6wF4+5T4q2peaChbqqcC4GGpga1V3VVl7N6obE7YTTYpTgGG7VX08s
-HNvZ/HSnul0mhMPtgHax3yzH+w3CCCdgnQAXgvbj+s4dOvw9qAEVzknhZEPjmgZCkofDbRC8
-Jt2ERj2FcOi48RfWbw3LgB8N1MUKWHmlrytpFwl6nyQcJy2/hWXxsUTh4LmS4x4H/h/buH4q
-nBMTdp71CXYK4TRPuDBm64hHOCGl7cLCiITCW1owvqybF4OHNskIpyNxtwzjalB3qR1at//x
-3Fg4FQkNzNU0Fs5027dKjKlE3Iop4VTGilgvnBB6nbiGE4OLwrxwwl8X6Whqx3+eCoqRODJr
-lVfnQUc4HpRXuujXLjHQqdadR44wZuuoFg5iSlKxYkvrIAvHjTqfdiWYingF75OFE0/1WsZy
-BVjrESvWLq/OwmWF4xOLGsgmJv0tXjUqQCJwoubbvWFiYHTVrJdsIRzu6Nyp07rK7fK3/2Pe
-YwWA/XH4ZOGYWLjjhM8H++1mz8kfL9l/NuT1G6DCUURaJgY6dKuOsoVwFgJJcMzGwvkkcrmj
-wlFEGicGRlpNyqd6rx0FLkWFY5ge3QAVjiLSPjFwn8Z2h6D68jTjqHy2Uy10Nq7LUeI7ErqQ
-5G97UOEoIvskRve8zp3HSh7zfdVZ2QAVjiIyjBjCrUWuvPGTLOlPJyuXAv/lQmrD+BM13lQ4
-iqIoW9D3/wNpcuJ24h2e/QAAAABJRU5ErkJggg==</item>
-		<item item-id="53">iVBORw0KGgoAAAANSUhEUgAAAHkAAAARCAYAAAD5XQN+AAAAAXNSR0IArs4c6QAAAARnQU1B
-AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAKMSURBVGhD7VcLkqwwCPRcOZDnyWm8
-TA6ThQAGMBqdVff5xq5K1Zgon25AZ8gv/nu8In8BXpG/AK/IXwAr8jTmYRhghRxTynGMOdFB
-HmF/nMrF5UgxcByw0CnEteV7Gvleuf9qJOAjsL8gHHkAf6HmEaK7K0VlY8zTfIzP8b5eLq80
-4fNkf2HboYoMTkMRt1yQo9UErgMJBknztRReTzt8rpfsOSBuAgdU4t3gSQrWxkZNQ3uO66ID
-cmBXzT+BT7QZSgzQi104kRW56Hzu5JtgCk2h08mI20RmESQeErERM6MpMheu7Mk9xSZ0aKxt
-Tf5UEfX8taDGtYyJhgFP/jzW6zqDYEpAF9oSQkhZKvmFyBfFKHatyOuTRs53i+yAZ/OzXGAD
-jGnq9pDHHTm5Dy8RGpeQTaOlio/XVfAS4FqGB9EbfeS7FkGaYFzxbyvy3hh1vm6t5OQF2RII
-IedG5FksynXdBsa3bC6ytdGUDk5kgQjLhJpOto5PJ3BTZBITbRjSAFbkvTF+gIOdbIWpSHGc
-uzEUnhoTrDmqD/hmmHeybX0SqRgwIss1C9YZr4dQCGlU5iI2V4S448f1rhiPF6LYtUQ3Yhas
-iDyD7bXO0bYJw9n6SGT70aNGnjmD/U63/QbUqVoU7W/KUZGBX5lyuRjXl8XIhcHMlnjZlwiu
-SceObYoMn8UYfxG4qRLy74sT96o/+sruN5nrZCBRVTb5VtVejLerv1dNR0BCy3KCK5+GaLN3
-dYxYRGxXFZMV2cWq7pX7Avx7mdb+A0HXNsU3/9HH9QmisPJO3gJUoP7ER2Cnn8fgCXhCjPfh
-sMhYhX704N6/xN8TYrwTH3WyH4WL982f4wkx3ocPRH7xLOT8A4Ge2pCci6m1AAAAAElFTkSu
-QmCC</item>
-		<item item-id="54">iVBORw0KGgoAAAANSUhEUgAAAGIAAABnCAYAAAD7aJe9AAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="51">iVBORw0KGgoAAAANSUhEUgAAAGIAAABnCAYAAAD7aJe9AAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAUJSURBVHhe7Z3rtasgEEbTwO3j1JAu
 bhP2cTqwGn7dTizGy4wgA6JBUTMh316LdXzkEJ0t4wOjjxGo4GtEDKYfezO4sfewtQxfIcJ0
 3dgZN/JmBmOXpV/KaF7E0OuRMGNlPBMZbYsY+vFZbGEY++djfDzikgbsLEz3HGXVDYuwgbUp
@@ -8918,7 +8640,7 @@ bb/Pejj+hndPVgRf3g43DkyfqftVbNtveB9t+jiem5isCNvSaFosouaODmphU79FoyLCCh4l
 JyINfL0I2t9Mqa1REVOQalKG3/ovbRFiX9asCBulOIh7yYk4eR8hn7rQrojK9ERHMwsRXKc9
 UnIm6o6a4v1YwyIs1PR3541wv9JcomCfcx6RPoOkbREW2rIP5/CrsBtIenjdvAjCdHpk0OvV
 cuc4XyGCGEw/9ulDX25m6NeX4WtE6GYc/wNNWx9Y9F27YQAAAABJRU5ErkJggg==</item>
-		<item item-id="55">iVBORw0KGgoAAAANSUhEUgAAAPYAAACnCAYAAAAiwKGaAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="52">iVBORw0KGgoAAAANSUhEUgAAAPYAAACnCAYAAAAiwKGaAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAA6vSURBVHhe7Z3NlZs8GIWni6+F1DAF
 +UwR2WSfhWuZBbvpIdscr6aDdOBPV0IgycJIBi5/9zmHxMb8ynr0vmANersLIQ6HxF6U5n55
 e7u/JdOlaT8WYiLN5bF+vZkKJrEXxYgtiwUVV+ck9qJIbMFGYhOQ2DGmPN4u5t9p2PRzE+Vq
@@ -8990,7 +8712,7 @@ wcHVOYm9KBsTu72Bpoh9ZCQ2gbXFbu+Em2sud2M87ZUljofEJrB+xLZ9p7sbZ5L6+EhsAuuL
 Lc6GxCYgsQUbiU2AIzb+Gsin2+kkzobEJrC82F7qscfpiLMgsQksLzakLnnqhjgLEpuAxBZs
 JDaB5cX2T9zwDD1OR5wFiU1gebHB+ON0xHmQ2AQ4YgvRI7EJSGzBRmITMIX89vjbslwXc5Eb
 2AAP05DYQhyO+/1/CsWtO8Kn0KgAAAAASUVORK5CYII=</item>
-		<item item-id="56" content-encoding="gzip">H4sIAAAAAAAA/4xUyW4TQRCtHnsWT+w4Cw5JxmGCwZAEEux2yGIWmShCSKwyHxBN7MExwtg4
+		<item item-id="53" content-encoding="gzip">H4sIAAAAAAAA/4xUyW4TQRCtHnsWT+w4Cw5JxmGCwZAEEux2yGIWmShCSKwyHxBN7MExwtg4
 YxRuVj6AG2cuSPwA4o64IcSZz+AHUKjFWU90q6a7qt+rfl3tdhIAFNpzNJfnMfw64Ztq2Gi2
 X5tAbRktUW/XJBbn2DrBWrWn2y/DWsQRqDLfwK+1u9PZaO9J+BGajYHqEfAx2h/cZ9IG+Ixb
 ZJxjn9pvJaIMMGI8GTva/F4UdZvbvShUjCyjpeFki5dzp3yTE8Sjbhh6HNBoqQ5PLT31DaBv
@@ -9004,7 +8726,7 @@ oxt0drZetLutIJIXlKEHy+HNIAqkXNODshGLHzm9i1m0KZ6T5wZ7zd37nEceeZaerxpgpR1g
 B5X9/+hhcjvqBrVQb8Z4yRsAfTUCyiNc1lTYPAweeIYylBfDqK9iyotjHl/Fae0AJ6byjH4F
 lyzCUAqbMThxhO+rBGKY7iKG6UOIYXoSMUxPEYZYw4zBSZowBBbF6Se9Vtht1oJXUhOHlT9A
 q0MTO21Ofz7uoKBnWvKk8w8AAP//AwBLtThGaAUAAA==</item>
-		<item item-id="57">iVBORw0KGgoAAAANSUhEUgAAAbcAAAD9CAYAAAA/IzlVAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="54">iVBORw0KGgoAAAANSUhEUgAAAbcAAAD9CAYAAAA/IzlVAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAABTwSURBVHhe7d2NtbI6EIVh66Ig66Ea
 mqEYTgaIxhg8g4aQCe+zFveTyM9oJFvQc71NAAA0hnADADSHcAMANIdwAwA0h3ADADSHcAMA
 NIdwAwA0h3ADADSHcAMANIdwAwA0h3ADADSHcEO9hvvU3W7T7dZN92Ft2zL2U9f107jOArg2
@@ -9106,7 +8828,7 @@ cwg3AEBzCDcAQHMINwBAcwg3AEBzCDcAQHMINwBAcwg3AEBzCDcAQHMINwBGrD/Fc7tN9z74
 PTEggXADYIj86KX80OUw9QQbPiDcANgyVPJr2qga4QbAlqGfuo5LkviMcANgx+iC7S7nbPL5
 WzeRb9hCuAEwYv1CiYSbhNzN3e561wq8I9wAAM0h3AAAzSHcAADNIdwAAI2Zpj/9/sHlY8IF
 YgAAAABJRU5ErkJggg==</item>
-		<item item-id="58">iVBORw0KGgoAAAANSUhEUgAAASgAAAC5CAYAAACbSqJLAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="55">iVBORw0KGgoAAAANSUhEUgAAASgAAAC5CAYAAACbSqJLAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAABFCSURBVHhe7Z0NtqI6EAZnXS7I9bga
 N+Ni7qTzAwmEEARRP6vO4T1BSAJ2l4E7Jv/+AAA+FAQlyr9///wC8M0QwaIgKFCACBYFQYEC
 kwi+/11jYP+7Xv3r6z2+1cvj9nf5d/m7PeL6VvLjm2VZW6/uv2cSrs+2a+KOudz+nr0cz1IX
@@ -9190,7 +8912,7 @@ d5SgKmOVVwTl63S9KBvDPPSY3Pt+PPP4fu2YJLNUx1J98BEgKFGeFdQjPuPZfosXEz/ZIcoj
 lNIQkidfDz29oX5Xjt9elU3sFcaCZrO5FMfcnbzGg22evbC6UB98BAhKlO2CSj2LbMmTvQcv
 hHR82StJt1cmk+F1lMe4nvdq4rZgp+z2tCzXhDp4xx13HVfGY/x5TM4vt9CsPvgUEJQoKREB
 vhkiWBQEBQoQwaIgKFCACAaAD+Xv7z8wdG7uQxT/QwAAAABJRU5ErkJggg==</item>
-		<item item-id="59">iVBORw0KGgoAAAANSUhEUgAAAKoAAAARCAYAAABNezc0AAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="56">iVBORw0KGgoAAAANSUhEUgAAAKoAAAARCAYAAABNezc0AAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAM7SURBVGhD7VYLkqwwCPRcHsjzeJpc
 xsP4IIQECERny5l97thV7o75AE0T4rQ/eHADPIX64BZ4CvXBLfAU6oNboBTqtq/ztE+TeZZE
 01djW/d5mvd1K+9/Amlfat6W/HucPly/wN8HPSA38wpV2SA6KhVrTW5actKvr1UWVBQq+HrX
@@ -9208,7 +8930,7 @@ syQ5R8Wh+KFtVTRlPc9lO9yJiCMVcQ8WUcPbM+br61RieEnzkXYjLhif131xnGpPdNRvwrYn
 KCgFFMRN4vXwCyyGdyVmEZe4m+o9v8tXwucSABtlifErC9X7TsSxz+mG3eXctbjBt6utsYx6
 Dfewe36fLyHk4iF38tZlv7aj2qvQCvl+RNfdGPoz6Sz+B76vAA+yzs2XFuqDe2Hf/wGaN3Wn
 OozC4gAAAABJRU5ErkJggg==</item>
-		<item item-id="60">iVBORw0KGgoAAAANSUhEUgAAAIcAAAARCAYAAAD32L9UAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="57">iVBORw0KGgoAAAANSUhEUgAAAIcAAAARCAYAAAD32L9UAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAALqSURBVGhD7ViLcawwDKQuCqKOlOBq
 aIZiiCRLtiRkA0dyySTeGefhj/5rOS/TPjDQwCDHQBODHANNDHIMNPFD5Fj3ZZr2Ccey0Pey
 8tZVbGmfp3lPG8/vQst3daGvC/ys2NKcfSf/YWeFGNZtTzOvwZhBmTlXdKhz8wx2Zd8OlD8H
@@ -9224,7 +8946,7 @@ kNe/Q8ACkwEumKyTbO4iXjwiBxHxUnw9oB/3dTTIAeAb1qrtY/hC9Ipk5kxE1dl8QSNQkksw
 vt7ThJA1CLqc7UDLFFltC/QYuwyUa7TkTJBAxgBidQna0uLIbPOhxzG3TK67Se/EEaN2m4Ac
 AwK5Qb8J1577B8COx0EXckwflidn8/8BvK3nT9e7sK3wX+Dv9IW6bO2EVHEsvC7+2fxXIXo2
 yviKwl55Zv8C8CLYOAs57vw78B+w758jSDj26+fIvwAAAABJRU5ErkJggg==</item>
-		<item item-id="61">iVBORw0KGgoAAAANSUhEUgAAAIMAAAAYCAYAAADZPE7mAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="58">iVBORw0KGgoAAAANSUhEUgAAAIMAAAAYCAYAAADZPE7mAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAK4SURBVGhD7ViLdYUgDHUuBmKOjsA0
 LMMwNiQQQ4RXwdKPj3uOpyKY371EXrd9YSFhiWGBscSwwFhiWGA0xeDttm/Wp9EMhN0Z8LGp
 a5bP4Hazmd2FNP5tBL/bnL9xUI0WRJ30Om8hJ5oztm0jcmkuJN4Qg4cADDixcDcTlCjzD8nF
@@ -9239,7 +8961,7 @@ LDgngjiTXhFxf2eQ6pYGleqrHWJULKVtSTg9kySmdeyEfOZ3ZYFyu8cLzhuZSKPy43X4bsue
 yA3j6ukYXwFs55hEXQ8xxPvj/wj4DLZ9uS7PpavGT78YFqrAQpaiFLp7HFgM20epi97xE5F3
 qRTDlR32X4GMRmIlub3jp+JtxXDn71PxdmKQhMb73vGj8W5nBk1o7/jZmPlr4u/hnZgdA4gg
 doTYIZ7cFSKWGBYYSwwLjCWGBcYSw0LCvn8CBj88IuWo6dMAAAAASUVORK5CYII=</item>
-		<item item-id="62">iVBORw0KGgoAAAANSUhEUgAAAIIAAAAYCAYAAAA2/iXYAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="59">iVBORw0KGgoAAAANSUhEUgAAAIIAAAAYCAYAAAA2/iXYAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAKJSURBVGhD7ZjLccMgEEBVFwUxLsIl
 +KBquLkHXz004Q7IfgDBgiSiyPlM9s0wFpK1YtmHgjMFRQFUBIVQERRCRVCIHxLBh9lMYZpE
 sy5ePxk/BzOZMPvY/yV4NwdrDOVuOoNzVpyHPGyaN2OD28lnL37JD74RWIZce2dpwOe74ILF
@@ -9253,12 +8975,12 @@ l1qEtkB8PScLCfI1F+ZiAnB3zF1xP03IiAgb8VKRT903ROFiTN7dd+TrvBFw+4/fJwmWBGKx
 YS8Q52covqAR4XK5UOGxXa9XakmOFjmpo9QrqSw2nysLGL+3VJgTbc7j7cX5YrPEr1FsPCH5
 e3Tverw8zlNFADw8M0sW9wSS7sqGXGAj6cTvwVoEPDEQX9CIoJS8SYRfiIqwiYqgEP9UBEWi
 IiiEiqAQKoJS/nSl9pl/NP09VASFUBEUQkVQCBVBAUL4AOeoPGURw/dGAAAAAElFTkSuQmCC</item>
-		<item item-id="63">iVBORw0KGgoAAAANSUhEUgAAACIAAAARCAYAAAC4qX7BAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="60">iVBORw0KGgoAAAANSUhEUgAAACIAAAARCAYAAAC4qX7BAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACgSURBVEhL7ZTbDYAgDEWZqwN1HqZh
 GYaplCIKMbZBiXx4ksYXXk4KwdEi/CI9q4lE8uDIuVIY2nfg09NbcC7UucBLctORgMcH+QGJ
 lWYQvcioIgGBqtMETCJ8zauj0i3puZQAVUSC5naDMXVEBln2x3hH0mR53K3Ifm+TGcQqwugy
 T/bIpUgXWEJEZK+3uhMIa2apdE41HfmSX6RnERGiDTqqMJVorCPXAAAAAElFTkSuQmCC</item>
-		<item item-id="64">iVBORw0KGgoAAAANSUhEUgAAAIEAAAAYCAYAAADdyZ7bAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="61">iVBORw0KGgoAAAANSUhEUgAAAIEAAAAYCAYAAADdyZ7bAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAKvSURBVGhD7ZjLlesgDIZdFwW5ipSQ
 BbVkQR3Ze5UO0gEjIR4Ci5jryeM6o+8cZgZjsB4/wp7JK38eFYGiIlBUBArwAREs3prJT1PT
 ZhfHn8xivZmMt0vsfxzmv7HQk1ncDHan+Bg/ZwdwvslxM41j/Xl9PlQJKBA572A4Gv18HTg/
@@ -9273,7 +8995,7 @@ fa0IRuZJVFs9CQF/Y8Nq0Ke3q7aodxBPNF2LRofkxftKduOOba/jdHYdSmJKoMnPoh2S76No
 y+tlW2J70gtjERY2fGkr7yCVCEKf3YslPrva2BzGi339eX1edegfmsVa2q34khUC+i/HxPFQ
 EWwQKgerON+IiuAheHRtn6lHR0XwCGd3vPMcDxVBF/7l4Lz7YjGoCDpUXxsDn1lHRkUgkP7J
 Upp+HShfjopAUREoKgLFe/8DDHHQhxo+p4MAAAAASUVORK5CYII=</item>
-		<item item-id="65" content-encoding="gzip">H4sIAAAAAAAA/4xUzU5TURCec9v700tL+REEbrEIKCo/0gOisgJCjIm/wQcgl/YKNWKxXAzu
+		<item item-id="62" content-encoding="gzip">H4sIAAAAAAAA/4xUzU5TURCec9v700tL+REEbrEIKCo/0gOisgJCjIm/wQcgl/YKNWKxXAzu
 Gh7AnWs3PoJx5cawM8a1K9/AxBcw+M1MrejKczOdM3O+b87MnHOaJyIDeQQJZZ7Bb5A830i2
 641nLvFYhORqjar6suK7ybDd6oOtJ0k1FQ9tCN/Br7e/s7fWOFT3XYgPx0YHeA/yFaF/+CBB
 vgd/bB7fjCblkJORSV9n89U0bda3DtLECHIZUqTTI7s8/pftSoBs2kySSBwWUtiTqWeHPxK1
@@ -9287,7 +9009,7 @@ l3YMMixztsL4sL5/S+LoCyzx2zJtrI4TfGRK/+/9HdxPm3E1set6elEbWDY9ZCLGlVyDEcF5
 EjnGMVEG3rLJmCiLOGWT5bUTTFwTOa0VLHmM4RC+YDAJlF82OWCEHgIj9C5ghJ4HRugFxjCr
 WzCYFBnDYM24eP9gN2nWq/FT7Ukgmd+G1KiOjzfnf4aw3dB/Rv608QsAAP//AwCDa5nKBQUA
 AA==</item>
-		<item item-id="66">iVBORw0KGgoAAAANSUhEUgAAAXoAAAD9CAYAAACyYrxEAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="63">iVBORw0KGgoAAAANSUhEUgAAAXoAAAD9CAYAAACyYrxEAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAABXDSURBVHhe7d3RtbM2FoZh10VBXiki
 RXA9DaQD3+U6NWS5iXTAaIOEhRA2sgXSFu+zFnOMjgxCG3/mx56c2wAAaBpBDwCNI+gBoHEE
 PQA0jqAHgMYR9ADQOIIeABpH0ANA4wh6AGgcQQ8AjSPoAaBxBH1tHvehu92G260b7g/bFvrU
@@ -9393,7 +9115,7 @@ OIIeABpH0ANA4wh6AGgcQQ8AjSPoAaBxBD0ANI6gB4DGEfQA0DiCHlDJ/ueTb7fh3nv/PXQg
 gqAH1JI/YCF/tEL+iDkhj20EPaDZo5K/EoWqEfSAZo9+6Dpu2+A9gh7QSv5c4Ph36OR+ffi3
 boEXgh5QyX4YK0Hv/j6s/3dtAQ9BDwCNI+gBoHEEPQA0jqAHgKYNw/8BHk8YQH28/icAAAAA
 SUVORK5CYII=</item>
-		<item item-id="67">iVBORw0KGgoAAAANSUhEUgAAAZEAAAAYCAYAAAA76cDzAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="64">iVBORw0KGgoAAAANSUhEUgAAAZEAAAAYCAYAAAA76cDzAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAk4SURBVHhe7VyJkYQ4DNy4JqBJ4i6I
 iYZkCIbTa0uyDQPzLHuoq6jiseWWrMeG2f1ZEquYpmmZ5TyRqJjJNxKJqyOLyBqmx/LICpIY
 YQb/yDqSuDiyiAwxL4/MEIkNTPdH7lQTl0YWkRGm+3LPGpLYQvpJ4uIYFxHYqt9+bu51zvy4
@@ -9439,7 +9161,7 @@ YiAqFnY1bl9L6astLDwDg9K2u7OarzueLQgfkEHfX5D7t3YHl/OTRMIji8gQkJji0vh/DErk
 +HrIJF/dSehuwsL9ZBmStvu7DCgi9SeoWpgw0ZsiZRH7E6Co7SgElqv/yetncZ5fvyUSv4Ms
 ImsIH3oTL4J2N4NC4hB3PifFPDWv4BKJqyGLyAbqP25MvAVYSDbe//yN71HzMoFvJBJXRxaR
 RCKRSBxGFpFEIpFIHMSy/AfG0c0LEuOQXgAAAABJRU5ErkJggg==</item>
-		<item item-id="68">iVBORw0KGgoAAAANSUhEUgAAAcIAAAAYCAYAAABpyv24AAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="65">iVBORw0KGgoAAAANSUhEUgAAAcIAAAAYCAYAAABpyv24AAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAowSURBVHhe7VyJkfMqDE5dKShN/K+I
 VONmUoyfTpAE+Mja2WSjb8YzPkB8uhAm3r3MiUVM0zQ/5DyRqHhQbCQSic9HFsIlTPf5nlUw
 McID4iNrYSLx8chCOMRjvucsl1jBdLvnjkEi8eHIQjjCdJtvWQcTa8g4SSQ+HuNC+LjP18tV
@@ -9490,7 +9212,7 @@ dN6q6pvnNpCc8rb4ooXM18VJIvH3kIVwCLPV9wUoRSRsZ2phiZO9+3MQKJru70qhENbP+7W4
 YvE0hdYi9idAYd6x5Wi5+nHPxft8lZtIJJ5FFsIlhI83Ej+EboPK5RjxDfRN8Zia7dxEIvF5
 yEK4gvrPuhOHAIvhyl7iZ/w++5in1/wImUgkTkYWwkQikUh8NbIQJhKJROKLMc//A3dm8eVO
 g1hCAAAAAElFTkSuQmCC</item>
-		<item item-id="69">iVBORw0KGgoAAAANSUhEUgAAAOEAAAARCAYAAAArIctjAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="66">iVBORw0KGgoAAAANSUhEUgAAAOEAAAARCAYAAAArIctjAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAARsSURBVGhD7ZjNcewgDMe3ri3IkyJS
 Qg6uZQ++pYdcMz6lg3Tgp79AthAfa2N7dyeP3wzvxQiQhCQguUyNRuOptCJsNJ5MK8JG48m0
 Imw0nsz+Ihz76Xq5Tv3ov6sZpu7S0b+vxDE2Dd1lunSv4Bn5c+2n3aFazYn6RqxN+3qhVtJR
@@ -9513,7 +9235,7 @@ DYWEJoXpSM+VQpQ58e0JW+4fJDUgBsYc4gx95Lvsp4pVWIQgPc5RKyPowLH7PlOSJYjfKU8g
 Dtw4DfpPvQDJv8GxvaSTKY9+Ytdg5yP4a9msGzfWKXtJxdalE/YcfX+DlyhCihKd6MtJidPM
 /v6AvsfGMbSpxEi/K9ozYwup+WuLcLNuvsnNa+QoqNiiGJ2p74/wIkUI8GSRYJmnG7Vj/4iw
 Fm3TY9lyE64HB8vx/kS/rsyco++v8UJF2Gj8j0zTPxDaD5yG2nCwAAAAAElFTkSuQmCC</item>
-		<item item-id="70">iVBORw0KGgoAAAANSUhEUgAAAdEAAAARCAYAAACCXJabAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="67">iVBORw0KGgoAAAANSUhEUgAAAdEAAAARCAYAAACCXJabAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAfZSURBVHhe7VqLlau6Dp26KChNvFsE
 1aSZFJOrry3LMh9D5mbW0z7LZwG2pS1pYxOGn3cikUgkEokp5CaaSCQSicQkchNNJBKJRGIS
 uYkmEolEIjGJP7CJPt+Pnwf8H+C1vpef5b2+6OS9Lj/vnx9sem0LMv7xhKPX+/mA42WFowt4
@@ -9553,7 +9275,7 @@ NeuMfkAGrXyoBM3m39evQHVtcyR+EY2fXM+m0W6iXwZMAifnHpx/R5+4BLwx7ixgInEXdNG+
 YRHt8Enbia/DV2+ioEZ4Cr7nlwz+rHcPwIlPAp+C9e1DIvFtyE00cRO+fBNF4E/v/8PFmDYh
 eQXRtd99RXoe+PCTG2jie9G+sr4Xn7T9Z/Gn17Nt/IFNNJFIJBKJb8T7/S9LWOGYgPKrNwAA
 AABJRU5ErkJggg==</item>
-		<item item-id="71">iVBORw0KGgoAAAANSUhEUgAAANQAAAARCAYAAACl+4IfAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="68">iVBORw0KGgoAAAANSUhEUgAAANQAAAARCAYAAACl+4IfAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAATpSURBVGhD7VnRkeMgDHUD6SM1pIs0
 kT7Sgavx1zawXykgX6mEk4SEJSFidte3yc3xZpgxIIRs3pPI7pQGBgZ2wxDUwMCOGIIaGNgR
 Q1ADAzviTQR1T/NpStPk2mXh6Tmd/By1S2ILg+UCc7K2YEmX0MeUTvOdbeI48vwXYtR76/HT
@@ -9579,7 +9301,7 @@ Db0efpjnZ/Ata0tTYmYhPHqJC3HjVU/+MCHr1j3At4gDG8wbQalvgVVE1uHvpzV2fDdr1w9c
 p98PgdzIZw4eB34bks3eGVEW/gmI0Pz8T4MrqAEmVT7QIaiXACv537g27wmsLD4Tfw945Sp/
 XfuXQRVabgkM+gm03oyGoF4GvCboK+o7Aq83jkD/LTDB+G+BidGe4RDUwMBuSOkPuRZur8RJ
 NzIAAAAASUVORK5CYII=</item>
-		<item item-id="72" content-encoding="gzip">H4sIAAAAAAAA/4xUS08TURQ+dzrT6UxbChUQmMoAPgqK2N7BClWTQogx8Rn8ATi0I9SIxTIY
+		<item item-id="69" content-encoding="gzip">H4sIAAAAAAAA/4xUS08TURQ+dzrT6UxbChUQmMoAPgqK2N7BClWTQogx8Rn8ATi0I9SIxTIY
 3DWsXLlz7catO+PKjWFhYoy/wT9i8Dxqqa6cyZ3zuN/5zqP3NgMACtcjXC7rCfymohfr0Vaz
 9dwCehZxOY1WXXwm+5YJtlN/sPk0qsfsgXWON/Cb3NveXW0diPsuLhsd6z3gPYpFmscpgA+Y
 InRObHp+KinKACPBSr6XfCWO283N/ThSjKziykH/Y1Zn/rItJjDjdhR57NC4srusJvX4F4CO
@@ -9593,7 +9315,7 @@ k1Z7J4xtxo7QTWT3WhiHcsInuiedovj20oHHecM462S54UFz7xbzyO0t0L1UXaw8x/iCKvy/
 9w+5HbfDeqTXEnKsukBfDYLy1DFpChUM8gxlKC+Bsb5KKM9EFl+ZtHeMiqU8o1PDrSRhKMxm
 DCopifeVgxgOdxHD4WnEcHgGMRyeJQxFDTAGlRxhCCz15u7v70TtZj18JhORP53buBrQxJeS
 03+K2x3nP0+m3/gNAAD//wMA/EK4xT8FAAA=</item>
-		<item item-id="73">iVBORw0KGgoAAAANSUhEUgAAAaUAAAEBCAYAAADYX7pWAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="70">iVBORw0KGgoAAAANSUhEUgAAAaUAAAEBCAYAAADYX7pWAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAABtOSURBVHhe7d3dlbQoAodx4zIgzwQx
 QXi9CUwG3s31xDDHJCYDF1SqKAoUEIsPn9857nTbICCW/8aq3rdbAAAoBKEEACgGoQQAKAah
 BAAoBqEEACgGoQQAKAahBAAoBqEEACgGoQQAKAahBAAoBqGEbKahX7quW/ph2vcAeDpCCXlM
@@ -9725,7 +9447,7 @@ ACgGoQQAKAahBAAoBqEEACgGoQQAKAahBAAoBqEEACgGoQQAKAahBAAoBqEEACgGoQTgZvs/
 qdF1yzBq/54PYEEoAfgB+Y/FyX8gblpGAgkHCCUAvzEV8q/HomiEEoDfmMal73l0h2OEEoD7
 yX/yfP23tOX7S/1CLsGFUAJws/2DDjKUZDh14ut+FHuBb4QSAKAYhBIAoBiEEgCgGIQSAKAQ
 y/J/5inTL1Nz0KMAAAAASUVORK5CYII=</item>
-		<item item-id="74">iVBORw0KGgoAAAANSUhEUgAAAL0AAAA4CAYAAACoqvlbAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="71">iVBORw0KGgoAAAANSUhEUgAAAL0AAAA4CAYAAACoqvlbAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAVjSURBVHhe7Z3NcaQwEIUni01hYyCS
 jYByEL747gOx+MDNOfjq4uQMnAHb3ZLQD5IQM4xHWO+rohaEQFLrqdUwwnuZAWgMiB40B0QP
 mgOiB81xheineegu8+USbP2ozwNQN1d7+rG/zIvOp2HuSPjdMOkEAOrlGNETfAxvD87AQaIf
@@ -9753,7 +9475,7 @@ Fd7cr6wcXI/HCGSPpy+HBzIEv8WDRA/A44DoQXNkRY9nIfAbgehBcyREn3nPC8DJSYief1Bw
 Y40ver0uBJ4enIxETB9HPLuJ53mDlwcnZLfoUzrHf64GzsIxoudVffK2R73lge5BzRwienke
 cESPOB/UTKHo/ff0oagl1ndEj1gf1MwuT58Cnh6ciUNEj5genIljRE/g7Q04C4eJHoCzANGD
 5oDoQWPM83+7i3k6Vv1cfQAAAABJRU5ErkJggg==</item>
-		<item item-id="75">iVBORw0KGgoAAAANSUhEUgAAAFIAAAAYCAYAAABp76qRAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="72">iVBORw0KGgoAAAANSUhEUgAAAFIAAAAYCAYAAABp76qRAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAF1SURBVFhH7ZbR0YMgDIBZwD2cgS1c
 gj3YwGl4cgGfHIAnJ8kfQDS09Wo1enp/vjtakXjSrzFRgcCCiGRCRDIhIpkQkUyISCZEJBOF
 SN9qUEqloVvw6SRopaH1DkxeMy7Gv5NiVpe/MDYV7gi3FEbVwBhOdvitKug7C0Neq22MvxNE
@@ -9762,7 +9484,7 @@ tlBEOZMu1NTSnJErc0aGOkkbG2JpzsiV+UkcEpnIWThl4C6R+7IgkbNwysDDIi/PSActsePM
 JOuyjLTQk0wc6knWN5FYanT8wXp3bf7EIZFLPcQRd0X/zZChZJ6bUcGRZkPrIY7YUDroq3wu
 ZCiZx2ZE7hdr91LjjzJ7CPfawLaou0IbX3xS9r8xvPKvRKbXtVJk0SgvREQyISKZkBrJxLNF
 nti1f+XhIpGT3iN/5fkib4KIZEJEMiEiWQD4A1ZgEg0T/aDfAAAAAElFTkSuQmCC</item>
-		<item item-id="76">iVBORw0KGgoAAAANSUhEUgAAALEAAAATCAYAAADf/ewgAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="73">iVBORw0KGgoAAAANSUhEUgAAALEAAAATCAYAAADf/ewgAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAOxSURBVGhD7ZhRsqsgDIa7LhfEKrqE
 PriWPriOvvvUHXQH3vyBaECIaHs67S3fjHNUIAnJD9JzmhqNL6eJuPH1NBE3vp4m4oOcTqeP
 vX6NJuKD/KJYPpVWiYM0EX8OoRLj1Hf5T1PXD1Fb14/T2Heqj5uG1EbnJqftOd9jcOpd1Eds
@@ -9782,7 +9504,7 @@ s0jTgK22AqEiycozBy+fekH/cvbk7bEg5V3yv2QxuRQisZE9ayaf6x2sBVHyYYu43o6eDxVp
 vocQVRvGQtCJjW0/sKEWRQYRMv7iwm78SpajAGITQUvsXsRyj/9zDyRYjdVmsd5WGllQGP33
 r7F21SzYCY+s5v+AJuJKZPd7H/jK2DvrDB9FCkeYH6CJeAfvFTHAEWFLnBD77woYNBHv4P0i
 bmwzTf8AgYcn30k4pQoAAAAASUVORK5CYII=</item>
-		<item item-id="77">iVBORw0KGgoAAAANSUhEUgAAAJkAAAAlCAYAAABRVEu0AAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="74">iVBORw0KGgoAAAANSUhEUgAAAJkAAAAlCAYAAABRVEu0AAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAQWSURBVHhe7ZvRcbMwDIAzFwP5OkRG
 6APT8NYd+ppjiW7AL1kSlmxj+Eu4nhN9d74ANg7BH0KG9rY4zsW4ZM7luGTO5bhkzuV0Itm8
 jMNtud3KMoyTqRvGeZnHQbUJy5T3MYQl6P4CtZiC2mbaSB85us8R1pwaXUUylAAlWpnHJcR1
@@ -9804,7 +9526,7 @@ Ic34tl6XVCOZgfrYrn9fXDKEH0aakr0u2ZUMb50exaq8oGT6mV9WdvOlxuuS2hN6Bf1PgVOj
 a8l+fn7i5xUUr0sakpk/EoCIlv1T1NvTjWRfX19xGT9Fss/Pz/h5FroVtl+X1F8Dyb46Yh55
 l/tedCPZx8dHlArL/X6PRcQ7TfN1SZoUrIVzr1KwVOckupHM6ReXzLkcl8y5HB8952KW5R+e
 jawOp8ZeagAAAABJRU5ErkJggg==</item>
-		<item item-id="78">iVBORw0KGgoAAAANSUhEUgAAADYAAAARCAYAAACW7F9TAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="75">iVBORw0KGgoAAAANSUhEUgAAADYAAAARCAYAAACW7F9TAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEgSURBVEhL7VXBccQwCKQuClI9VKNm
 VAxZBHJkbN9dcuNMfOOd4YEsxK4AmfRDcQu7Gm5hhiasVGp4Z6CpMCkRjAXePmohZZm+tqol
 xb0srIuywNOETaLCVuQHaknfPI6Dl4k2cf+nYiA8yLYgv831XZlFWBNl+GOrFwDmLgLsICz4
@@ -9812,7 +9534,7 @@ xb0srIuywNOETaLCVuQHaknfPI6Dl4k2cf+nYiA8yLYgv831XZlFWBNl+GOrFwDmLgLsICz4
 R8Leg1XF2ouooAdsQbQMItes2IRO2PMvZJN1cZ3n4YwZ0nxMBw+cVzHMVX/NUKHId5grV2xc
 YuzdfRX7YtwGMa/bIQ7sdiju94+HzZDnM8N8SQXlHWyEGZB3dMhP/2NXwy3savhQYapfVh7m
 4g5S1+8AAAAASUVORK5CYII=</item>
-		<item item-id="79">iVBORw0KGgoAAAANSUhEUgAAADYAAAARCAYAAACW7F9TAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="76">iVBORw0KGgoAAAANSUhEUgAAADYAAAARCAYAAACW7F9TAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFLSURBVEhL7VXtrQMhDGMuBso8TMMy
 DJOXL8DleFWv0v3otZaQygGJ7QSa+Kb4Cfs0fLuwxiUnTklH5tLi84WolDhDolaJs+V3DoQk
 YC1TEbYvCmuFhhhNmLIfvgxC1Ej2pK0Y8UzVp7YeBseaC44h+863ogUi9hRXoDJFdwxhIVQJ
@@ -9821,7 +9543,7 @@ Q/t5GxSBd3IZT1QP9w/CBA3ErWsdYPpJYRr8ovsl+UYVthVzLvMROZpey+R2SlilV+/W+Yq1
 krf7VZyvzdx9L4ZqNe6fQrjD4+H9OTaba1OYBhtr6O4VWCvWuVj+JlMV9sgNzVATQJieh0Up
 vZdcLyt8t/FYyYnFnHdxaEUlD/9j2paRY1vp+SreDz9hn4abCmP+A34H1btWOImaAAAAAElF
 TkSuQmCC</item>
-		<item item-id="80">iVBORw0KGgoAAAANSUhEUgAAAEkAAAARCAYAAACRroFGAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="77">iVBORw0KGgoAAAANSUhEUgAAAEkAAAARCAYAAACRroFGAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGYSURBVFhH7VXbscUgCExdFGQ9VmMz
 FsMBAcVEE+859yMf7owziSKPZdUDNx6xSVrAJmkBm6QFvJaknCIGADyOAyFmnXXIEYHWeN1G
 SLqGGSPoPET6u+LRv8MLScqYAicPCFR1nuSfoxTYRkDhyBGkoydhzb/H60iS4gHvm0tEhLFC
@@ -9831,7 +9553,7 @@ SrINTkU2LFgK8t+f9d9hCrU45/8rMt0piY7e2I6Pm9QgBP7dv+CBJN+dM0x9M5tflbReBIMb
 N7QrPrWuL/3PSdIiq1oogDijzjUjmn6W6zqUeL3n5BXyKpCjU7/tLiI1hZIcv1y8n/ZoTsW2
 sjD3fwclyXfdbfJH7hzoMv9P4IItFyrWGuBJ4ryqTSFLjQiZHp52TTgiDRP/d2hK2phik7SA
 TdICNkmPQPwAFTNwGK72VbIAAAAASUVORK5CYII=</item>
-		<item item-id="81">iVBORw0KGgoAAAANSUhEUgAAAKIAAAARCAYAAABerHfAAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="78">iVBORw0KGgoAAAANSUhEUgAAAKIAAAARCAYAAABerHfAAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAALzSURBVGhD7ViLcewgDHRdLoh6XA3N
 uBg//QAhSyS52BfnhZ1hhq8sLYt0yXJMTDwAU4gTj8AU4sQjMIU48QiIEPdjW5djWfq2bjsv
 /3bs27Eu6cgy9JGPRHv+cy4uwr6tx5J6RmmO+FqPRhfy2nOZMsytGzDd0GXEnBThOckhHv44
@@ -9848,7 +9570,7 @@ K77Uco3N+ItnTTknW10c3+WCY1jrOXtGoGOoe+P4GbHtlHUfzYNQXBsOTpzRZOyL3i/z9Xt2
 r6D+26YD+swC7zLiX0V5lVcib94jvQZ32n4rUNBC/BQiAV//J8rgJ7HDX+aQoG7BnbbfCqoI
 LUtOIVZgmfDKxy+H9zOmtuse39eAD7/negpx4gE4jn/uPeAg8vd+HgAAAABJRU5ErkJg
 gg==</item>
-		<item item-id="82">iVBORw0KGgoAAAANSUhEUgAAAXIAAAARCAYAAADAMydJAAAAAXNSR0IArs4c6QAAAARnQU1B
+		<item item-id="79">iVBORw0KGgoAAAANSUhEUgAAAXIAAAARCAYAAADAMydJAAAAAXNSR0IArs4c6QAAAARnQU1B
 AACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAcmSURBVHhe7VrZdes4DHUD6SM1qIs0
 oT7cgavRVxrIVwrwVyrRYCFIgAIkypbj+A3vHJ4nbsDFQoiR5zR3dHR0dLw0eiHv6OjoeHH0
 Qt7R0dHx4uiFvKOjo+PFkQr5db4Mp/l04jZcrvP1MuT+6TTOU71uGOdR7clt5JWIabTjVqZt

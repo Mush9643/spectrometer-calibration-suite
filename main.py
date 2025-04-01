@@ -1231,6 +1231,15 @@ class SpectrumWindow(QMainWindow):
             parameters.append(("a (Beta)", "Отсутствует"))
             parameters.append(("b (Beta)", "Отсутствует"))
 
+        # Добавляем значения Pn для Gamma
+        Ep = [80, 146, 400, 850, 1500, 2515]  # Энергии из gamma_math.py
+        if hasattr(self, 'gamma_pn_values') and self.gamma_pn_values:
+            for i, (energy, pn_value) in enumerate(zip(Ep, self.gamma_pn_values)):
+                parameters.append((f"Pn ({energy} кэВ)", f"{pn_value}"))
+        else:
+            for energy in Ep:
+                parameters.append((f"Pn ({energy} кэВ)", "Отсутствует"))
+
         # Устанавливаем количество строк в таблице
         self.calibration_table.setRowCount(len(parameters))
 
@@ -1299,8 +1308,8 @@ class SpectrumWindow(QMainWindow):
             self.resize(self.width(), new_height)
 
     def generate_report(self):
-        """Метод для создания отчёта: создаёт Excel-файл в папке 'Отчёты' с параметрами."""
-        # Проверяем, была ли выполнена калибровка
+        """Метод для создания отчёта: создаёт Excel-файл в папке 'Отчёты' с параметрами, включая массив Pn."""
+        # Проверяем, была ли выполнена калибровка (оставляем как есть для Alfa chart)
         if not self.calibration_performed:
             self.show_warning_message("Сначала выполните калибровку на вкладке Alfa chart.")
             print("Предупреждение: Калибровка не выполнена. Нажмите кнопку 'Калибровка' на вкладке Alfa chart.")
@@ -1387,7 +1396,7 @@ class SpectrumWindow(QMainWindow):
             report_data.append(["k1c0", "Отсутствует"])
 
         # AB и BB (Beta) переименованы в intercept и slope
-        if hasattr(self, 'beta_calibration_coefficients') and self.beta_calibration_coefficients:
+        if hasattr(self, 'beta_calibration_coequettes') and self.beta_calibration_coefficients:
             intercept, slope = self.beta_calibration_coefficients
             report_data.append(["a (Beta)", f"{intercept:.3f}"])  # intercept как a
             report_data.append(["b (Beta)", f"{slope:.3f}"])  # slope как b
@@ -1395,17 +1404,14 @@ class SpectrumWindow(QMainWindow):
             report_data.append(["a (Beta)", "Отсутствует"])
             report_data.append(["b (Beta)", "Отсутствует"])
 
-        # Добавляем массив Pn из CalibrationWindow в формате Gamma[1], Gamma[2], ..., Gamma[6]
-        if hasattr(self, 'pn_values') and self.pn_values:
-            pn_values = self.pn_values  # [18, 32, 84, 176, 308, 516]
-            for i in range(6):  # Ожидаем 6 значений
-                if i < len(pn_values):
-                    report_data.append([f"Gamma[{i+1}]", f"{pn_values[i]}"])
-                else:
-                    report_data.append([f"Gamma[{i+1}]", "Отсутствует"])
+        # Добавляем значения Pn для Gamma
+        Ep = [80, 146, 400, 850, 1500, 2515]  # Энергии из gamma_math.py
+        if hasattr(self, 'gamma_pn_values') and self.gamma_pn_values:
+            for energy, pn_value in zip(Ep, self.gamma_pn_values):
+                report_data.append((f"Pn ({energy} кэВ)", f"{pn_value}"))
         else:
-            for i in range(1, 7):
-                report_data.append([f"Gamma[{i}]", "Отсутствует"])
+            for energy in Ep:
+                report_data.append((f"Pn ({energy} кэВ)", "Отсутствует"))
 
         # Создаём DataFrame
         df = pd.DataFrame(report_data[1:], columns=report_data[0])
@@ -1454,7 +1460,6 @@ class SpectrumWindow(QMainWindow):
         ws.column_dimensions['A'].width = 30  # Колонка "Параметр"
         ws.column_dimensions['B'].width = 15  # Колонка "Значение"
 
-        # Сохраняем файл с обработкой ошибки
         # Сохраняем файл с обработкой ошибки
         try:
             wb.save(report_path)
@@ -1703,7 +1708,6 @@ class SpectrumWindow(QMainWindow):
         # Отображаем пики на графике
         if peaks:
             plot_peaks(self, peaks)
-
 
     def load_xls_files(self):
         """Загружает список файлов .xls и .xlsx из указанной папки."""

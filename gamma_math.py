@@ -232,7 +232,6 @@ def plot_peaks(main_window, peaks):
 
 
 class CalibrationWindow(QDialog):
-
     def __init__(self, parent=None, peaks=None, rbntu=None):
         super().__init__(parent)
         self.pn_values = None
@@ -248,62 +247,55 @@ class CalibrationWindow(QDialog):
             # Ось X
             self.axis_x = QValueAxis()
             self.axis_x.setTitleText("Каналы")
-            self.axis_x.setRange(0, 400)  # Диапазон X: 0–400
+            self.axis_x.setRange(0, 400)
             self.calibration_chart.addAxis(self.axis_x, Qt.AlignmentFlag.AlignBottom)
 
             # Ось Y
             self.axis_y = QValueAxis()
             self.axis_y.setTitleText("Энергия (кэВ)")
-            self.axis_y.setRange(0, 4000)  # Диапазон Y: 0–4000
+            self.axis_y.setRange(0, 4000)
             self.calibration_chart.addAxis(self.axis_y, Qt.AlignmentFlag.AlignLeft)
 
             # Переменные для коэффициентов
             a, b = 0, 0
-            # Переменные для хранения X-координат пиков
             cs137_x, am241_x = None, None
 
-            # Построение калибровочной прямой, если передан Rbntu
+            # Построение калибровочной прямой
             if rbntu and len(rbntu) == 2:
-                # Вычисляем коэффициенты прямой по сдвинутым каналам (Rbntu)
-                x1, x2 = rbntu[0], rbntu[1]  # Каналы: Cs-137 (137), Am-241 (14)
-                y1, y2 = Era226[0], Era226[1]  # Энергии: Cs-137 (661.66), Am-241 (60)
-                b = (y2 - y1) / (x2 - x1)  # Наклон
-                a = y1 - b * x1  # Свободный член
+                x1, x2 = rbntu[0], rbntu[1]
+                y1, y2 = Era226[0], Era226[1]
+                b = (y2 - y1) / (x2 - x1)
+                a = y1 - b * x1
 
-                # Создаём серию для прямой
                 calibration_line = QLineSeries()
                 calibration_line.setName("Калибровочная прямая")
-                calibration_line.setPen(QColor(0, 128, 0))  # Зелёный цвет
-
-                # Добавляем две точки для прямой (t = 0 и t = 400 на графике)
-                t_min, t_max = 0, 400  # Диапазон X графика (после сдвига)
+                calibration_line.setPen(QColor(0, 128, 0))
+                t_min, t_max = 0, 400
                 f_t_min = a + b * t_min
                 f_t_max = a + b * t_max
                 calibration_line.append(t_min, f_t_min)
                 calibration_line.append(t_max, f_t_max)
-
-                # Добавляем серию на график
                 self.calibration_chart.addSeries(calibration_line)
                 calibration_line.attachAxis(self.axis_x)
                 calibration_line.attachAxis(self.axis_y)
 
-            # Добавляем пики Cs-137 и Am-241 с энергиями из Era226, сдвигая каналы только для отображения
+            # Добавляем пики
             if peaks:
                 for file_name, (peak_channel, _) in peaks.items():
                     scatter_series = QScatterSeries()
-                    shifted_channel = peak_channel - 512  # Сдвигаем канал влево на 512 только для отображения
+                    shifted_channel = peak_channel - 512
                     if any(keyword in file_name.lower() for keyword in ["cs", "cs137", "cs_gamma"]):
                         scatter_series.setName("Пик Cs-137")
-                        energy = Era226[0]  # 661.66 кэВ
-                        scatter_series.setColor(QColor(255, 0, 0))  # Красный
+                        energy = Era226[0]
+                        scatter_series.setColor(QColor(255, 0, 0))
                         scatter_series.setBorderColor(QColor(255, 0, 0))
-                        cs137_x = shifted_channel  # Сохраняем X-координату
+                        cs137_x = shifted_channel
                     elif any(keyword in file_name.lower() for keyword in ["am", "am241", "am_gamma"]):
                         scatter_series.setName("Пик Am-241")
-                        energy = Era226[1]  # 60 кэВ
-                        scatter_series.setColor(QColor(0, 0, 255))  # Синий
+                        energy = Era226[1]
+                        scatter_series.setColor(QColor(0, 0, 255))
                         scatter_series.setBorderColor(QColor(0, 0, 255))
-                        am241_x = shifted_channel  # Сохраняем X-координату
+                        am241_x = shifted_channel
                     else:
                         continue
 
@@ -314,7 +306,7 @@ class CalibrationWindow(QDialog):
                     scatter_series.attachAxis(self.axis_x)
                     scatter_series.attachAxis(self.axis_y)
 
-            # Пустая серия, если ничего не добавлено
+            # Пустая серия
             if not peaks and not rbntu:
                 self.dummy_series = QLineSeries()
                 self.dummy_series.setName("Пустая серия")
@@ -330,17 +322,17 @@ class CalibrationWindow(QDialog):
             # Компоновка
             layout = QVBoxLayout()
             layout.addWidget(self.chart_view)
+
+            # Вычисляем Pn с помощью новой функции
             ka = b
             kb = a
-            if ka != 0:
-                Pn = np.round((Ep - kb) / ka).astype(int)
-                self.pn_values = Pn.tolist()
+            self.pn_values = calculate_pn(Ep, ka, kb)
+            if self.pn_values is not None:
                 print(f"Вычислен и сохранён массив Pn: {self.pn_values}")
 
-            else:
-                print("Коэффициент ka равен 0, Pn не вычислен.")
             # Формируем текст для QLabel
-            label_text = f"Энергии наших окон компенсационных Pn для Ep = {Ep}: {Pn}"
+            pn_text = self.pn_values if self.pn_values is not None else "Не вычислен"
+            label_text = f"Энергии наших окон компенсационных Pn для Ep = {Ep}: {pn_text}"
             label_text += f"\nКоэффициенты прямой: b = {a:.2f}, a = {b:.4f}"
             if cs137_x is not None:
                 label_text += f"\nX-координата пика Cs-137: {cs137_x:.2f}"
@@ -357,6 +349,26 @@ class CalibrationWindow(QDialog):
 
     def get_pn_values(self):
         return self.pn_values
+
+
+def calculate_pn(ep, ka, kb):
+    """
+    Вычисляет массив Pn (каналы, соответствующие энергиям Ep) на основе калибровочных коэффициентов.
+
+    Args:
+        ep (np.array): Массив энергий в кэВ (например, [80, 146, 400, 850, 1500, 2515]).
+        ka (float): Коэффициент наклона калибровочной прямой (b).
+        kb (float): Свободный член калибровочной прямой (a).
+
+    Returns:
+        list: Список значений Pn, округлённых до целых чисел, или None, если ka = 0.
+    """
+    if ka == 0:
+        print("Коэффициент ka равен 0, Pn не вычислен.")
+        return None
+    pn = np.round((ep - kb) / ka).astype(int)
+    return pn.tolist()
+
 
 def perform_calibration(main_window):
     """
