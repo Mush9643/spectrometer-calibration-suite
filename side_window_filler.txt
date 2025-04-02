@@ -1,11 +1,14 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QTableWidget, QTableWidgetItem, QLabel, QPushButton
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QHeaderView
+from pymodbus.client import ModbusSerialClient
+from pymodbus.exceptions import ModbusException
 
 
 class SideWindow(QWidget):
-    def __init__(self, main_geometry):
+    def __init__(self, main_geometry, modbus_client):
         super().__init__()
+        self.modbus = modbus_client  # Сохраняем клиент Modbus
         self.setWindowTitle("Дополнительное окно")
 
         # Вычисляем параметры для нового окна
@@ -13,83 +16,83 @@ class SideWindow(QWidget):
         main_y = main_geometry.y()
         main_width = main_geometry.width()
         main_height = main_geometry.height()
-        side_width = (main_width // 2) * 0.8  # Ширина в два раза меньше, затем уменьшаем на 20%
-        side_x = main_x + main_width  # Располагаем справа от основного окна
-        side_y = main_y  # Та же высота, что у основного окна
+        side_width = (main_width // 2) * 0.8
+        side_x = main_x + main_width
+        side_y = main_y
         side_height = main_height
         self.setGeometry(side_x, side_y, int(side_width), side_height)
 
         # Применяем улучшенный стиль
         self.setStyleSheet("""
-            QWidget {
-                background-color: #F8FAFC;
-                font-family: 'Montserrat', sans-serif;
-            }
-            QLabel#titleLabel {
-                font-size: 18px;
-                font-weight: 600;
-                color: #4A4A4A;
-                padding: 10px 10px 5px 10px;
-                border-bottom: 1px solid #E2E8F0;
-            }
-            QTableWidget {
-                background-color: #FFFFFF;
-                border: 1px solid #4A4A4A;
-                border-radius: 8px;
-                font-family: 'Montserrat', sans-serif;
-                font-size: 13px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            }
-            QHeaderView::section {
-                background-color: #4A4A4A;
-                color: #FFFFFF;
-                padding: 10px;
-                border: none;
-                border-bottom: 1px solid #E2E8F0;
-                font-weight: 600;
-                font-size: 15px;
-                border-top-left-radius: 8px;
-                border-top-right-radius: 8px;
-            }
-            QTableWidget::item {
-                padding: 10px;
-                border-bottom: 1px solid #E2E8F0;
-                color: #1A202C;
-            }
-            QTableWidget::item:alternate {
-                background-color: #F8FAFC;
-            }
-            QTableWidget::item:selected {
-                background-color: #E2E8F0;
-                color: #1A202C;
-            }
-            QPushButton#fillButton {
-                background-color: #4A4A4A;
-                color: #FFFFFF;
-                border: none;
-                border-radius: 5px;
-                padding: 8px 16px;
-                font-size: 12px;
-                font-weight: 600;
-                max-width: 150px;
-            }
-            QPushButton#fillButton:hover {
-                background-color: #5A5A5A;
-            }
-            QPushButton#fillButton:pressed {
-                background-color: #3A3A3A;
-            }
-        """)
+                    QWidget {
+                        background-color: #F8FAFC;
+                        font-family: 'Montserrat', sans-serif;
+                    }
+                    QLabel#titleLabel {
+                        font-size: 18px;
+                        font-weight: 600;
+                        color: #4A4A4A;
+                        padding: 10px 10px 5px 10px;
+                        border-bottom: 1px solid #E2E8F0;
+                    }
+                    QTableWidget {
+                        background-color: #FFFFFF;
+                        border: 1px solid #4A4A4A;
+                        border-radius: 8px;
+                        font-family: 'Montserrat', sans-serif;
+                        font-size: 13px;
+                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                    }
+                    QHeaderView::section {
+                        background-color: #4A4A4A;
+                        color: #FFFFFF;
+                        padding: 10px;
+                        border: none;
+                        border-bottom: 1px solid #E2E8F0;
+                        font-weight: 600;
+                        font-size: 15px;
+                        border-top-left-radius: 8px;
+                        border-top-right-radius: 8px;
+                    }
+                    QTableWidget::item {
+                        padding: 10px;
+                        border-bottom: 1px solid #E2E8F0;
+                        color: #1A202C;
+                    }
+                    QTableWidget::item:alternate {
+                        background-color: #F8FAFC;
+                    }
+                    QTableWidget::item:selected {
+                        background-color: #E2E8F0;
+                        color: #1A202C;
+                    }
+                    QPushButton#fillButton {
+                        background-color: #4A4A4A;
+                        color: #FFFFFF;
+                        border: none;
+                        border-radius: 5px;
+                        padding: 8px 16px;
+                        font-size: 12px;
+                        font-weight: 600;
+                        max-width: 150px;
+                    }
+                    QPushButton#fillButton:hover {
+                        background-color: #5A5A5A;
+                    }
+                    QPushButton#fillButton:pressed {
+                        background-color: #3A3A3A;
+                    }
+                """)
 
         # Создаем layout для окна
         side_layout = QVBoxLayout()
         side_layout.setContentsMargins(20, 20, 20, 20)
         side_layout.setSpacing(20)
 
-        # Добавляем заголовок
-        title_label = QLabel("Дополнительное окно")
-        title_label.setObjectName("titleLabel")
-        side_layout.addWidget(title_label)
+        # Добавляем заголовок (будем обновлять после чтения серийного номера)
+        self.title_label = QLabel("Дополнительное окно")
+        self.title_label.setObjectName("titleLabel")
+        side_layout.addWidget(self.title_label)
 
         # Создаем таблицу
         self.side_table = QTableWidget()
@@ -97,7 +100,7 @@ class SideWindow(QWidget):
         self.side_table.setRowCount(22)
         self.side_table.setHorizontalHeaderLabels(["Параметр", "Значение"])
 
-        # Данные для таблицы (столбец "Значение" пустой)
+        # Данные для таблицы
         data = [
             ("a (Alfa)", ""),
             ("b (Alfa)", ""),
@@ -146,16 +149,53 @@ class SideWindow(QWidget):
         fill_button.setObjectName("fillButton")
         fill_button.clicked.connect(self.fill_values)
 
-        # Горизонтальный layout для кнопки (центрирование)
+        # Кнопка для чтения серийного номера
+        serial_button = QPushButton("Прочитать серийный номер")
+        serial_button.setObjectName("fillButton")
+        serial_button.clicked.connect(self.read_serial_number)
+
+        # Горизонтальный layout для кнопок
         button_layout = QHBoxLayout()
         button_layout.addStretch()
+        button_layout.addWidget(serial_button)
         button_layout.addWidget(fill_button)
         button_layout.addStretch()
 
         side_layout.addLayout(button_layout)
-
-        # Устанавливаем layout для окна
         self.setLayout(side_layout)
+
+        # Читаем серийный номер при открытии окна
+        self.read_serial_number()
+
+    def read_serial_number(self):
+        """Чтение серийного номера из регистров 0x8008-0x800F"""
+        try:
+            if not self.modbus.client.connect():
+                raise ConnectionError("Не удалось подключиться к устройству")
+            # Читаем 8 регистров (16 байт)
+            response = self.modbus.read_spectrum(
+                start_register=0x8008,
+                num_registers=8,
+                slave_address=1
+            )
+
+            if hasattr(response, 'isError') and response.isError():
+                raise ModbusException("Ошибка чтения регистров")
+            # Преобразуем регистры в строку (каждый регистр - 2 символа ASCII)
+            serial_bytes = bytearray()
+            for reg in response.registers:
+                serial_bytes.extend(reg.to_bytes(2, byteorder='big'))
+
+            # Удаляем нулевые байты в конце
+            serial_str = serial_bytes.decode('ascii').strip('\x00')
+
+            # Обновляем заголовок окна и метку
+            self.setWindowTitle(f"Серийный номер: {serial_str}")
+            self.title_label.setText(f"Серийный номер прибора: {serial_str}")
+
+        except Exception as e:
+            self.title_label.setText("Ошибка чтения серийного номера")
+            print(f"Ошибка при чтении серийного номера: {str(e)}")
 
     def fill_values(self):
         """Заполняет столбец 'Значение' числами от 1 до 24."""

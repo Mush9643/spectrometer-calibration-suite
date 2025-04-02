@@ -19,6 +19,8 @@ class ModbusClient:
             timeout=self.timeout
         )
 
+
+
     def read_spectrum(self, start_register, num_registers, slave_address, max_registers_per_request=125):
         spectrum_values = []
         if not self.client.connect():

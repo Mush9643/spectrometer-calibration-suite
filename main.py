@@ -1503,7 +1503,7 @@ class SpectrumWindow(QMainWindow):
         main_geometry = self.geometry()
 
         # Создаем новое окно с помощью класса SideWindow
-        self.side_window = SideWindow(main_geometry)
+        self.side_window = SideWindow(main_geometry, modbus)
 
         # Показываем окно
         self.side_window.show()
