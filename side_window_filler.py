@@ -1,4 +1,5 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QTableWidget, QTableWidgetItem, QLabel, QPushButton
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QTableWidget, QTableWidgetItem, QLabel, QPushButton, \
+    QApplication
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QHeaderView
 from pymodbus.client import ModbusSerialClient
@@ -12,83 +13,103 @@ class SideWindow(QWidget):
         self.main_window = main_window
         self.setWindowTitle("Дополнительное окно")
 
-        # Вычисляем параметры для нового окна
+        # Получаем размеры главного окна
         main_x = main_geometry.x()
         main_y = main_geometry.y()
         main_width = main_geometry.width()
         main_height = main_geometry.height()
-        side_width = (main_width // 2) * 0.9
-        side_x = main_x + main_width
-        side_y = main_y
-        side_height = main_height
-        self.setGeometry(side_x, side_y, int(side_width), side_height)
+
+        # Получаем размеры экрана
+        screen = QApplication.primaryScreen()
+        screen_geometry = screen.availableGeometry()
+        screen_width = screen_geometry.width()
+        screen_height = screen_geometry.height()
+
+        # Рассчитываем размеры и положение окна
+        side_x = main_x + main_width  # Начинаем от правого края главного окна
+        side_y = main_y  # Оставляем ту же высоту, что у главного окна
+        side_width = screen_width - side_x  # Ширина от правого края главного окна до правой границы экрана
+        side_height = main_height  # Высота равна высоте главного окна
+
+        # Устанавливаем геометрию окна
+        self.setGeometry(side_x, side_y, side_width, side_height)
 
         # Применяем улучшенный стиль
         self.setStyleSheet("""
-                            QWidget {
-                                background-color: #F8FAFC;
-                                font-family: 'Montserrat', sans-serif;
-                            }
-                            QLabel#titleLabel {
-                                font-size: 18px;
-                                font-weight: 600;
-                                color: #4A4A4A;
-                                padding: 10px 10px 5px 10px;
-                                border-bottom: 1px solid #E2E8F0;
-                            }
-                            QTableWidget {
-                                background-color: #FFFFFF;
-                                border: 1px solid #4A4A4A;
-                                border-radius: 8px;
-                                font-family: 'Montserrat', sans-serif;
-                                font-size: 13px;
-                                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                            }
-                            QHeaderView::section {
-                                background-color: #4A4A4A;
-                                color: #FFFFFF;
-                                padding: 10px;
-                                border: none;
-                                border-bottom: 1px solid #E2E8F0;
-                                font-weight: 600;
-                                font-size: 15px;
-                                border-top-left-radius: 8px;
-                                border-top-right-radius: 8px;
-                            }
-                            QTableWidget::item {
-                                padding: 10px;
-                                border-bottom: 1px solid #E2E8F0;
-                                color: #1A202C;
-                            }
-                            QTableWidget::item:alternate {
-                                background-color: #F8FAFC;
-                            }
-                            QTableWidget::item:selected {
-                                background-color: #E2E8F0;
-                                color: #1A202C;
-                            }
-                            QPushButton#fillButton, QPushButton#updateButton {
-                                background-color: #4A4A4A;
-                                color: #FFFFFF;
-                                border: none;
-                                border-radius: 5px;
-                                padding: 8px 16px;
-                                font-size: 12px;
-                                font-weight: 600;
-                                max-width: 150px;
-                            }
-                            QPushButton#fillButton:hover, QPushButton#updateButton:hover {
-                                background-color: #5A5A5A;
-                            }
-                            QPushButton#fillButton:pressed, QPushButton#updateButton:pressed {
-                                background-color: #3A3A3A;
-                            }
-                        """)
+                    /* Общий стиль окна: белый фон */
+                    QWidget {
+                        background-color: #FFFFFF;  /* Белый фон, как в основном окне */
+                        font-family: 'Arial', sans-serif;  /* Простой шрифт */
+                    }
+
+                    /* Заголовок окна: черный текст, без нижней границы */
+                    QLabel#titleLabel {
+                        font-size: 16px;
+                        font-weight: 600;
+                        color: #000000;  /* Черный текст для читаемости */
+                        padding: 10px;
+                    }
+
+                    /* Центральная панель (таблица), имитирующая дисплей детектора */
+                    QTableWidget {
+                        background-color: #D3D3D3;  /* Светло-серая заливка, как у LCD */
+                        border: 2px solid #C0392B;  /* Красная рамка, как у кнопок основного окна */
+                        border-radius: 5px;  /* Скругленные углы */
+                        font-family: 'Arial', sans-serif;
+                        font-size: 12px;
+                        color: #000000;  /* Черный текст */
+                    }
+
+                    /* Заголовки таблицы: серый фон с белым текстом */
+                    QHeaderView::section {
+                        background-color: #4A4A4A;  /* Темно-серый фон */
+                        color: #FFFFFF;  /* Белый текст */
+                        padding: 8px;
+                        border: none;
+                        border-bottom: 1px solid #D3D3D3;
+                        font-weight: 600;
+                        font-size: 13px;
+                        border-top-left-radius: 5px;
+                        border-top-right-radius: 5px;
+                    }
+
+                    /* Элементы таблицы: белый фон и черный текст */
+                    QTableWidget::item {
+                        padding: 8px;
+                        border-bottom: 1px solid #D3D3D3;
+                        color: #000000;
+                    }
+                    QTableWidget::item:alternate {
+                        background-color: #F0F0F0;  /* Легкий серый для чередующихся строк */
+                    }
+                    QTableWidget::item:selected {
+                        background-color: #E0E0E0;
+                        color: #000000;
+                    }
+
+                    /* Кнопки: красный фон, белый текст, как в основном окне */
+                    QPushButton#fillButton, QPushButton#updateButton, QPushButton#outputButton {
+                        background-color: #C0392B;  /* Красный фон, как у кнопок основного окна */
+                        color: #FFFFFF;  /* Белый текст */
+                        border: none;
+                        border-radius: 5px;  /* Скругленные углы */
+                        padding: 10px 20px;
+                        font-size: 12px;
+                        font-weight: 600;
+                        min-width: 120px;
+                    }
+                    QPushButton#fillButton:hover, QPushButton#updateButton:hover, QPushButton#outputButton:hover {
+                        background-color: #D35400;  /* Чуть светлее при наведении */
+                    }
+                    QPushButton#fillButton:pressed, QPushButton#updateButton:pressed, QPushButton#outputButton:pressed {
+                        background-color: #A93226;  /* Чуть темнее при нажатии */
+                    }
+                """)
 
         # Создаем layout для окна
         side_layout = QVBoxLayout()
-        side_layout.setContentsMargins(20, 20, 20, 20)
-        side_layout.setSpacing(20)
+        side_layout.setContentsMargins(15, 15, 15, 15)
+        side_layout.setSpacing(15)
 
         # Добавляем заголовок (будем обновлять после чтения серийного номера)
         self.title_label = QLabel("Детектор")
@@ -98,7 +119,7 @@ class SideWindow(QWidget):
         # Создаем таблицу
         self.side_table = QTableWidget()
         self.side_table.setColumnCount(2)
-        self.side_table.setRowCount(22)
+        self.side_table.setRowCount(20)
         self.side_table.setHorizontalHeaderLabels(["Параметр", "Значение"])
 
         # Данные для таблицы
@@ -112,11 +133,11 @@ class SideWindow(QWidget):
             ("НУД β", ""),
             ("ВУД β", ""),
             ("НУД α, № канала (2700)", ""),
-            ("ВУД ROI 3, № канала", ""),
-            ("НУД ROI 2, № канала", ""),
-            ("НУД ROI 6, № канала", ""),
-            ("НУД ROI 4, № канала", ""),
-            ("НУД ROI 5, № канала", ""),
+            ("ВУД ROI 3, № канала (4385.6)", ""),
+            ("НУД ROI 2, № канала (5687.5)", ""),
+            ("НУД ROI 6, № канала (6192.35)", ""),
+            ("НУД ROI 4, № канала (6337.7)", ""),
+            ("НУД ROI 5, № канала (8044.6)", ""),
             ("Pn (80 кэВ)", ""),
             ("Pn (146 кэВ)", ""),
             ("Pn (400 кэВ)", ""),
@@ -152,11 +173,15 @@ class SideWindow(QWidget):
         update_button.setObjectName("updateButton")
         update_button.clicked.connect(self.update_from_report)
 
+        output_button = QPushButton("Ввод")
+        output_button.setObjectName("outputButton")
+
         # Горизонтальный layout для кнопок
         button_layout = QHBoxLayout()
         button_layout.addStretch()
         button_layout.addWidget(fill_button)
         button_layout.addWidget(update_button)
+        button_layout.addWidget(output_button)
         button_layout.addStretch()
 
         side_layout.addLayout(button_layout)
