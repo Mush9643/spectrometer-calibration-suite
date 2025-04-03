@@ -1498,15 +1498,13 @@ class SpectrumWindow(QMainWindow):
             return
 
     def open_side_window(self):
-        """Открывает дополнительное окно справа от основного."""
-        # Получаем геометрию основного окна
-        main_geometry = self.geometry()
-
-        # Создаем новое окно с помощью класса SideWindow
-        self.side_window = SideWindow(main_geometry, modbus)
-
-        # Показываем окно
-        self.side_window.show()
+        """Открывает дополнительное окно с параметрами."""
+        if not hasattr(self, 'side_window') or not self.side_window.isVisible():
+            self.side_window = SideWindow(self.geometry(), self.modbus_client, self)
+            self.side_window.show()
+        else:
+            self.side_window.raise_()
+            self.side_window.activateWindow()
 
     def reset_all_data(self):
         """Сбрасывает все данные до начального состояния, как при запуске приложения."""

@@ -6,10 +6,10 @@ from pymodbus.exceptions import ModbusException
 import struct
 
 class SideWindow(QWidget):
-    def __init__(self, main_geometry, modbus_client):
+    def __init__(self, main_geometry, modbus_client, main_window):
         super().__init__()
         self.modbus = modbus_client  # Сохраняем клиент Modbus
-
+        self.main_window = main_window
         self.setWindowTitle("Дополнительное окно")
 
         # Вычисляем параметры для нового окна
@@ -148,12 +148,15 @@ class SideWindow(QWidget):
         fill_button.setObjectName("fillButton")
         fill_button.clicked.connect(self.fill_values)
 
-
+        update_button = QPushButton("Обновить")
+        update_button.setObjectName("updateButton")
+        update_button.clicked.connect(self.update_from_report)
 
         # Горизонтальный layout для кнопок
         button_layout = QHBoxLayout()
         button_layout.addStretch()
         button_layout.addWidget(fill_button)
+        button_layout.addWidget(update_button)
         button_layout.addStretch()
 
         side_layout.addLayout(button_layout)
@@ -207,7 +210,7 @@ class SideWindow(QWidget):
 
             # Обновляем заголовок окна и метку
             self.setWindowTitle(f"Серийный номер: {serial_str}")
-            self.title_label.setText(f"Серийный номер прибора: {serial_str}")
+            self.title_label.setText(f"Серийный номер: {serial_str}")
 
         except Exception as e:
             self.title_label.setText("Ошибка чтения серийного номера")
@@ -316,3 +319,33 @@ class SideWindow(QWidget):
             for row in range(self.side_table.rowCount()):
                 item = QTableWidgetItem(str(row + 1))
                 self.side_table.setItem(row, 1, item)
+
+    def update_from_report(self):
+        """Обновляет значения в столбце 'Значения' на основе данных из вкладки Report."""
+        try:
+            # Получаем таблицу из вкладки Report
+            report_table = self.main_window.calibration_table
+
+            # Создаём словарь параметров и значений из вкладки Report
+            report_values = {}
+            for row in range(report_table.rowCount()):
+                param_item = report_table.item(row, 0)
+                value_item = report_table.item(row, 1)
+                if param_item and value_item:
+                    param = param_item.text()
+                    value = value_item.text()
+                    report_values[param] = value
+
+            # Обновляем значения в таблице side_table
+            for row in range(self.side_table.rowCount()):
+                param_item = self.side_table.item(row, 0)
+                if param_item:
+                    param = param_item.text()
+                    if param in report_values:
+                        # Если параметр найден в таблице Report, обновляем значение
+                        new_value = report_values[param]
+                        value_item = QTableWidgetItem(new_value)
+                        self.side_table.setItem(row, 1, value_item)
+
+        except Exception as e:
+            print(f"Ошибка при обновлении значений из вкладки Report: {str(e)}")
