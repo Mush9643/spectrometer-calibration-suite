@@ -344,8 +344,8 @@ class SideWindow(QWidget):
                         item = QTableWidgetItem(f"{row_values[row]:.2f}")
                     else:
                         item = QTableWidgetItem(str(row_values[row]))
-                else:
-                    item = QTableWidgetItem(str(row + 1))  # Оставляем числа от 1 до 24 для остальных строк
+
+
 
                 self.side_table.setItem(row, 1, item)  # Столбец 'Значение' (индекс 1)
 
