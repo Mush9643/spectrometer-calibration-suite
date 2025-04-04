@@ -175,25 +175,31 @@ class ToggleSwitch(QWidget):
 # Класс Мелкого окна на вкладке menu
 ##########################################################################
 class SpectrumGraphWindow(QMainWindow):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, modbus_client=None):
         super().__init__(parent)
         self.setWindowTitle("Спектр")
         self.setWindowIcon(QIcon("M-Photoroom.png"))
         self.resize(800, 600)
+
+        self.modbus_client = modbus_client
+        self.spectrum_values = []
 
         # Основной виджет и макет
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         layout = QVBoxLayout(central_widget)
 
-        # Создание пустого графика
+        # Создание графика
         self.chart = QChart()
         self.chart.setTitle("Спектр")
         title_font = QFont("Montserrat", 14, QFont.Weight.Bold)
         self.chart.setTitleFont(title_font)
         self.chart.setTitleBrush(QColor("#000000"))
 
-        # Оси графика
+        self.series = QLineSeries()
+        self.series.setName("Импульсы")
+        self.chart.addSeries(self.series)
+
         self.axis_x = QValueAxis()
         self.axis_x.setTitleText("Каналы")
         self.axis_x.setRange(0, 1023)
@@ -206,7 +212,7 @@ class SpectrumGraphWindow(QMainWindow):
 
         self.axis_y = QValueAxis()
         self.axis_y.setTitleText("Импульсы")
-        self.axis_y.setRange(0, 100)  # Устанавливаем начальный диапазон
+        self.axis_y.setRange(0, 100)  # Начальный диапазон
         self.axis_y.setLabelsFont(axis_font)
         self.axis_y.setTitleFont(axis_font)
         self.axis_y.setTitleBrush(QColor("#000000"))
@@ -215,9 +221,10 @@ class SpectrumGraphWindow(QMainWindow):
 
         self.chart.addAxis(self.axis_x, Qt.AlignmentFlag.AlignBottom)
         self.chart.addAxis(self.axis_y, Qt.AlignmentFlag.AlignLeft)
+        self.series.attachAxis(self.axis_x)
+        self.series.attachAxis(self.axis_y)
 
-        # Создание ChartView
-        self.chart_view = QChartView(self.chart)
+        self.chart_view = CustomChartView(self.chart)
         self.chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
         layout.addWidget(self.chart_view)
 
@@ -231,12 +238,39 @@ class SpectrumGraphWindow(QMainWindow):
         button_layout.addStretch()
         layout.addLayout(button_layout)
 
+        # Загружаем данные при открытии
+        self.update_spectrum()
+
+    def update_spectrum(self):
+        """Обновляет спектр импульсов из Modbus."""
+        if self.modbus_client:
+            try:
+                spectrum_values = self.modbus_client.read_spectrum(
+                    start_register=0x0100,
+                    num_registers=1024,
+                    slave_address=1
+                )
+                self.spectrum_values = spectrum_values
+                self.series.clear()
+                for i, value in enumerate(spectrum_values):
+                    display_value = 0 if i < 2 else value  # Первые два значения обнуляем
+                    self.series.append(i, display_value)
+                max_y = max(spectrum_values[2:], default=100)  # Пропускаем первые два значения
+                self.axis_y.setRange(0, max_y * 1.1)
+            except Exception as e:
+                QMessageBox.critical(self, "Ошибка", f"Ошибка при чтении данных через Modbus: {str(e)}")
+        else:
+            QMessageBox.warning(self, "Предупреждение", "Modbus-клиент не инициализирован.")
+
     def export_to_excel(self):
-        """Экспортирует данные графика в Excel (пока пустой)."""
+        """Экспортирует данные графика в Excel."""
         try:
+            if not self.spectrum_values:
+                QMessageBox.warning(self, "Предупреждение", "Нет данных для экспорта.")
+                return
             data = {
-                "Точка спектра": list(range(1024)),
-                "Значение": [0] * 1024  # Пустые данные
+                "Точка спектра": list(range(len(self.spectrum_values))),
+                "Значение": self.spectrum_values
             }
             df = pd.DataFrame(data)
             file_name = "spectrum_data.xlsx"
@@ -672,122 +706,80 @@ class SpectrumWindow(QMainWindow):
         # =========================================================================
         # Блок 4: Создание вкладки "Alfa chart"
         # =========================================================================
-        # Первая вкладка
         self.tab1 = QWidget()
         self.tabs.addTab(self.tab1, "Alfa")
+        self.spectrum_addition = SpectrumAddition(self)
 
-        # Создание графика для первой вкладки
+        # Создание графика для вкладки Alfa
         self.chart = QChart()
         self.chart.setTitle("Alfa")
-        # Устанавливаем шрифт для заголовка
-        title_font = QFont()
-        title_font.setPointSize(14)
-        title_font.setBold(True)
+        title_font = QFont("Montserrat", 14, QFont.Weight.Bold)
         self.chart.setTitleFont(title_font)
+        self.chart.setTitleBrush(QColor("#000000"))
 
-        self.series = QLineSeries()
-        self.series.setName("Импульсы")
-        # Устанавливаем пастельный цвет для линии
-        self.series.setPen(QColor("#A3BFFA"))  # Мягкий пастельный голубой
-
-        self.spectrum_addition = SpectrumAddition(self)
-        try:
-            self.spectrum_values = self.update_spectrum()
-        except Exception as e:
-            self.show_error_message(str(e))
-            self.spectrum_values = []
-
-        self.chart.addSeries(self.series)
         self.axis_x = QValueAxis()
         self.axis_x.setTitleText("Точка спектра")
         self.axis_x.setRange(0, 1023)
-        self.axis_x.setTickCount(11)  # Шаг каждые ~100 единиц (1023 / 10)
-        self.axis_x.setLabelFormat("%d")  # Целые числа
-        # Устанавливаем шрифт для подписей оси
-        axis_font = QFont()
-        axis_font.setPointSize(10)
+        self.axis_x.setTickCount(11)
+        axis_font = QFont("Montserrat", 12)
         self.axis_x.setLabelsFont(axis_font)
         self.axis_x.setTitleFont(axis_font)
+        self.axis_x.setTitleBrush(QColor("#000000"))
+        self.axis_x.setLabelsColor(QColor("#000000"))
+        self.axis_x.setGridLineColor(QColor("#F5F5F5"))
 
         self.axis_y = QValueAxis()
         self.axis_y.setTitleText("Значение импульса")
-        points = self.series.points()
-        if points:
-            y_values = [point.y() for point in points]
-            self.axis_y.setRange(min(y_values), max(y_values))
-        else:
-            self.axis_y.setRange(0, 1)
-        self.axis_y.setLabelFormat("%.2f")  # Два знака после запятой
+        self.axis_y.setRange(0, 1)  # Начальный пустой диапазон
+        self.axis_y.setLabelFormat("%.2f")
         self.axis_y.setLabelsFont(axis_font)
         self.axis_y.setTitleFont(axis_font)
+        self.axis_y.setTitleBrush(QColor("#000000"))
+        self.axis_y.setLabelsColor(QColor("#000000"))
+        self.axis_y.setGridLineColor(QColor("#F5F5F5"))
 
         self.chart.addAxis(self.axis_x, Qt.AlignmentFlag.AlignBottom)
         self.chart.addAxis(self.axis_y, Qt.AlignmentFlag.AlignLeft)
-        self.series.attachAxis(self.axis_x)
-        self.series.attachAxis(self.axis_y)
-
-        # Включаем сетку
-        self.axis_x.setGridLineVisible(True)
-        self.axis_y.setGridLineVisible(True)
 
         self.chart_view = CustomChartView(self.chart)
+        self.chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         # Чекбокс для логарифмического масштаба
         self.log_checkbox = QCheckBox("Логарифмический масштаб")
         self.log_checkbox.stateChanged.connect(self.toggle_log_scale)
 
+        # Кнопка "Сложение спектра" из SpectrumAddition
+        self.spectrum_addition_button = self.spectrum_addition.addition_button  # Предполагается, что кнопка доступна как атрибут
+        self.spectrum_addition_button.setObjectName("spectrumAdditionButton")  # Для стилизации
 
         # Создаем виджет для чекбоксов Alfa chart
         self.alfa_checkboxes_widget = QWidget()
         self.alfa_checkboxes_layout = QVBoxLayout()
         self.alfa_checkboxes_widget.setLayout(self.alfa_checkboxes_layout)
-        self.alfa_checkboxes_widget.setStyleSheet("""
-            QWidget {
-                background-color: #F8FAFC;
-                border: 1px solid #D3D9DE;
-                border-radius: 5px;
-                padding: 5px;
-            }
-        """)
-        self.alfa_checkboxes_widget.setMinimumHeight(50)  # Устанавливаем минимальную высоту
-        self.alfa_checkboxes_widget.hide()  # Изначально скрыт
+        self.alfa_checkboxes_widget.setObjectName("checkboxesWidget")
+        self.alfa_checkboxes_widget.setMinimumHeight(50)
+        self.alfa_checkboxes_widget.hide()
 
         # Кнопка для отображения/скрытия чекбоксов Alfa chart
         self.alfa_toggle_checkboxes_button = QPushButton("📋 Чекбоксы")
         self.alfa_toggle_checkboxes_button.setObjectName("toggleCheckboxesButton")
-        self.alfa_toggle_checkboxes_button.setStyleSheet("""
-            QPushButton#toggleCheckboxesButton {
-                background-color: #D1E0FF;
-                color: #2D3748;
-                border-radius: 5px;
-                padding: 5px;
-            }
-            QPushButton#toggleCheckboxesButton:hover {
-                background-color: #B3C9FF;
-            }
-            QPushButton#toggleCheckboxesButton:pressed {
-                background-color: #A3BFFA;
-            }
-        """)
         self.alfa_toggle_checkboxes_button.clicked.connect(self.toggle_alfa_checkboxes)
 
         # Компоновка вкладки "Alfa chart"
         layout = QVBoxLayout()
         layout.addWidget(self.chart_view)
 
-        # Горизонтальный layout для чекбокса, кнопки калибровки и кнопки очистки
         controls_layout = QHBoxLayout()
         controls_layout.addWidget(self.log_checkbox)
-        controls_layout.addStretch()  # Растяжка для выравнивания
+        controls_layout.addWidget(self.spectrum_addition_button)  # Добавляем кнопку "Сложение спектра"
+        controls_layout.addStretch()
         controls_layout.addWidget(self.alfa_toggle_checkboxes_button)
 
         layout.addLayout(controls_layout)
-        # Добавляем виджет с чекбоксами
         layout.addWidget(self.alfa_checkboxes_widget)
 
         self.tab1.setLayout(layout)
 
-        # Добавляем кнопку "Калибровка" после создания chart_view
         add_calibration_button(self)
         self.add_reset_zoom_button()
 
@@ -1128,7 +1120,7 @@ class SpectrumWindow(QMainWindow):
 
     def open_spectrum_window(self):
         """Открывает окно с графиком спектра."""
-        self.spectrum_window = SpectrumGraphWindow(self)
+        self.spectrum_window = SpectrumGraphWindow(self, self.modbus_client)
         self.spectrum_window.show()
 
     def open_report_file(self, item):
@@ -2651,22 +2643,6 @@ class SpectrumWindow(QMainWindow):
             self.gamma_chart.removeAxis(self.gamma_chart.axisY())
             self.gamma_chart.addAxis(self.gamma_axis_y, Qt.AlignmentFlag.AlignLeft)
             self.gamma_series.attachAxis(self.gamma_axis_y)
-
-    def update_spectrum(self):
-        """Обновляет спектр импульсов."""
-        spectrum_values = self.modbus_client.read_spectrum(
-            start_register=0x0100,
-            num_registers=1024,
-            slave_address=1
-        )
-
-        self.series.clear()
-        for i, value in enumerate(spectrum_values):
-            display_value = 0 if i < 2 else value
-            self.series.append(i, display_value)
-
-        self.spectrum_values = spectrum_values
-        return spectrum_values
 
     def toggle_log_scale(self, state):
         """Переключает между логарифмическим и линейным масштабом для всех серий Alfa."""
