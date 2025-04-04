@@ -160,40 +160,36 @@ class SideWindow(QWidget):
         self.side_table.setAlternatingRowColors(True)
         self.side_table.setShowGrid(False)
         self.side_table.verticalHeader().setVisible(False)
-
-        # Добавляем таблицу в layout
         side_layout.addWidget(self.side_table)
 
-        # Создаём кнопки
+        # Кнопки
         fill_button = QPushButton("Вывод")
         fill_button.setObjectName("fillButton")
         fill_button.clicked.connect(self.fill_values)
 
         output_button = QPushButton("Ввод")
         output_button.setObjectName("outputButton")
+        output_button.clicked.connect(self.write_values)  # Подключаем новый метод
 
         update_button = QPushButton("Обновить")
         update_button.setObjectName("updateButton")
         update_button.clicked.connect(self.update_from_report)
 
-        # Компоновка для кнопок "Вывод" и "Ввод" (первый ряд)
+        # Компоновка кнопок
         top_button_layout = QHBoxLayout()
-        top_button_layout.addStretch()  # Растяжка слева
-        top_button_layout.addWidget(fill_button)  # Кнопка "Вывод"
-        top_button_layout.addWidget(output_button)  # Кнопка "Ввод"
-        top_button_layout.addStretch()  # Растяжка справа
+        top_button_layout.addStretch()
+        top_button_layout.addWidget(fill_button)
+        top_button_layout.addWidget(output_button)
+        top_button_layout.addStretch()
 
-        # Компоновка для кнопки "Обновить" (второй ряд)
         bottom_button_layout = QHBoxLayout()
-        bottom_button_layout.addStretch()  # Растяжка слева
-        bottom_button_layout.addWidget(update_button)  # Кнопка "Обновить"
-        bottom_button_layout.addStretch()  # Растяжка справа
+        bottom_button_layout.addStretch()
+        bottom_button_layout.addWidget(update_button)
+        bottom_button_layout.addStretch()
 
-        # Добавляем оба ряда кнопок в side_layout
         side_layout.addLayout(top_button_layout)
         side_layout.addLayout(bottom_button_layout)
 
-        # Устанавливаем side_layout как основной layout окна
         self.setLayout(side_layout)
 
         # Читаем серийный номер при открытии окна
@@ -300,22 +296,6 @@ class SideWindow(QWidget):
             value_501D = registers[29]  # 0x501D (индекс 29: 0x501D - 0x5000 = 29)
             value_5022 = registers[34]  # 0x5022 (индекс 34: 0x5022 - 0x5000 = 34)
 
-            # Выводим значения для отладки
-            print(f"Значение из регистров 0x5000-0x5001 (float): {value_5000_float}")
-            print(f"Значение из регистров 0x5002-0x5003 (float): {value_5002_float}")
-            print(f"Значение из регистров 0x5004-0x5005 (float): {value_5004_float}")
-            print(f"Значение из регистров 0x5006-0x5007 (float): {value_5006_float}")
-            print(f"Значение из регистров 0x500B-0x500C (float): {value_500B_float}")
-            print(f"Значение из регистров 0x500D-0x500E (float): {value_500D_float}")
-            print(f"Значение из регистра 0x500F: {value_500F}")
-            print(f"Значение из регистра 0x5010: {value_5010}")
-            print(f"Значение из регистра 0x5011: {value_5011}")
-            print(f"Значение из регистра 0x5012: {value_5012}")
-            print(f"Значение из регистра 0x5013: {value_5013}")
-            print(f"Значение из регистра 0x5018: {value_5018}")
-            print(f"Значение из регистра 0x501D: {value_501D}")
-            print(f"Значение из регистра 0x5022: {value_5022}")
-
             # Сопоставление строк и значений
             row_values = {
                 0: value_5004_float,  # 0x5004-0x5005 a(Alfa)
@@ -385,3 +365,87 @@ class SideWindow(QWidget):
 
         except Exception as e:
             print(f"Ошибка при обновлении значений из вкладки Report: {str(e)}")
+
+    def write_values(self):
+        """Записывает числовые значения из столбца 'Значение' в регистры детектора."""
+        try:
+            if not self.modbus.client.connect():
+                raise ConnectionError("Не удалось подключиться к устройству")
+
+            # Сопоставление строк таблицы с адресами регистров
+            register_mapping = {
+                0: 0x5004,  # a (Alfa), float (2 регистра)
+                1: 0x5006,  # b (Alfa), float (2 регистра)
+                2: 0x5000,  # a (Beta), float (2 регистра)
+                3: 0x5002,  # b (Beta), float (2 регистра)
+                4: 0x500B,  # k1p9, float (2 регистра)
+                5: 0x500D,  # k1c0, float (2 регистра)
+                6: 0x500F,  # НУД β, uint16 (1 регистр)
+                7: 0x5010,  # ВУД β, uint16 (1 регистр)
+                8: 0x5011,  # НУД α, uint16 (1 регистр)
+                9: 0x5012,  # ВУД ROI 3, uint16 (1 регистр)
+                10: 0x5013,  # НУД ROI 2, uint16 (1 регистр)
+                11: 0x5018,  # НУД ROI 6, uint16 (1 регистр)
+                12: 0x501D,  # НУД ROI 4, uint16 (1 регистр)
+                13: 0x5022,  # НУД ROI 5, uint16 (1 регистр)
+                14: 0x5014,  # Pn (80 кэВ), uint16 (1 регистр)
+                15: 0x5015,  # Pn (146 кэВ), uint16 (1 регистр)
+                16: 0x5016,  # Pn (400 кэВ), uint16 (1 регистр)
+                17: 0x5017,  # Pn (850 кэВ), uint16 (1 регистр)
+                18: 0x5019,  # Pn (1500 кэВ), uint16 (1 регистр)
+                19: 0x501A,  # Pn (2515 кэВ), uint16 (1 регистр)
+            }
+
+            float_rows = {0, 1, 2, 3, 4, 5}  # Строки с float значениями (2 регистра)
+
+            # Собираем данные для записи
+            for row in range(self.side_table.rowCount()):
+                value_item = self.side_table.item(row, 1)
+                if not value_item or not value_item.text().strip():
+                    continue  # Пропускаем пустые строки
+
+                value_str = value_item.text().strip()
+                try:
+                    # Проверяем, является ли значение числом
+                    if row in float_rows:
+                        # Для float значений
+                        value = float(value_str)
+                        # Преобразуем float в два uint16 регистра
+                        float_bytes = struct.pack('>f', value)
+                        reg1, reg2 = struct.unpack('>HH', float_bytes)
+                        address = register_mapping[row]
+                        # Используем 0x10 для записи двух регистров
+                        response = self.modbus.client.write_registers(
+                            address=address,
+                            values=[reg1, reg2],
+                            slave=1
+                        )
+                        if response.isError():
+                            raise ModbusException(f"Ошибка записи в регистры {hex(address)}-{hex(address + 1)}")
+                        print(f"Записано в регистр {hex(address)}: {reg1}")
+                        print(f"Записано в регистр {hex(address + 1)}: {reg2}")
+                    else:
+                        # Для uint16 значений
+                        value = int(float(value_str))  # Преобразуем в int, если есть дробная часть
+                        if not 0 <= value <= 65535:
+                            raise ValueError(f"Значение {value} вне диапазона uint16 (0-65535)")
+                        address = register_mapping[row]
+                        # Используем 0x06 для записи одного регистра
+                        response = self.modbus.client.write_register(
+                            address=address,
+                            value=value,
+                            slave=1
+                        )
+                        if response.isError():
+                            raise ModbusException(f"Ошибка записи в регистр {hex(address)}")
+                        print(f"Записано в регистр {hex(address)}: {value}")
+
+                except ValueError as e:
+                    print(f"Ошибка: Значение '{value_str}' в строке {row} не является числом или вне диапазона: {e}")
+                except ModbusException as e:
+                    print(f"Ошибка Modbus при записи в строку {row}: {e}")
+
+        except Exception as e:
+            print(f"Ошибка при записи данных: {str(e)}")
+        finally:
+            self.modbus.client.close()

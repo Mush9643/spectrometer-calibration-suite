@@ -1,3 +1,4 @@
+from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QTableWidget, QTableWidgetItem, QLabel, QPushButton, \
     QApplication
 from PyQt6.QtCore import Qt
@@ -12,6 +13,7 @@ class SideWindow(QWidget):
         self.modbus = modbus_client  # Сохраняем клиент Modbus
         self.main_window = main_window
         self.setWindowTitle("Дополнительное окно")
+        self.setWindowIcon(QIcon("M-Photoroom.png"))
 
         # Получаем размеры главного окна
         main_x = main_geometry.x()
@@ -39,7 +41,7 @@ class SideWindow(QWidget):
                     /* Общий стиль окна: белый фон */
                     QWidget {
                         background-color: #FFFFFF;  /* Белый фон, как в основном окне */
-                        font-family: 'Arial', sans-serif;  /* Простой шрифт */
+                        font-family: 'Montserrat', sans-serif;  /* Простой шрифт */
                     }
 
                     /* Заголовок окна: черный текст, без нижней границы */
@@ -53,9 +55,8 @@ class SideWindow(QWidget):
                     /* Центральная панель (таблица), имитирующая дисплей детектора */
                     QTableWidget {
                         background-color: #D3D3D3;  /* Светло-серая заливка, как у LCD */
-                        border: 2px solid #C0392B;  /* Красная рамка, как у кнопок основного окна */
-                        border-radius: 5px;  /* Скругленные углы */
-                        font-family: 'Arial', sans-serif;
+                        border: 5px solid #C0392B;  /* Красная рамка, как у кнопок основного окна */
+                        font-family: 'Montserrat', sans-serif;
                         font-size: 12px;
                         color: #000000;  /* Черный текст */
                     }
@@ -89,14 +90,14 @@ class SideWindow(QWidget):
 
                     /* Кнопки: красный фон, белый текст, как в основном окне */
                     QPushButton#fillButton, QPushButton#updateButton, QPushButton#outputButton {
-                        background-color: #C0392B;  /* Красный фон, как у кнопок основного окна */
+                        background-color: #4A4A4A;  /* Красный фон, как у кнопок основного окна */
                         color: #FFFFFF;  /* Белый текст */
                         border: none;
                         border-radius: 5px;  /* Скругленные углы */
                         padding: 10px 20px;
                         font-size: 12px;
                         font-weight: 600;
-                        min-width: 120px;
+                        min-width: 80px;
                     }
                     QPushButton#fillButton:hover, QPushButton#updateButton:hover, QPushButton#outputButton:hover {
                         background-color: #D35400;  /* Чуть светлее при наведении */
@@ -111,7 +112,7 @@ class SideWindow(QWidget):
         side_layout.setContentsMargins(15, 15, 15, 15)
         side_layout.setSpacing(15)
 
-        # Добавляем заголовок (будем обновлять после чтения серийного номера)
+        # Добавляем заголовок
         self.title_label = QLabel("Детектор")
         self.title_label.setObjectName("titleLabel")
         side_layout.addWidget(self.title_label)
@@ -144,7 +145,6 @@ class SideWindow(QWidget):
             ("Pn (850 кэВ)", ""),
             ("Pn (1500 кэВ)", ""),
             ("Pn (2515 кэВ)", ""),
-
         ]
 
         # Заполняем таблицу
@@ -164,27 +164,36 @@ class SideWindow(QWidget):
         # Добавляем таблицу в layout
         side_layout.addWidget(self.side_table)
 
-        # Добавляем кнопку "Заполнить значения"
+        # Создаём кнопки
         fill_button = QPushButton("Вывод")
         fill_button.setObjectName("fillButton")
         fill_button.clicked.connect(self.fill_values)
+
+        output_button = QPushButton("Ввод")
+        output_button.setObjectName("outputButton")
 
         update_button = QPushButton("Обновить")
         update_button.setObjectName("updateButton")
         update_button.clicked.connect(self.update_from_report)
 
-        output_button = QPushButton("Ввод")
-        output_button.setObjectName("outputButton")
+        # Компоновка для кнопок "Вывод" и "Ввод" (первый ряд)
+        top_button_layout = QHBoxLayout()
+        top_button_layout.addStretch()  # Растяжка слева
+        top_button_layout.addWidget(fill_button)  # Кнопка "Вывод"
+        top_button_layout.addWidget(output_button)  # Кнопка "Ввод"
+        top_button_layout.addStretch()  # Растяжка справа
 
-        # Горизонтальный layout для кнопок
-        button_layout = QHBoxLayout()
-        button_layout.addStretch()
-        button_layout.addWidget(fill_button)
-        button_layout.addWidget(update_button)
-        button_layout.addWidget(output_button)
-        button_layout.addStretch()
+        # Компоновка для кнопки "Обновить" (второй ряд)
+        bottom_button_layout = QHBoxLayout()
+        bottom_button_layout.addStretch()  # Растяжка слева
+        bottom_button_layout.addWidget(update_button)  # Кнопка "Обновить"
+        bottom_button_layout.addStretch()  # Растяжка справа
 
-        side_layout.addLayout(button_layout)
+        # Добавляем оба ряда кнопок в side_layout
+        side_layout.addLayout(top_button_layout)
+        side_layout.addLayout(bottom_button_layout)
+
+        # Устанавливаем side_layout как основной layout окна
         self.setLayout(side_layout)
 
         # Читаем серийный номер при открытии окна
@@ -291,22 +300,6 @@ class SideWindow(QWidget):
             value_501D = registers[29]  # 0x501D (индекс 29: 0x501D - 0x5000 = 29)
             value_5022 = registers[34]  # 0x5022 (индекс 34: 0x5022 - 0x5000 = 34)
 
-            # Выводим значения для отладки
-            print(f"Значение из регистров 0x5000-0x5001 (float): {value_5000_float}")
-            print(f"Значение из регистров 0x5002-0x5003 (float): {value_5002_float}")
-            print(f"Значение из регистров 0x5004-0x5005 (float): {value_5004_float}")
-            print(f"Значение из регистров 0x5006-0x5007 (float): {value_5006_float}")
-            print(f"Значение из регистров 0x500B-0x500C (float): {value_500B_float}")
-            print(f"Значение из регистров 0x500D-0x500E (float): {value_500D_float}")
-            print(f"Значение из регистра 0x500F: {value_500F}")
-            print(f"Значение из регистра 0x5010: {value_5010}")
-            print(f"Значение из регистра 0x5011: {value_5011}")
-            print(f"Значение из регистра 0x5012: {value_5012}")
-            print(f"Значение из регистра 0x5013: {value_5013}")
-            print(f"Значение из регистра 0x5018: {value_5018}")
-            print(f"Значение из регистра 0x501D: {value_501D}")
-            print(f"Значение из регистра 0x5022: {value_5022}")
-
             # Сопоставление строк и значений
             row_values = {
                 0: value_5004_float,  # 0x5004-0x5005 a(Alfa)
@@ -335,8 +328,8 @@ class SideWindow(QWidget):
                         item = QTableWidgetItem(f"{row_values[row]:.2f}")
                     else:
                         item = QTableWidgetItem(str(row_values[row]))
-                else:
-                    item = QTableWidgetItem(str(row + 1))  # Оставляем числа от 1 до 24 для остальных строк
+
+
 
                 self.side_table.setItem(row, 1, item)  # Столбец 'Значение' (индекс 1)
 
