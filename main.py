@@ -172,6 +172,80 @@ class ToggleSwitch(QWidget):
         self.setChecked(not self._checked)
 
 ##########################################################################
+# Класс Мелкого окна на вкладке menu
+##########################################################################
+class SpectrumGraphWindow(QMainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Спектр")
+        self.setWindowIcon(QIcon("M-Photoroom.png"))
+        self.resize(800, 600)
+
+        # Основной виджет и макет
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+        layout = QVBoxLayout(central_widget)
+
+        # Создание пустого графика
+        self.chart = QChart()
+        self.chart.setTitle("Спектр")
+        title_font = QFont("Montserrat", 14, QFont.Weight.Bold)
+        self.chart.setTitleFont(title_font)
+        self.chart.setTitleBrush(QColor("#000000"))
+
+        # Оси графика
+        self.axis_x = QValueAxis()
+        self.axis_x.setTitleText("Каналы")
+        self.axis_x.setRange(0, 1023)
+        axis_font = QFont("Montserrat", 12)
+        self.axis_x.setLabelsFont(axis_font)
+        self.axis_x.setTitleFont(axis_font)
+        self.axis_x.setTitleBrush(QColor("#000000"))
+        self.axis_x.setLabelsColor(QColor("#000000"))
+        self.axis_x.setGridLineColor(QColor("#F5F5F5"))
+
+        self.axis_y = QValueAxis()
+        self.axis_y.setTitleText("Импульсы")
+        self.axis_y.setRange(0, 100)  # Устанавливаем начальный диапазон
+        self.axis_y.setLabelsFont(axis_font)
+        self.axis_y.setTitleFont(axis_font)
+        self.axis_y.setTitleBrush(QColor("#000000"))
+        self.axis_y.setLabelsColor(QColor("#000000"))
+        self.axis_y.setGridLineColor(QColor("#F5F5F5"))
+
+        self.chart.addAxis(self.axis_x, Qt.AlignmentFlag.AlignBottom)
+        self.chart.addAxis(self.axis_y, Qt.AlignmentFlag.AlignLeft)
+
+        # Создание ChartView
+        self.chart_view = QChartView(self.chart)
+        self.chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
+        layout.addWidget(self.chart_view)
+
+        # Кнопка "Экспорт в Excel"
+        self.export_button = QPushButton("Экспорт в Excel")
+        self.export_button.setObjectName("exportButton")
+        self.export_button.clicked.connect(self.export_to_excel)
+        button_layout = QHBoxLayout()
+        button_layout.addStretch()
+        button_layout.addWidget(self.export_button)
+        button_layout.addStretch()
+        layout.addLayout(button_layout)
+
+    def export_to_excel(self):
+        """Экспортирует данные графика в Excel (пока пустой)."""
+        try:
+            data = {
+                "Точка спектра": list(range(1024)),
+                "Значение": [0] * 1024  # Пустые данные
+            }
+            df = pd.DataFrame(data)
+            file_name = "spectrum_data.xlsx"
+            df.to_excel(file_name, index=False)
+            QMessageBox.information(self, "Информация", f"Данные успешно экспортированы в {file_name}")
+        except Exception as e:
+            QMessageBox.critical(self, "Ошибка", f"Ошибка при экспорте данных: {str(e)}")
+
+##########################################################################
 # Класс основного окна приложения
 ##########################################################################
 
@@ -424,6 +498,68 @@ class SpectrumWindow(QMainWindow):
             QPushButton#assemblyReportButton:pressed {
                 background-color: #922B21; /* Ещё более тёмный красный при нажатии */
             }
+            /* Стили для кнопок на вкладке Report */
+            QPushButton#reportButton {
+                background-color: #C0392B; /* Красный фон */
+                color: #FFFFFF; /* Белый текст */
+                border: none;
+                border-radius: 5px;
+                padding: 10px 30px;
+                font-size: 12px;
+                font-weight: 600; /* Montserrat SemiBold */
+            }
+            QPushButton#reportButton:hover {
+                background-color: #A93226; /* Более тёмный красный при наведении */
+            }
+            QPushButton#reportButton:pressed {
+                background-color: #922B21; /* Ещё более тёмный красный при нажатии */
+            }
+
+            QPushButton#sideWindowButton {
+                background-color: #C0392B; /* Красный фон (изменяем с тёмно-серого на красный для единообразия) */
+                color: #FFFFFF; /* Белый текст */
+                border: none;
+                border-radius: 5px;
+                padding: 10px 30px;
+                font-size: 12px;
+                font-weight: 600; /* Montserrat SemiBold */
+            }
+            QPushButton#sideWindowButton:hover {
+                background-color: #A93226; /* Более тёмный красный при наведении */
+            }
+            QPushButton#sideWindowButton:pressed {
+                background-color: #922B21; /* Ещё более тёмный красный при нажатии */
+            }
+            QPushButton#sideWindowButton {
+                background-color: #C0392B; /* Красный фон (изменяем с тёмно-серого на красный для единообразия) */
+                color: #FFFFFF; /* Белый текст */
+                border: none;
+                border-radius: 5px;
+                padding: 10px 30px;
+                font-size: 12px;
+                font-weight: 600; /* Montserrat SemiBold */
+            }
+            QPushButton#sideWindowButton:hover {
+                background-color: #A93226; /* Более тёмный красный при наведении */
+            }
+            QPushButton#sideWindowButton:pressed {
+                background-color: #922B21; /* Ещё более тёмный красный при нажатии */
+            }
+            QPushButton#spectrumButton {
+                background-color: #C0392B; /* Красный фон */
+                color: #FFFFFF; /* Белый текст */
+                border: none;
+                border-radius: 5px;
+                padding: 8px 16px;
+                font-size: 12px;
+                font-weight: 600; /* Montserrat SemiBold */
+            }
+            QPushButton#spectrumButton:hover {
+                background-color: #A93226; /* Более тёмный красный при наведении */
+            }
+            QPushButton#spectrumButton:pressed {
+                background-color: #922B21; /* Ещё более тёмный красный при нажатии */
+            }
         """)
 
         # Настройка окна
@@ -522,11 +658,11 @@ class SpectrumWindow(QMainWindow):
         self.auto_load_button.clicked.connect(self.auto_load_files)  # Подключаем метод для авто загрузки
         menu_layout.addWidget(self.auto_load_button)
 
-        # Кнопка "Экспорт в Excel"
-        self.export_button = QPushButton("Экспорт в Excel")
-        self.export_button.setObjectName("exportButton")  # Для специфического стиля
-        self.export_button.clicked.connect(self.export_to_excel)
-        menu_layout.addWidget(self.export_button)
+        # Кнопка "Спектр"
+        self.spectrum_button = QPushButton("Спектр")
+        self.spectrum_button.setObjectName("spectrumButton")  # Для стилизации
+        self.spectrum_button.clicked.connect(self.open_spectrum_window)  # Подключаем метод открытия окна
+        menu_layout.addWidget(self.spectrum_button)
 
         self.tab0.setLayout(menu_layout)
 
@@ -989,6 +1125,11 @@ class SpectrumWindow(QMainWindow):
     ##########################################################################
     # Методы всякого разного
     ##########################################################################
+
+    def open_spectrum_window(self):
+        """Открывает окно с графиком спектра."""
+        self.spectrum_window = SpectrumGraphWindow(self)
+        self.spectrum_window.show()
 
     def open_report_file(self, item):
         """Открывает выбранный файл Excel."""

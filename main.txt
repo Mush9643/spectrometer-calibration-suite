@@ -172,6 +172,80 @@ class ToggleSwitch(QWidget):
         self.setChecked(not self._checked)
 
 ##########################################################################
+# Класс Мелкого окна на вкладке menu
+##########################################################################
+class SpectrumGraphWindow(QMainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Спектр")
+        self.setWindowIcon(QIcon("M-Photoroom.png"))
+        self.resize(800, 600)
+
+        # Основной виджет и макет
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+        layout = QVBoxLayout(central_widget)
+
+        # Создание пустого графика
+        self.chart = QChart()
+        self.chart.setTitle("Спектр")
+        title_font = QFont("Montserrat", 14, QFont.Weight.Bold)
+        self.chart.setTitleFont(title_font)
+        self.chart.setTitleBrush(QColor("#000000"))
+
+        # Оси графика
+        self.axis_x = QValueAxis()
+        self.axis_x.setTitleText("Каналы")
+        self.axis_x.setRange(0, 1023)
+        axis_font = QFont("Montserrat", 12)
+        self.axis_x.setLabelsFont(axis_font)
+        self.axis_x.setTitleFont(axis_font)
+        self.axis_x.setTitleBrush(QColor("#000000"))
+        self.axis_x.setLabelsColor(QColor("#000000"))
+        self.axis_x.setGridLineColor(QColor("#F5F5F5"))
+
+        self.axis_y = QValueAxis()
+        self.axis_y.setTitleText("Импульсы")
+        self.axis_y.setRange(0, 100)  # Устанавливаем начальный диапазон
+        self.axis_y.setLabelsFont(axis_font)
+        self.axis_y.setTitleFont(axis_font)
+        self.axis_y.setTitleBrush(QColor("#000000"))
+        self.axis_y.setLabelsColor(QColor("#000000"))
+        self.axis_y.setGridLineColor(QColor("#F5F5F5"))
+
+        self.chart.addAxis(self.axis_x, Qt.AlignmentFlag.AlignBottom)
+        self.chart.addAxis(self.axis_y, Qt.AlignmentFlag.AlignLeft)
+
+        # Создание ChartView
+        self.chart_view = QChartView(self.chart)
+        self.chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
+        layout.addWidget(self.chart_view)
+
+        # Кнопка "Экспорт в Excel"
+        self.export_button = QPushButton("Экспорт в Excel")
+        self.export_button.setObjectName("exportButton")
+        self.export_button.clicked.connect(self.export_to_excel)
+        button_layout = QHBoxLayout()
+        button_layout.addStretch()
+        button_layout.addWidget(self.export_button)
+        button_layout.addStretch()
+        layout.addLayout(button_layout)
+
+    def export_to_excel(self):
+        """Экспортирует данные графика в Excel (пока пустой)."""
+        try:
+            data = {
+                "Точка спектра": list(range(1024)),
+                "Значение": [0] * 1024  # Пустые данные
+            }
+            df = pd.DataFrame(data)
+            file_name = "spectrum_data.xlsx"
+            df.to_excel(file_name, index=False)
+            QMessageBox.information(self, "Информация", f"Данные успешно экспортированы в {file_name}")
+        except Exception as e:
+            QMessageBox.critical(self, "Ошибка", f"Ошибка при экспорте данных: {str(e)}")
+
+##########################################################################
 # Класс основного окна приложения
 ##########################################################################
 
@@ -372,6 +446,120 @@ class SpectrumWindow(QMainWindow):
             QPushButton#sideWindowButton:pressed {
                 background-color: #3A3A3A; /* Темнее при нажатии */
             }
+                /* Заголовок вкладки Combined Report */
+            QLabel#tabTitle {
+                color: #C0392B; /* Красный цвет, соответствующий брендингу */
+                font-family: 'Montserrat', sans-serif;
+                font-size: 14px;
+                font-weight: 600; /* Montserrat SemiBold */
+                padding: 10px;
+            }
+
+            /* Улучшенные стили для QListWidget с узорами для доступности */
+            QListWidget#reportsList::item {
+                padding: 5px;
+            }
+            QListWidget#reportsList::item:selected {
+                background-color: #C0392B; /* Красный фон для выбранного элемента */
+                color: #FFFFFF; /* Белый текст */
+            }
+            /* Цветовая кодировка с узорами для доступности */
+            QListWidget#reportsList::item[category="spectral"] {
+                background-color: #D6BCFA; /* Фиолетовый для спектральных данных */
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #D6BCFA, stop:1 #E9D8FD); /* Градиент с узором */
+            }
+            QListWidget#reportsList::item[category="report"] {
+                background-color: #BBF7D0; /* Зелёный для отчётов */
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #BBF7D0, stop:1 #DCFCE7); /* Градиент с узором */
+            }
+
+            /* Стиль для метки статуса */
+            QLabel#reportsStatusLabel {
+                color: #4A4A4A; /* Тёмно-серый текст */
+                font-size: 12px;
+                padding: 5px;
+                background-color: #F5F5F5; /* Светло-серый фон */
+                border-radius: 5px;
+            }
+
+            /* Стиль для кнопки "Сборочный отчёт" */
+            QPushButton#assemblyReportButton {
+                background-color: #C0392B; /* Красный фон */
+                color: #FFFFFF; /* Белый текст */
+                border: none;
+                border-radius: 5px;
+                padding: 8px 16px;
+                font-size: 12px;
+                font-weight: 600; /* Montserrat SemiBold */
+            }
+            QPushButton#assemblyReportButton:hover {
+                background-color: #A93226; /* Более тёмный красный при наведении */
+            }
+            QPushButton#assemblyReportButton:pressed {
+                background-color: #922B21; /* Ещё более тёмный красный при нажатии */
+            }
+            /* Стили для кнопок на вкладке Report */
+            QPushButton#reportButton {
+                background-color: #C0392B; /* Красный фон */
+                color: #FFFFFF; /* Белый текст */
+                border: none;
+                border-radius: 5px;
+                padding: 10px 30px;
+                font-size: 12px;
+                font-weight: 600; /* Montserrat SemiBold */
+            }
+            QPushButton#reportButton:hover {
+                background-color: #A93226; /* Более тёмный красный при наведении */
+            }
+            QPushButton#reportButton:pressed {
+                background-color: #922B21; /* Ещё более тёмный красный при нажатии */
+            }
+
+            QPushButton#sideWindowButton {
+                background-color: #C0392B; /* Красный фон (изменяем с тёмно-серого на красный для единообразия) */
+                color: #FFFFFF; /* Белый текст */
+                border: none;
+                border-radius: 5px;
+                padding: 10px 30px;
+                font-size: 12px;
+                font-weight: 600; /* Montserrat SemiBold */
+            }
+            QPushButton#sideWindowButton:hover {
+                background-color: #A93226; /* Более тёмный красный при наведении */
+            }
+            QPushButton#sideWindowButton:pressed {
+                background-color: #922B21; /* Ещё более тёмный красный при нажатии */
+            }
+            QPushButton#sideWindowButton {
+                background-color: #C0392B; /* Красный фон (изменяем с тёмно-серого на красный для единообразия) */
+                color: #FFFFFF; /* Белый текст */
+                border: none;
+                border-radius: 5px;
+                padding: 10px 30px;
+                font-size: 12px;
+                font-weight: 600; /* Montserrat SemiBold */
+            }
+            QPushButton#sideWindowButton:hover {
+                background-color: #A93226; /* Более тёмный красный при наведении */
+            }
+            QPushButton#sideWindowButton:pressed {
+                background-color: #922B21; /* Ещё более тёмный красный при нажатии */
+            }
+            QPushButton#spectrumButton {
+                background-color: #C0392B; /* Красный фон */
+                color: #FFFFFF; /* Белый текст */
+                border: none;
+                border-radius: 5px;
+                padding: 8px 16px;
+                font-size: 12px;
+                font-weight: 600; /* Montserrat SemiBold */
+            }
+            QPushButton#spectrumButton:hover {
+                background-color: #A93226; /* Более тёмный красный при наведении */
+            }
+            QPushButton#spectrumButton:pressed {
+                background-color: #922B21; /* Ещё более тёмный красный при нажатии */
+            }
         """)
 
         # Настройка окна
@@ -470,11 +658,11 @@ class SpectrumWindow(QMainWindow):
         self.auto_load_button.clicked.connect(self.auto_load_files)  # Подключаем метод для авто загрузки
         menu_layout.addWidget(self.auto_load_button)
 
-        # Кнопка "Экспорт в Excel"
-        self.export_button = QPushButton("Экспорт в Excel")
-        self.export_button.setObjectName("exportButton")  # Для специфического стиля
-        self.export_button.clicked.connect(self.export_to_excel)
-        menu_layout.addWidget(self.export_button)
+        # Кнопка "Спектр"
+        self.spectrum_button = QPushButton("Спектр")
+        self.spectrum_button.setObjectName("spectrumButton")  # Для стилизации
+        self.spectrum_button.clicked.connect(self.open_spectrum_window)  # Подключаем метод открытия окна
+        menu_layout.addWidget(self.spectrum_button)
 
         self.tab0.setLayout(menu_layout)
 
@@ -860,35 +1048,67 @@ class SpectrumWindow(QMainWindow):
         self.tab3 = QWidget()
         self.tabs.addTab(self.tab3, "Combined Report")
 
+        # Добавляем заголовок вкладки
+        self.combined_report_title = QLabel("Combined Report")
+        self.combined_report_title.setObjectName("tabTitle")
+        self.combined_report_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # Список файлов отчётов
         self.reports_list = QListWidget()
+        self.reports_list.setObjectName("reportsList")
 
+        # Устанавливаем цветовую кодировку с категориями
+        def update_list_item_styles():
+            for i in range(self.reports_list.count()):
+                item = self.reports_list.item(i)
+                file_name = item.text().lower()
+                if "отчёт" in file_name:
+                    item.setData(Qt.ItemDataRole.UserRole, "report")  # Категория "report"
+                else:
+                    item.setData(Qt.ItemDataRole.UserRole, "spectral")  # Категория "spectral"
+
+        self.reports_list.itemChanged.connect(update_list_item_styles)
+
+        # Метка статуса
         self.reports_status_label = QLabel("Проверка наличия папки 'Отчёты'...")
+        self.reports_status_label.setObjectName("reportsStatusLabel")
+        self.reports_status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
+        # Кнопка "Сборочный отчёт"
         self.assembly_report_button = QPushButton("Сборочный отчёт")
+        self.assembly_report_button.setObjectName("assemblyReportButton")
         self.assembly_report_button.clicked.connect(self.create_assembly_report)
         self.assembly_report_button.setFixedWidth(200)
+        self.assembly_report_button.setToolTip("Создать сборочный отчёт из выбранных файлов")
 
+        # Макет для метки статуса
         status_layout = QHBoxLayout()
-        status_layout.addStretch()  # Растяжка слева для центрирования
+        status_layout.addStretch()
         status_layout.addWidget(self.reports_status_label)
-        status_layout.addStretch()  # Растяжка справа для центрирования
+        status_layout.addStretch()
 
+        # Макет для кнопки
         button_layout = QHBoxLayout()
         button_layout.addStretch()
         button_layout.addWidget(self.assembly_report_button)
         button_layout.addStretch()
 
+        # Основной макет вкладки
         combined_layout = QVBoxLayout()
+        combined_layout.addWidget(self.combined_report_title)  # Добавляем заголовок
         combined_layout.addLayout(status_layout)
         combined_layout.addWidget(self.reports_list)
         combined_layout.addLayout(button_layout)
         combined_layout.setSpacing(10)
-        combined_layout.setContentsMargins(20, 20, 20, 20)  # Увеличенные отступы
+        combined_layout.setContentsMargins(20, 20, 20, 20)
 
         self.tab3.setLayout(combined_layout)
 
         self.tabs.currentChanged.connect(self.on_tab_changed)
         self.reports_list.itemDoubleClicked.connect(self.open_report_file)
+
+        # Обновляем стили списка после его заполнения
+        self.reports_list.itemChanged.connect(update_list_item_styles)
 
         # =========================================================================
         # Блок 9: Добавление кнопки "Калибровка"
@@ -905,6 +1125,11 @@ class SpectrumWindow(QMainWindow):
     ##########################################################################
     # Методы всякого разного
     ##########################################################################
+
+    def open_spectrum_window(self):
+        """Открывает окно с графиком спектра."""
+        self.spectrum_window = SpectrumGraphWindow(self)
+        self.spectrum_window.show()
 
     def open_report_file(self, item):
         """Открывает выбранный файл Excel."""
@@ -935,7 +1160,11 @@ class SpectrumWindow(QMainWindow):
             self.reports_status_label.setText(f"Ошибка при создании папки: {str(e)}")
 
     def create_assembly_report(self):
-        """Создает сборочный отчёт из файлов, отображаемых в списке Combined Report."""
+        """Создает сборочный отчёт с одним столбцом 'Параметр' и значениями по папкам."""
+        # Показываем, что процесс начался
+        self.reports_status_label.setText("Создание сборочного отчёта...")
+        QApplication.processEvents()  # Обновляем интерфейс
+
         assembly_reports_dir = Path("Сборочные отчёты")
         try:
             if not assembly_reports_dir.exists():
@@ -950,8 +1179,36 @@ class SpectrumWindow(QMainWindow):
             self.reports_status_label.setText("Нет файлов для создания сборочного отчёта")
             return
 
-        combined_data = []
+        # Список параметров в нужном порядке
+        parameters_order = [
+            "Имя папки",
+            "a (Alfa)",
+            "b (Alfa)",
+            "НУД α, № канала (2700)",
+            "ВУД ROI 3, № канала (4385.6)",
+            "НУД ROI 2, № канала (5687.5)",
+            "НУД ROI 6, № канала (6192.35)",
+            "НУД ROI 4, № канала (6337.7)",
+            "НУД ROI 5, № канала (8044.6)",
+            "K(Po218)",
+            "k1p9",
+            "Пик Am241",
+            "НУД β",
+            "ВУД β",
+            "k1c0",
+            "a (Beta)",
+            "b (Beta)",
+            "Pn (80 кэВ)",
+            "Pn (146 кэВ)",
+            "Pn (400 кэВ)",
+            "Pn (850 кэВ)",
+            "Pn (1500 кэВ)",
+            "Pn (2515 кэВ)"
+        ]
+
+        # Чтение данных и создание словаря с данными по папкам
         reports_dir = Path("Отчёты")
+        data_by_folder = {}
         for file_name in displayed_files:
             file_path = reports_dir / file_name
             if not file_path.exists():
@@ -960,116 +1217,85 @@ class SpectrumWindow(QMainWindow):
 
             try:
                 df = pd.read_excel(file_path)
-                # Проверяем, что файл имеет правильную структуру: два столбца "Параметр" и "Значение"
                 if df.shape[1] != 2 or list(df.columns) != ["Параметр", "Значение"]:
                     self.reports_status_label.setText(f"Файл {file_name} имеет неверную структуру")
                     return
-                df.reset_index(drop=True, inplace=True)
-                combined_data.append(df)
+                folder_name = df[df["Параметр"] == "Имя папки"]["Значение"].iloc[0]
+                data_dict = dict(zip(df["Параметр"], df["Значение"]))
+                data_by_folder[folder_name] = data_dict
             except Exception as e:
                 self.reports_status_label.setText(f"Ошибка при чтении файла {file_name}: {str(e)}")
                 continue
 
-        if not combined_data:
+        if not data_by_folder:
             self.reports_status_label.setText("Не удалось прочитать ни один файл")
             return
 
-        try:
-            # Объединяем данные в ширину (по столбцам)
-            combined_df = pd.concat(combined_data, axis=1)
-            date_str = datetime.now().strftime("%Y-%m-%d")
-            output_file = assembly_reports_dir / f"Сборочный отчёт_{date_str}.xlsx"
+        # Создание итогового DataFrame
+        combined_df = pd.DataFrame({"Параметр": parameters_order})
+        for folder_name, data_dict in data_by_folder.items():
+            values = [data_dict.get(param, "Отсутствует") for param in parameters_order]
+            combined_df[folder_name] = values
 
-            combined_df.to_excel(output_file, index=False)
+        # Сохранение в Excel
+        date_str = datetime.now().strftime("%Y-%m-%d")
+        output_file = assembly_reports_dir / f"Сборочный отчёт_{date_str}.xlsx"
+        combined_df.to_excel(output_file, index=False)
 
-            # Форматирование с помощью openpyxl
-            workbook = load_workbook(output_file)
-            worksheet = workbook.active
+        # Форматирование с помощью openpyxl
+        workbook = load_workbook(output_file)
+        worksheet = workbook.active
 
-            # Определяем стили заливки и границ
-            from openpyxl.styles import PatternFill, Border, Side
-            header_fill = PatternFill(start_color="D7CCC8", end_color="D7CCC8",
-                                      fill_type="solid")  # Тёмно-серый для заголовка
-            data_fill = PatternFill(start_color="E6EAD6", end_color="E6EAD6",
-                                    fill_type="solid")  # Светло-серый для данных
-            thin_border = Border(
-                left=Side(style='thin', color='000000'),
-                right=Side(style='thin', color='000000'),
-                top=Side(style='thin', color='000000'),
-                bottom=Side(style='thin', color='000000')
+        header_fill = PatternFill(start_color="D7CCC8", end_color="D7CCC8", fill_type="solid")
+        data_fill = PatternFill(start_color="E6EAD6", end_color="E6EAD6", fill_type="solid")
+        thin_border = Border(
+            left=Side(style='thin', color='000000'),
+            right=Side(style='thin', color='000000'),
+            top=Side(style='thin', color='000000'),
+            bottom=Side(style='thin', color='000000')
+        )
+        thick_border = Border(right=Side(style='medium', color='000000'))
+
+        for cell in worksheet[1]:
+            cell.fill = header_fill
+
+        for row in range(2, worksheet.max_row + 1):
+            for cell in worksheet[row]:
+                cell.fill = data_fill
+
+        for row in worksheet.rows:
+            for cell in row:
+                cell.border = thin_border
+
+        for column in worksheet.columns:
+            max_length = 0
+            column_letter = column[0].column_letter
+            for cell in column:
+                try:
+                    if cell.value:
+                        max_length = max(max_length, len(str(cell.value)))
+                except:
+                    pass
+            adjusted_width = max_length + 2
+            worksheet.column_dimensions[column_letter].width = adjusted_width
+
+        for row in range(1, worksheet.max_row + 1):
+            cell = worksheet.cell(row=row, column=1)
+            new_border = Border(
+                left=cell.border.left,
+                right=thick_border.right,
+                top=cell.border.top,
+                bottom=cell.border.bottom
             )
-            thick_border = Border(right=Side(style='medium', color='000000'))
+            cell.border = new_border
 
-            # Применяем заливку к заголовку (первая строка)
-            for cell in worksheet[1]:
-                cell.fill = header_fill
-
-            # Применяем заливку к данным (все строки, начиная со второй)
-            for row in range(2, worksheet.max_row + 1):
-                for cell in worksheet[row]:
-                    cell.fill = data_fill
-
-            # Применяем тонкие границы ко всем ячейкам
-            for row in worksheet.rows:
-                for cell in row:
-                    cell.border = thin_border
-
-            # Автоматическая подгонка размеров ячеек
-            for column in worksheet.columns:
-                max_length = 0
-                column_letter = column[0].column_letter
-                for cell in column:
-                    try:
-                        if cell.value:
-                            max_length = max(max_length, len(str(cell.value)))
-                    except:
-                        pass
-                adjusted_width = max_length + 2
-                worksheet.column_dimensions[column_letter].width = adjusted_width
-
-            for row in worksheet.rows:
-                max_height = 0
-                for cell in row:
-                    try:
-                        if cell.value:
-                            lines = str(cell.value).count('\n') + 1
-                            max_height = max(max_height, lines)
-                    except:
-                        pass
-                adjusted_height = max_height * 15
-                worksheet.row_dimensions[row[0].row].height = adjusted_height
-
-            # Добавляем толстые рамки для разделения отчётов
-            columns_per_report = [df.shape[1] for df in combined_data]
-            current_column = 1
-
-            for cols in columns_per_report:
-                if current_column + cols - 1 >= worksheet.max_column:
-                    break
-
-                rightmost_column = current_column + cols - 1
-                for row in range(1, worksheet.max_row + 1):
-                    cell = worksheet.cell(row=row, column=rightmost_column)
-                    # Обновляем только правую границу, сохраняя остальные тонкие
-                    new_border = Border(
-                        left=cell.border.left,
-                        right=thick_border.right,
-                        top=cell.border.top,
-                        bottom=cell.border.bottom
-                    )
-                    cell.border = new_border
-
-                current_column += cols
-
-            workbook.save(output_file)
-            self.reports_status_label.setText(f"Сборочный отчёт создан: {output_file.name}")
-            if os.name == "nt":
-                os.startfile(output_file)
-            else:
-                import subprocess
-                subprocess.run(["xdg-open", str(output_file)])
-        except Exception as e:
-            self.reports_status_label.setText(f"Ошибка при создании сборочного отчёта: {str(e)}")
+        workbook.save(output_file)
+        self.reports_status_label.setText(f"Сборочный отчёт создан: {output_file.name}")
+        if os.name == "nt":
+            os.startfile(output_file)
+        else:
+            import subprocess
+            subprocess.run(["xdg-open", str(output_file)])
 
     def update_reports_list(self, index):
         """Обновляет список файлов Excel на вкладке Combined Report при переключении вкладок."""
