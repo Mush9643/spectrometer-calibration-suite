@@ -425,15 +425,14 @@ class SideWindow(QWidget):
                         print(f"Записано в регистр {hex(address)}: {reg1}")
                         print(f"Записано в регистр {hex(address + 1)}: {reg2}")
                     else:
-                        # Для uint16 значений
-                        value = int(float(value_str))  # Преобразуем в int, если есть дробная часть
+                        # Для uint16 используем write_registers вместо write_register
+                        value = int(float(value_str))
                         if not 0 <= value <= 65535:
                             raise ValueError(f"Значение {value} вне диапазона uint16 (0-65535)")
                         address = register_mapping[row]
-                        # Используем 0x06 для записи одного регистра
-                        response = self.modbus.client.write_register(
+                        response = self.modbus.client.write_registers(
                             address=address,
-                            value=value,
+                            values=[value],
                             slave=1
                         )
                         if response.isError():
