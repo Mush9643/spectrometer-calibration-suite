@@ -236,7 +236,7 @@ class CalibrationWindow(QDialog):
         super().__init__(parent)
         self.pn_values = None
         self.setWindowTitle("Калибровка Gamma")
-        self.setGeometry(100, 100, 800, 600)
+        self.setFixedSize(700, 500)
 
         try:
             # Создаём график

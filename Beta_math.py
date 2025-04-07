@@ -102,7 +102,7 @@ def update_calibration_button_state(parent):
 def show_calibration_dialog(parent):
     dialog = QDialog(parent)
     dialog.setWindowTitle("Калибровка Beta")
-    dialog.resize(972, 540)  # Увеличиваем ширину на 20%
+    dialog.resize(700, 500)
 
     # Стиль для диалогового окна
     dialog.setStyleSheet("""

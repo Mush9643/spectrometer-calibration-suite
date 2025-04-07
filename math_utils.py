@@ -1,7 +1,8 @@
 import numpy as np
 from PyQt6.QtCharts import QScatterSeries, QLineSeries, QChart, QValueAxis, QChartView
 from PyQt6.QtGui import QPainter, QColor
-from PyQt6.QtWidgets import QPushButton, QVBoxLayout, QWidget, QDialog, QLabel, QLineEdit, QFormLayout, QHBoxLayout
+from PyQt6.QtWidgets import QPushButton, QVBoxLayout, QWidget, QDialog, QLabel, QLineEdit, QFormLayout, QHBoxLayout, \
+    QSizePolicy
 from PyQt6.QtCore import Qt, QPointF
 
 # Константы
@@ -259,7 +260,7 @@ class CalibrationDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Калибровка")
-        self.setFixedSize(600, 500)
+        self.setFixedSize(700, 500)
         self.parent_window = parent
 
         print_alfa_data_arrays(self.parent_window)
@@ -325,20 +326,6 @@ class CalibrationDialog(QDialog):
         layout.addWidget(chart_view)
 
         info_layout = QFormLayout()
-        info_layout.addRow("Intercept (a):", QLabel(f"{self.intercept:.2f}"))
-        info_layout.addRow("Slope (b):", QLabel(f"{self.slope:.2f}"))
-        info_layout.addRow("Enewa (t=1023):", QLabel(f"{self.intercept + self.slope * 1023:.2f}"))
-        if self.am241_x is not None:
-            info_layout.addRow("Am241 x:", QLabel(f"{self.am241_x:.2f}"))
-        else:
-            info_layout.addRow("Am241 x:", QLabel("Не найден"))
-
-        if hasattr(self.parent_window, 'ra_value'):
-            info_layout.addRow("ra:", QLabel(f"{self.parent_window.ra_value:.3f}"))
-        if hasattr(self.parent_window, 'am_rate_value'):
-            info_layout.addRow("am_rate:", QLabel(f"{self.parent_window.am_rate_value:.3f}"))
-        if hasattr(self.parent_window, 'k1p9_value'):
-            info_layout.addRow("k1p9:", QLabel(f"{self.parent_window.k1p9_value:.3f}"))
 
         layout.addLayout(info_layout)
 
@@ -372,28 +359,37 @@ class CalibrationDialog(QDialog):
         return None
 
 def add_calibration_button(window):
-    """Добавляет кнопку калибровки на вкладку Alfa chart в controls_layout."""
+    """Добавляет кнопку калибровки внизу вкладки Alfa chart, растянутую на всю ширину."""
     button = QPushButton("Калибровка")
     button.clicked.connect(lambda: open_calibration_dialog(window))
 
-    # Ищем controls_layout в компоновке tab1
+    # Создаём отдельный layout для кнопки "Калибровка"
+    calibration_layout = QHBoxLayout()
+    calibration_layout.addWidget(button)
+
+    # Устанавливаем растяжку кнопки по горизонтали
+    button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+
+    # Получаем основной layout вкладки tab1
     main_layout = window.tab1.layout()
+
+    # Проверяем, есть ли уже controls_layout (где находятся другие элементы управления)
     controls_layout = None
     for i in range(main_layout.count()):
         item = main_layout.itemAt(i)
-        if isinstance(item.layout(), QHBoxLayout):
+        if isinstance(item.layout(), QHBoxLayout) and item.layout().itemAt(0).widget().text() in ["Логарифмический масштаб"]:
             controls_layout = item.layout()
             break
 
-    if controls_layout:
-        controls_layout.addWidget(button)
-    else:
-        # Если controls_layout не найден, создаём новый
-        new_layout = QHBoxLayout()
-        new_layout.addWidget(window.log_checkbox if hasattr(window, 'log_checkbox') else QWidget())
-        new_layout.addStretch()
-        new_layout.addWidget(button)
-        main_layout.addLayout(new_layout)
+    if not controls_layout:
+        # Если controls_layout не найден, создаём новый для других элементов управления
+        controls_layout = QHBoxLayout()
+        controls_layout.addWidget(window.log_checkbox if hasattr(window, 'log_checkbox') else QWidget())
+        controls_layout.addStretch()
+        main_layout.addLayout(controls_layout)
+
+    # Добавляем layout с кнопкой "Калибровка" в самый низ основного layout
+    main_layout.addLayout(calibration_layout)
 
 def open_calibration_dialog(window):
     """Открывает диалоговое окно калибровки и устанавливает флаг calibration_performed."""
@@ -431,6 +427,9 @@ def add_recalculate_button(window):
     """Добавляет кнопку 'Перерасчёт по двум пикам' на вкладку Alfa chart в controls_layout."""
     button = QPushButton("Перерасчёт по двум пикам")
     button.clicked.connect(lambda: recalculate_with_two_peaks(window))
+
+    # Устанавливаем стиль кнопки: серый фон (#4A4A4A) и белый текст для читаемости
+    button.setStyleSheet("background-color: #4A4A4A; color: #FFFFFF; border: none; border-radius: 5px; padding: 8px 16px; font-size: 12px; font-weight: 600;")
 
     # Ищем controls_layout в компоновке tab1
     main_layout = window.tab1.layout()

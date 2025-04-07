@@ -27,6 +27,8 @@ import os
 import logging
 from gamma_math import print_gamma_impulses, calculate_peaks, plot_peaks, perform_calibration
 from side_window_filler import SideWindow
+from tkinter import filedialog, simpledialog, Tk
+from datetime import datetime
 
 ##########################################################################
 # Класс Зума
@@ -178,9 +180,8 @@ class SpectrumGraphWindow(QMainWindow):
     def __init__(self, parent=None, modbus_client=None):
         super().__init__(parent)
         self.setWindowTitle("Спектр")
-        self.setWindowIcon(QIcon("M-Photoroom.png"))
-        self.resize(800, 600)
-
+        self.setWindowIcon(QIcon(os.path.join("lib", "Pictures", "M-Photoroom.png")))
+        self.resize(700, 500)
         self.modbus_client = modbus_client
         self.spectrum_values = []
 
@@ -212,7 +213,7 @@ class SpectrumGraphWindow(QMainWindow):
 
         self.axis_y = QValueAxis()
         self.axis_y.setTitleText("Импульсы")
-        self.axis_y.setRange(0, 100)  # Начальный диапазон
+        self.axis_y.setRange(0, 200)  # Начальный диапазон
         self.axis_y.setLabelsFont(axis_font)
         self.axis_y.setTitleFont(axis_font)
         self.axis_y.setTitleBrush(QColor("#000000"))
@@ -241,6 +242,30 @@ class SpectrumGraphWindow(QMainWindow):
         # Загружаем данные при открытии
         self.update_spectrum()
 
+    def show_info_message(self, message):
+        """Показывает информационное сообщение."""
+        msg = QMessageBox(self)
+        msg.setIcon(QMessageBox.Icon.Information)
+        msg.setText(message)
+        msg.setWindowTitle("Информация")
+        msg.exec()
+
+    def show_warning_message(self, message):
+        """Показывает предупреждение."""
+        msg = QMessageBox(self)
+        msg.setIcon(QMessageBox.Icon.Warning)
+        msg.setText(message)
+        msg.setWindowTitle("Предупреждение")
+        msg.exec()
+
+    def show_error_message(self, message):
+        """Показывает сообщение об ошибке."""
+        msg = QMessageBox(self)
+        msg.setIcon(QMessageBox.Icon.Critical)
+        msg.setText(message)
+        msg.setWindowTitle("Ошибка")
+        msg.exec()
+
     def update_spectrum(self):
         """Обновляет спектр импульсов из Modbus."""
         if self.modbus_client:
@@ -263,21 +288,40 @@ class SpectrumGraphWindow(QMainWindow):
             QMessageBox.warning(self, "Предупреждение", "Modbus-клиент не инициализирован.")
 
     def export_to_excel(self):
-        """Экспортирует данные графика в Excel."""
+        """Экспортирует данные спектра в Excel."""
+        from PyQt6.QtWidgets import QInputDialog  # Добавляем импорт для QInputDialog
         try:
-            if not self.spectrum_values:
-                QMessageBox.warning(self, "Предупреждение", "Нет данных для экспорта.")
+            if not hasattr(self, 'spectrum_values') or not self.spectrum_values:
+                self.show_warning_message("Нет данных для экспорта.")
                 return
+
             data = {
                 "Точка спектра": list(range(len(self.spectrum_values))),
                 "Значение": self.spectrum_values
             }
             df = pd.DataFrame(data)
-            file_name = "spectrum_data.xlsx"
-            df.to_excel(file_name, index=False)
-            QMessageBox.information(self, "Информация", f"Данные успешно экспортированы в {file_name}")
+
+            # Получаем путь к корневой директории и папке lib
+            root_dir = os.path.dirname(os.path.abspath(__file__))
+            lib_dir = os.path.join(root_dir, 'lib')
+            os.makedirs(lib_dir, exist_ok=True)
+
+            # Запрашиваем имя файла через QInputDialog
+            custom_name, ok = QInputDialog.getText(self, "Имя файла", "Введите имя файла:")
+            if not ok or not custom_name:
+                return
+
+            # Форматируем дату с нижними подчеркиваниями
+            current_date = datetime.now().strftime('%Y_%m_%d')  # Например, 2025_04_07
+            file_name = f"{custom_name}_{current_date}.xlsx"
+            file_path = os.path.join(lib_dir, file_name)
+
+            # Сохраняем файл
+            df.to_excel(file_path, index=False, engine='openpyxl')
+            self.show_info_message(f"Данные успешно экспортированы в {file_path}")
+
         except Exception as e:
-            QMessageBox.critical(self, "Ошибка", f"Ошибка при экспорте данных: {str(e)}")
+            self.show_error_message(f"Ошибка при экспорте данных: {str(e)}")
 
 ##########################################################################
 # Класс основного окна приложения
@@ -598,7 +642,7 @@ class SpectrumWindow(QMainWindow):
 
         # Настройка окна
         self.setWindowTitle("Спектр импульсов")
-        self.setWindowIcon(QIcon("M-Photoroom.png"))
+        self.setWindowIcon(QIcon("lib\\Pictures\\M-Photoroom.png"))
 
         # Инициализация данных
         self.fon_processed = False
@@ -708,7 +752,7 @@ class SpectrumWindow(QMainWindow):
         # =========================================================================
         self.tab1 = QWidget()
         self.tabs.addTab(self.tab1, "Alfa")
-        self.spectrum_addition = SpectrumAddition(self)
+
 
         # Создание графика для вкладки Alfa
         self.chart = QChart()
@@ -748,9 +792,6 @@ class SpectrumWindow(QMainWindow):
         self.log_checkbox = QCheckBox("Логарифмический масштаб")
         self.log_checkbox.stateChanged.connect(self.toggle_log_scale)
 
-        # Кнопка "Сложение спектра" из SpectrumAddition
-        self.spectrum_addition_button = self.spectrum_addition.addition_button  # Предполагается, что кнопка доступна как атрибут
-        self.spectrum_addition_button.setObjectName("spectrumAdditionButton")  # Для стилизации
 
         # Создаем виджет для чекбоксов Alfa chart
         self.alfa_checkboxes_widget = QWidget()
@@ -771,7 +812,6 @@ class SpectrumWindow(QMainWindow):
 
         controls_layout = QHBoxLayout()
         controls_layout.addWidget(self.log_checkbox)
-        controls_layout.addWidget(self.spectrum_addition_button)  # Добавляем кнопку "Сложение спектра"
         controls_layout.addStretch()
         controls_layout.addWidget(self.alfa_toggle_checkboxes_button)
 
@@ -3019,25 +3059,6 @@ class SpectrumWindow(QMainWindow):
     # Методы для работы с экспортом данных и сообщениями
     ##########################################################################
 
-    def export_to_excel(self):
-        """Экспортирует данные спектра в Excel."""
-        try:
-            if not hasattr(self, 'spectrum_values') or not self.spectrum_values:
-                self.show_warning_message("Нет данных для экспорта.")
-                return
-
-            data = {
-                "Точка спектра": list(range(len(self.spectrum_values))),
-                "Значение": self.spectrum_values
-            }
-            df = pd.DataFrame(data)
-
-            file_name = "spectrum_data.xlsx"
-            df.to_excel(file_name, index=False)
-            self.show_info_message(f"Данные успешно экспортированы в {file_name}")
-        except Exception as e:
-            self.show_error_message(f"Ошибка при экспорте данных: {str(e)}")
-
     def show_info_message(self, message):
         """Показывает информационное сообщение."""
         msg_box = QMessageBox()
@@ -3076,7 +3097,7 @@ if __name__ == "__main__":
 
     settings = dialog.get_settings()
 
-    splash = QSplashScreen(QPixmap("Micasensor.png"))
+    splash = QSplashScreen(QPixmap("lib\\Pictures\\Micasensor.png"))
     splash.showMessage("Загрузка...", Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignHCenter,
                        Qt.GlobalColor.white)
     splash.show()
