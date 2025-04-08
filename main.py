@@ -128,10 +128,10 @@ class ToggleSwitch(QWidget):
         super().__init__(parent)
         self._checked = False
         self._text = text
-        self.setFixedSize(265, 30)  # Увеличиваем ширину на 15px (250 + 15 = 265)
+        self.setFixedSize(265, 30)
 
-    def isChecked(self):
-        return self._checked
+    def text(self):  # Добавляем метод text()
+        return self._text
 
     def setChecked(self, checked):
         if self._checked != checked:
@@ -789,7 +789,7 @@ class SpectrumWindow(QMainWindow):
         self.chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         # Чекбокс для логарифмического масштаба
-        self.log_checkbox = QCheckBox("Логарифмический масштаб")
+        self.log_checkbox = ToggleSwitch("Логарифмический масштаб")
         self.log_checkbox.stateChanged.connect(self.toggle_log_scale)
 
 

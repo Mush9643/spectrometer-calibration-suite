@@ -1,3 +1,302 @@
+##########################################################################
+# Класс Зума
+##########################################################################
+
+class CustomChartView(QChartView):
+    def __init__(self, chart, parent=None):
+        super().__init__(chart, parent)
+        self.setRenderHint(QPainter.RenderHint.Antialiasing)
+        self._is_panning = False  # Флаг для режима перемещения
+        self._last_pos = None  # Последняя позиция мыши для расчета смещения
+
+    # В классе CustomChartView в main.py
+    def wheelEvent(self, event):
+        """Обработка прокрутки колесика мыши для зума относительно центра графика."""
+        factor = 1.05 if event.angleDelta().y() > 0 else 0.95
+
+        x_axis = self.chart().axes(Qt.Orientation.Horizontal)[0]
+        y_axis = self.chart().axes(Qt.Orientation.Vertical)[0]
+        x_min, x_max = x_axis.min(), x_axis.max()
+        y_min, y_max = y_axis.min(), y_axis.max()
+
+        new_x_range = (x_max - x_min) * factor
+        new_y_range = (y_max - y_min) * factor
+
+        if 10 < new_x_range < 2048:
+            x_center = (x_min + x_max) / 2
+            y_center = (y_min + y_max) / 2
+
+            x_half_range = new_x_range / 2
+            y_half_range = new_y_range / 2
+
+            new_x_min = x_center - x_half_range
+            new_x_max = x_center + x_half_range
+            new_y_min = y_center - y_half_range
+            new_y_max = y_center + y_half_range
+
+            x_axis.setRange(new_x_min, new_x_max)
+            y_axis.setRange(new_y_min, new_y_max)
+
+            # Перерисовываем пики для Gamma
+            if hasattr(self.parent(), 'reapply_gamma_peaks'):
+                self.parent().reapply_gamma_peaks()
+
+        event.accept()
+
+    def mouseReleaseEvent(self, event):
+        """Окончание перемещения."""
+        if event.button() == Qt.MouseButton.LeftButton:
+            self._is_panning = False
+            self.setCursor(Qt.CursorShape.ArrowCursor)
+            # Перерисовываем пики для Gamma после зума или перемещения
+            if hasattr(self.parent(), 'reapply_gamma_peaks'):
+                self.parent().reapply_gamma_peaks()
+        super().mouseReleaseEvent(event)
+
+    def mouseMoveEvent(self, event):
+        """Перемещение графика при зажатой левой кнопке."""
+        if self._is_panning and self._last_pos is not None:
+            current_pos = event.position().toPoint()
+            delta = current_pos - self._last_pos
+
+            # Преобразование смещения пикселей в координаты графика
+            x_axis = self.chart().axes(Qt.Orientation.Horizontal)[0]
+            y_axis = self.chart().axes(Qt.Orientation.Vertical)[0]
+            x_range = x_axis.max() - x_axis.min()
+            y_range = y_axis.max() - y_axis.min()
+
+            # Масштабирование смещения относительно размеров viewport
+            dx = -delta.x() * x_range / self.viewport().width()
+            dy = delta.y() * y_range / self.viewport().height()  # Инверсия для Y (вверх = уменьшение)
+
+            # Обновление диапазонов осей
+            x_axis.setRange(x_axis.min() + dx, x_axis.max() + dx)
+            y_axis.setRange(y_axis.min() + dy, y_axis.max() + dy)
+
+            self._last_pos = current_pos
+            event.accept()
+        else:
+            super().mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        """Окончание перемещения."""
+        if event.button() == Qt.MouseButton.LeftButton:
+            self._is_panning = False
+            self.setCursor(Qt.CursorShape.ArrowCursor)  # Возвращаем стандартный курсор
+        super().mouseReleaseEvent(event)
+
+##########################################################################
+# Класс Переключателя
+##########################################################################
+
+class ToggleSwitch(QWidget):
+    stateChanged = pyqtSignal(int)  # Сигнал для изменения состояния
+
+    def __init__(self, text="", parent=None):
+        super().__init__(parent)
+        self._checked = False
+        self._text = text
+        self.setFixedSize(265, 30)  # Увеличиваем ширину на 15px (250 + 15 = 265)
+
+    def isChecked(self):
+        return self._checked
+
+    def setChecked(self, checked):
+        if self._checked != checked:
+            self._checked = checked
+            self.update()  # Перерисовываем виджет
+            self.stateChanged.emit(Qt.CheckState.Checked.value if checked else Qt.CheckState.Unchecked.value)
+
+    def mousePressEvent(self, event):
+        self.setChecked(not self._checked)
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+        # Настройки шрифта для текста
+        painter.setFont(QFont("Montserrat", 12))
+        painter.setPen(QColor("#4A4A4A"))
+
+        # Рисуем текст слева
+        text_rect = QRectF(0, 0, 210, 30)  # Оставляем ширину текста без изменений
+        painter.drawText(text_rect, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, self._text)
+
+        # Рисуем фон переключателя справа, сдвигаем на 15px правее
+        switch_rect = QRectF(215, 5, 40, 20)  # Сдвигаем с x=200 на x=215
+        painter.setBrush(QColor("#4A4A4A"))  # Тёмно-серый фон
+        painter.setPen(QColor("#000000"))  # Чёрный контур
+        painter.drawRoundedRect(switch_rect, 10, 10)
+
+        # Рисуем шар, корректируем позиции
+        if self._checked:
+            circle_pos = 237  # Позиция шара вправо (222 + 15 = 237)
+            painter.setBrush(QColor("#C8102E"))  # Красный шар при активации
+        else:
+            circle_pos = 217  # Позиция шара влево (202 + 15 = 217)
+            painter.setBrush(QColor("#FFFFFF"))  # Белый шар
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.drawEllipse(circle_pos, 7, 16, 16)
+
+    def toggle(self):
+        self.setChecked(not self._checked)
+
+##########################################################################
+# Класс Мелкого окна на вкладке menu
+##########################################################################
+class SpectrumGraphWindow(QMainWindow):
+    def __init__(self, parent=None, modbus_client=None):
+        super().__init__(parent)
+        self.setWindowTitle("Спектр")
+        self.setWindowIcon(QIcon(os.path.join("lib", "Pictures", "M-Photoroom.png")))
+        self.resize(700, 500)
+        self.modbus_client = modbus_client
+        self.spectrum_values = []
+
+        # Основной виджет и макет
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+        layout = QVBoxLayout(central_widget)
+
+        # Создание графика
+        self.chart = QChart()
+        self.chart.setTitle("Спектр")
+        title_font = QFont("Montserrat", 14, QFont.Weight.Bold)
+        self.chart.setTitleFont(title_font)
+        self.chart.setTitleBrush(QColor("#000000"))
+
+        self.series = QLineSeries()
+        self.series.setName("Импульсы")
+        self.chart.addSeries(self.series)
+
+        self.axis_x = QValueAxis()
+        self.axis_x.setTitleText("Каналы")
+        self.axis_x.setRange(0, 1023)
+        axis_font = QFont("Montserrat", 12)
+        self.axis_x.setLabelsFont(axis_font)
+        self.axis_x.setTitleFont(axis_font)
+        self.axis_x.setTitleBrush(QColor("#000000"))
+        self.axis_x.setLabelsColor(QColor("#000000"))
+        self.axis_x.setGridLineColor(QColor("#F5F5F5"))
+
+        self.axis_y = QValueAxis()
+        self.axis_y.setTitleText("Импульсы")
+        self.axis_y.setRange(0, 200)  # Начальный диапазон
+        self.axis_y.setLabelsFont(axis_font)
+        self.axis_y.setTitleFont(axis_font)
+        self.axis_y.setTitleBrush(QColor("#000000"))
+        self.axis_y.setLabelsColor(QColor("#000000"))
+        self.axis_y.setGridLineColor(QColor("#F5F5F5"))
+
+        self.chart.addAxis(self.axis_x, Qt.AlignmentFlag.AlignBottom)
+        self.chart.addAxis(self.axis_y, Qt.AlignmentFlag.AlignLeft)
+        self.series.attachAxis(self.axis_x)
+        self.series.attachAxis(self.axis_y)
+
+        self.chart_view = CustomChartView(self.chart)
+        self.chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
+        layout.addWidget(self.chart_view)
+
+        # Кнопка "Экспорт в Excel"
+        self.export_button = QPushButton("Экспорт в Excel")
+        self.export_button.setObjectName("exportButton")
+        self.export_button.clicked.connect(self.export_to_excel)
+        button_layout = QHBoxLayout()
+        button_layout.addStretch()
+        button_layout.addWidget(self.export_button)
+        button_layout.addStretch()
+        layout.addLayout(button_layout)
+
+        # Загружаем данные при открытии
+        self.update_spectrum()
+
+    def show_info_message(self, message):
+        """Показывает информационное сообщение."""
+        msg = QMessageBox(self)
+        msg.setIcon(QMessageBox.Icon.Information)
+        msg.setText(message)
+        msg.setWindowTitle("Информация")
+        msg.exec()
+
+    def show_warning_message(self, message):
+        """Показывает предупреждение."""
+        msg = QMessageBox(self)
+        msg.setIcon(QMessageBox.Icon.Warning)
+        msg.setText(message)
+        msg.setWindowTitle("Предупреждение")
+        msg.exec()
+
+    def show_error_message(self, message):
+        """Показывает сообщение об ошибке."""
+        msg = QMessageBox(self)
+        msg.setIcon(QMessageBox.Icon.Critical)
+        msg.setText(message)
+        msg.setWindowTitle("Ошибка")
+        msg.exec()
+
+    def update_spectrum(self):
+        """Обновляет спектр импульсов из Modbus."""
+        if self.modbus_client:
+            try:
+                spectrum_values = self.modbus_client.read_spectrum(
+                    start_register=0x0100,
+                    num_registers=1024,
+                    slave_address=1
+                )
+                self.spectrum_values = spectrum_values
+                self.series.clear()
+                for i, value in enumerate(spectrum_values):
+                    display_value = 0 if i < 2 else value  # Первые два значения обнуляем
+                    self.series.append(i, display_value)
+                max_y = max(spectrum_values[2:], default=100)  # Пропускаем первые два значения
+                self.axis_y.setRange(0, max_y * 1.1)
+            except Exception as e:
+                QMessageBox.critical(self, "Ошибка", f"Ошибка при чтении данных через Modbus: {str(e)}")
+        else:
+            QMessageBox.warning(self, "Предупреждение", "Modbus-клиент не инициализирован.")
+
+    def export_to_excel(self):
+        """Экспортирует данные спектра в Excel."""
+        from PyQt6.QtWidgets import QInputDialog  # Добавляем импорт для QInputDialog
+        try:
+            if not hasattr(self, 'spectrum_values') or not self.spectrum_values:
+                self.show_warning_message("Нет данных для экспорта.")
+                return
+
+            data = {
+                "Точка спектра": list(range(len(self.spectrum_values))),
+                "Значение": self.spectrum_values
+            }
+            df = pd.DataFrame(data)
+
+            # Получаем путь к корневой директории и папке lib
+            root_dir = os.path.dirname(os.path.abspath(__file__))
+            lib_dir = os.path.join(root_dir, 'lib')
+            os.makedirs(lib_dir, exist_ok=True)
+
+            # Запрашиваем имя файла через QInputDialog
+            custom_name, ok = QInputDialog.getText(self, "Имя файла", "Введите имя файла:")
+            if not ok or not custom_name:
+                return
+
+            # Форматируем дату с нижними подчеркиваниями
+            current_date = datetime.now().strftime('%Y_%m_%d')  # Например, 2025_04_07
+            file_name = f"{custom_name}_{current_date}.xlsx"
+            file_path = os.path.join(lib_dir, file_name)
+
+            # Сохраняем файл
+            df.to_excel(file_path, index=False, engine='openpyxl')
+            self.show_info_message(f"Данные успешно экспортированы в {file_path}")
+
+        except Exception as e:
+            self.show_error_message(f"Ошибка при экспорте данных: {str(e)}")
+
+##########################################################################
+# Класс основного окна приложения
+##########################################################################
+
+class SpectrumWindow(QMainWindow):
+
     def __init__(self, modbus):
         """
         Инициализация основного окна приложения SpectrumWindow.
@@ -311,7 +610,7 @@
 
         # Настройка окна
         self.setWindowTitle("Спектр импульсов")
-        self.setWindowIcon(QIcon("M-Photoroom.png"))
+        self.setWindowIcon(QIcon("lib\\Pictures\\M-Photoroom.png"))
 
         # Инициализация данных
         self.fon_processed = False
@@ -410,11 +709,6 @@
         self.spectrum_button.setObjectName("spectrumButton")  # Для стилизации
         self.spectrum_button.clicked.connect(self.open_spectrum_window)  # Подключаем метод открытия окна
         menu_layout.addWidget(self.spectrum_button)
-
-        self.spectrum_addition = SpectrumAddition(self)
-        self.spectrum_addition_button = self.spectrum_addition.addition_button
-        self.spectrum_addition_button.setObjectName("spectrumAdditionButton")
-        menu_layout.addWidget(self.spectrum_addition_button)
 
         self.tab0.setLayout(menu_layout)
 
