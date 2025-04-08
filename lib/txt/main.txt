@@ -128,10 +128,10 @@ class ToggleSwitch(QWidget):
         super().__init__(parent)
         self._checked = False
         self._text = text
-        self.setFixedSize(265, 30)  # Увеличиваем ширину на 15px (250 + 15 = 265)
+        self.setFixedSize(265, 30)
 
-    def isChecked(self):
-        return self._checked
+    def text(self):  # Добавляем метод text()
+        return self._text
 
     def setChecked(self, checked):
         if self._checked != checked:
@@ -180,9 +180,8 @@ class SpectrumGraphWindow(QMainWindow):
     def __init__(self, parent=None, modbus_client=None):
         super().__init__(parent)
         self.setWindowTitle("Спектр")
-        self.setWindowIcon(QIcon("M-Photoroom.png"))
-        self.resize(800, 600)
-
+        self.setWindowIcon(QIcon(os.path.join("lib", "Pictures", "M-Photoroom.png")))
+        self.resize(700, 500)
         self.modbus_client = modbus_client
         self.spectrum_values = []
 
@@ -214,7 +213,7 @@ class SpectrumGraphWindow(QMainWindow):
 
         self.axis_y = QValueAxis()
         self.axis_y.setTitleText("Импульсы")
-        self.axis_y.setRange(0, 100)  # Начальный диапазон
+        self.axis_y.setRange(0, 200)  # Начальный диапазон
         self.axis_y.setLabelsFont(axis_font)
         self.axis_y.setTitleFont(axis_font)
         self.axis_y.setTitleBrush(QColor("#000000"))
@@ -243,6 +242,30 @@ class SpectrumGraphWindow(QMainWindow):
         # Загружаем данные при открытии
         self.update_spectrum()
 
+    def show_info_message(self, message):
+        """Показывает информационное сообщение."""
+        msg = QMessageBox(self)
+        msg.setIcon(QMessageBox.Icon.Information)
+        msg.setText(message)
+        msg.setWindowTitle("Информация")
+        msg.exec()
+
+    def show_warning_message(self, message):
+        """Показывает предупреждение."""
+        msg = QMessageBox(self)
+        msg.setIcon(QMessageBox.Icon.Warning)
+        msg.setText(message)
+        msg.setWindowTitle("Предупреждение")
+        msg.exec()
+
+    def show_error_message(self, message):
+        """Показывает сообщение об ошибке."""
+        msg = QMessageBox(self)
+        msg.setIcon(QMessageBox.Icon.Critical)
+        msg.setText(message)
+        msg.setWindowTitle("Ошибка")
+        msg.exec()
+
     def update_spectrum(self):
         """Обновляет спектр импульсов из Modbus."""
         if self.modbus_client:
@@ -266,6 +289,7 @@ class SpectrumGraphWindow(QMainWindow):
 
     def export_to_excel(self):
         """Экспортирует данные спектра в Excel."""
+        from PyQt6.QtWidgets import QInputDialog  # Добавляем импорт для QInputDialog
         try:
             if not hasattr(self, 'spectrum_values') or not self.spectrum_values:
                 self.show_warning_message("Нет данных для экспорта.")
@@ -282,21 +306,9 @@ class SpectrumGraphWindow(QMainWindow):
             lib_dir = os.path.join(root_dir, 'lib')
             os.makedirs(lib_dir, exist_ok=True)
 
-            # Создаем корневой объект Tkinter
-            root = Tk()
-            root.withdraw()
-
-            # Запрашиваем имя файла у пользователя
-            custom_name = simpledialog.askstring(
-                "Имя файла",
-                "Введите имя файла:",
-                parent=root
-            )
-
-            # Закрываем Tkinter
-            root.destroy()
-
-            if not custom_name:
+            # Запрашиваем имя файла через QInputDialog
+            custom_name, ok = QInputDialog.getText(self, "Имя файла", "Введите имя файла:")
+            if not ok or not custom_name:
                 return
 
             # Форматируем дату с нижними подчеркиваниями
@@ -630,7 +642,7 @@ class SpectrumWindow(QMainWindow):
 
         # Настройка окна
         self.setWindowTitle("Спектр импульсов")
-        self.setWindowIcon(QIcon("lib\Pictures\M-Photoroom.png"))
+        self.setWindowIcon(QIcon("lib\\Pictures\\M-Photoroom.png"))
 
         # Инициализация данных
         self.fon_processed = False
@@ -777,7 +789,7 @@ class SpectrumWindow(QMainWindow):
         self.chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         # Чекбокс для логарифмического масштаба
-        self.log_checkbox = QCheckBox("Логарифмический масштаб")
+        self.log_checkbox = ToggleSwitch("Логарифмический масштаб")
         self.log_checkbox.stateChanged.connect(self.toggle_log_scale)
 
 
@@ -3085,7 +3097,7 @@ if __name__ == "__main__":
 
     settings = dialog.get_settings()
 
-    splash = QSplashScreen(QPixmap("Micasensor.png"))
+    splash = QSplashScreen(QPixmap("lib\\Pictures\\Micasensor.png"))
     splash.showMessage("Загрузка...", Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignHCenter,
                        Qt.GlobalColor.white)
     splash.show()

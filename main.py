@@ -638,6 +638,21 @@ class SpectrumWindow(QMainWindow):
             QPushButton#spectrumButton:pressed {
                 background-color: #922B21; /* Ещё более тёмный красный при нажатии */
             }
+            QPushButton#alfaResetZoomButton {
+                background-color: #4A4A4A; /* Средний серый фон */
+                color: #FFFFFF; /* Белый текст */
+                border: none;
+                border-radius: 5px;
+                padding: 8px 16px;
+                font-size: 12px;
+                font-weight: 600; /* Montserrat SemiBold */
+            }
+            QPushButton#alfaResetZoomButton:hover {
+                background-color: #5A5A5A; /* Светло-серый при наведении */
+            }
+            QPushButton#alfaResetZoomButton:pressed {
+                background-color: #3A3A3A; /* Тёмно-серый при нажатии */
+            }
         """)
 
         # Настройка окна
@@ -1410,6 +1425,7 @@ class SpectrumWindow(QMainWindow):
     def add_reset_zoom_button(self):
         """Добавляет кнопку сброса масштаба на вкладку Alfa chart в controls_layout."""
         reset_button = QPushButton("Сбросить масштаб")
+        reset_button.setObjectName("alfaResetZoomButton")
         reset_button.clicked.connect(self.reset_zoom)
 
         # Ищем controls_layout в компоновке tab1

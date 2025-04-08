@@ -63,7 +63,8 @@ def add_beta_calibration_button(parent):
     calibration_button.clicked.connect(lambda: show_calibration_dialog(parent))
     calibration_button.setEnabled(False)
     parent.beta_calibration_button = calibration_button
-
+    calibration_button.setFixedHeight(50)
+    calibration_button.setFont(QFont("Montserrat", 14, QFont.Weight.Bold))
     beta_layout = parent.tab2.layout()
     if beta_layout is None:
         beta_layout = QVBoxLayout()
