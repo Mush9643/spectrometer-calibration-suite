@@ -13,7 +13,7 @@ class SideWindow(QWidget):
         self.modbus = modbus_client  # Сохраняем клиент Modbus
         self.main_window = main_window
         self.setWindowTitle("Дополнительное окно")
-        self.setWindowIcon(QIcon("M-Photoroom.png"))
+        self.setWindowIcon(QIcon("lib\\Pictures\\M-Photoroom.png"))
 
         # Получаем размеры главного окна
         main_x = main_geometry.x()

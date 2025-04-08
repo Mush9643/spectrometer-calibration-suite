@@ -6,7 +6,7 @@ class SettingsDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Настройки подключения")
-        self.setWindowIcon(QIcon("M-Photoroom.png"))
+        self.setWindowIcon(QIcon("lib\\Pictures\\M-Photoroom.png"))
         self.setFixedSize(300, 250)  # Фиксированный размер окна
 
         # Создаем форму для ввода параметров
