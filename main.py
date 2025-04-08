@@ -1192,6 +1192,10 @@ class SpectrumWindow(QMainWindow):
         # Добавляем кнопку в основной layout
         gamma_layout.addWidget(self.calibration_button)
 
+        self.tabs.setTabEnabled(1, False)  # Alfa
+        self.tabs.setTabEnabled(2, False)  # Beta
+        self.tabs.setTabEnabled(3, False)  # Gamma
+
     ##########################################################################
     # Методы всякого разного
     ##########################################################################
@@ -1582,6 +1586,9 @@ class SpectrumWindow(QMainWindow):
             self.folder_input.setText(os.path.basename(folder))
             self.reset_all_data()
             self.load_xls_files()
+            self.tabs.setTabEnabled(1, False)  # Alfa
+            self.tabs.setTabEnabled(2, False)  # Beta
+            self.tabs.setTabEnabled(3, False)  # Gamma
 
     def clear_alfa_chart(self):
         """Очищает график Alfa chart."""
@@ -2029,7 +2036,17 @@ class SpectrumWindow(QMainWindow):
             )
         print_gamma_impulses(self)
         peaks = calculate_peaks(self)
+        # После успешной обработки файлов включаем вкладки "Alfa", "Beta" и "Gamma"
+        if beta_files_to_process or alfa_files_to_process or gamma_files_to_process or gamma_special_files:
+            self.tabs.setTabEnabled(1, True)  # Alfa
+            self.tabs.setTabEnabled(2, True)  # Beta
+            self.tabs.setTabEnabled(3, True)  # Gamma
 
+        # Если файлы не найдены, оставляем вкладки отключенными и показываем предупреждение
+        if not beta_files_to_process and not alfa_files_to_process and not gamma_files_to_process and not gamma_special_files:
+            self.show_warning_message(
+                "Не найдено файлов с именами, содержащими 'фона', 'SrY90', 'Rad', 'Cs137', 'C14', 'Am241' (Beta), 'Rn', 'Am241' (Alfa) или 'gamma' (Gamma)."
+            )
         # Отображаем пики на графике
         if peaks:
             plot_peaks(self, peaks)

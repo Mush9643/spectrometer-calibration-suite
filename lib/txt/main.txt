@@ -1712,7 +1712,7 @@ class SpectrumWindow(QMainWindow):
             report_data.append(["k1c0", "Отсутствует"])
 
         # AB и BB (Beta) переименованы в intercept и slope
-        if hasattr(self, 'beta_calibration_coequettes') and self.beta_calibration_coefficients:
+        if hasattr(self, 'beta_calibration_coefficients') and self.beta_calibration_coefficients:
             intercept, slope = self.beta_calibration_coefficients
             report_data.append(["a (Beta)", f"{intercept:.3f}"])  # intercept как a
             report_data.append(["b (Beta)", f"{slope:.3f}"])  # slope как b
