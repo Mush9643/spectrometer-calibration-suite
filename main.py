@@ -40,11 +40,12 @@ class CustomChartView(QChartView):
         self.setRenderHint(QPainter.RenderHint.Antialiasing)
         self._is_panning = False  # Флаг для режима перемещения
         self._last_pos = None  # Последняя позиция мыши для расчета смещения
+        # Убираем зум через выделение поля (rubber band)
+        self.setRubberBand(QChartView.RubberBand.NoRubberBand)
 
-    # В классе CustomChartView в main.py
     def wheelEvent(self, event):
         """Обработка прокрутки колесика мыши для зума относительно центра графика."""
-        factor = 1.05 if event.angleDelta().y() > 0 else 0.95
+        factor = 1.1 if event.angleDelta().y() > 0 else 0.9  # Увеличение или уменьшение масштаба
 
         x_axis = self.chart().axes(Qt.Orientation.Horizontal)[0]
         y_axis = self.chart().axes(Qt.Orientation.Vertical)[0]
@@ -54,7 +55,8 @@ class CustomChartView(QChartView):
         new_x_range = (x_max - x_min) * factor
         new_y_range = (y_max - y_min) * factor
 
-        if 10 < new_x_range < 2048:
+        # Унифицированные ограничения для всех вкладок
+        if 10 < new_x_range < 2048:  # Ограничение по X (подходит для всех вкладок)
             x_center = (x_min + x_max) / 2
             y_center = (y_min + y_max) / 2
 
@@ -66,24 +68,30 @@ class CustomChartView(QChartView):
             new_y_min = y_center - y_half_range
             new_y_max = y_center + y_half_range
 
+            # Проверка на логарифмическую ось (Y не должен быть меньше 1)
+            if isinstance(y_axis, QLogValueAxis):
+                new_y_min = max(new_y_min, 1.0)  # Логарифмическая ось требует положительных значений
+
             x_axis.setRange(new_x_min, new_x_max)
             y_axis.setRange(new_y_min, new_y_max)
 
-            # Перерисовываем пики для Gamma
-            if hasattr(self.parent(), 'reapply_gamma_peaks'):
+            # Перерисовка пиков для всех вкладок
+            if hasattr(self.parent(), 'reapply_peaks'):  # Для Alfa
+                self.parent().reapply_peaks()
+            if hasattr(self.parent(), 'draw_cs137_peak_point'):  # Для Beta
+                self.parent().draw_cs137_peak_point()
+            if hasattr(self.parent(), 'reapply_gamma_peaks'):  # Для Gamma
                 self.parent().reapply_gamma_peaks()
 
         event.accept()
 
-    def mouseReleaseEvent(self, event):
-        """Окончание перемещения."""
+    def mousePressEvent(self, event):
+        """Начало перемещения при нажатии левой кнопки мыши."""
         if event.button() == Qt.MouseButton.LeftButton:
-            self._is_panning = False
-            self.setCursor(Qt.CursorShape.ArrowCursor)
-            # Перерисовываем пики для Gamma после зума или перемещения
-            if hasattr(self.parent(), 'reapply_gamma_peaks'):
-                self.parent().reapply_gamma_peaks()
-        super().mouseReleaseEvent(event)
+            self._is_panning = True
+            self._last_pos = event.position().toPoint()
+            self.setCursor(Qt.CursorShape.OpenHandCursor)  # Курсор "рука"
+        super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
         """Перемещение графика при зажатой левой кнопке."""
@@ -91,7 +99,6 @@ class CustomChartView(QChartView):
             current_pos = event.position().toPoint()
             delta = current_pos - self._last_pos
 
-            # Преобразование смещения пикселей в координаты графика
             x_axis = self.chart().axes(Qt.Orientation.Horizontal)[0]
             y_axis = self.chart().axes(Qt.Orientation.Vertical)[0]
             x_range = x_axis.max() - x_axis.min()
@@ -99,11 +106,20 @@ class CustomChartView(QChartView):
 
             # Масштабирование смещения относительно размеров viewport
             dx = -delta.x() * x_range / self.viewport().width()
-            dy = delta.y() * y_range / self.viewport().height()  # Инверсия для Y (вверх = уменьшение)
+            dy = delta.y() * y_range / self.viewport().height()  # Инверсия для Y
 
-            # Обновление диапазонов осей
-            x_axis.setRange(x_axis.min() + dx, x_axis.max() + dx)
-            y_axis.setRange(y_axis.min() + dy, y_axis.max() + dy)
+            # Новые диапазоны с учетом перемещения
+            new_x_min = x_axis.min() + dx
+            new_x_max = x_axis.max() + dx
+            new_y_min = y_axis.min() + dy
+            new_y_max = y_axis.max() + dy
+
+            # Ограничение для логарифмической оси
+            if isinstance(y_axis, QLogValueAxis):
+                new_y_min = max(new_y_min, 1.0)  # Минимальное значение Y для логарифма
+
+            x_axis.setRange(new_x_min, new_x_max)
+            y_axis.setRange(new_y_min, new_y_max)
 
             self._last_pos = current_pos
             event.accept()
@@ -115,6 +131,13 @@ class CustomChartView(QChartView):
         if event.button() == Qt.MouseButton.LeftButton:
             self._is_panning = False
             self.setCursor(Qt.CursorShape.ArrowCursor)  # Возвращаем стандартный курсор
+            # Перерисовка пиков для всех вкладок
+            if hasattr(self.parent(), 'reapply_peaks'):  # Для Alfa
+                self.parent().reapply_peaks()
+            if hasattr(self.parent(), 'draw_cs137_peak_point'):  # Для Beta
+                self.parent().draw_cs137_peak_point()
+            if hasattr(self.parent(), 'reapply_gamma_peaks'):  # Для Gamma
+                self.parent().reapply_gamma_peaks()
         super().mouseReleaseEvent(event)
 
 ##########################################################################
@@ -881,9 +904,9 @@ class SpectrumWindow(QMainWindow):
         self.beta_series.attachAxis(self.beta_axis_x)
         self.beta_series.attachAxis(self.beta_axis_y)
 
-        self.beta_chart_view = QChartView(self.beta_chart)
+        self.beta_chart_view = CustomChartView(self.beta_chart)  # Используем CustomChartView
         self.beta_chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
-        self.beta_chart_view.setRubberBand(QChartView.RubberBand.RectangleRubberBand)  # Включаем зум
+
 
         # Переключатель для логарифмического масштаба
         self.beta_log_checkbox = ToggleSwitch("Логарифмический масштаб")
@@ -973,7 +996,7 @@ class SpectrumWindow(QMainWindow):
 
         self.gamma_chart_view = CustomChartView(self.gamma_chart)
         self.gamma_chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
-        self.gamma_chart_view.setRubberBand(QChartView.RubberBand.RectangleRubberBand)  # Включаем зум
+
 
         # Переключатель для логарифмического масштаба
         self.gamma_log_checkbox = ToggleSwitch("Логарифмический масштаб")
@@ -2418,9 +2441,6 @@ class SpectrumWindow(QMainWindow):
         # Добавляем чекбокс в self.alfa_checkboxes_layout
         self.alfa_checkboxes_layout.addWidget(checkbox)
 
-        if not self.alfa_checkboxes_widget.isVisible():
-            self.alfa_checkboxes_widget.show()
-
         self.update_y_axis_range()
         self.highlight_p90_points()
 
@@ -2533,9 +2553,6 @@ class SpectrumWindow(QMainWindow):
 
         # Добавляем чекбокс в self.gamma_checkboxes_layout
         self.gamma_checkboxes_layout.addWidget(checkbox)
-
-        if not self.gamma_checkboxes_widget.isVisible():
-            self.gamma_checkboxes_widget.show()
 
         self.update_gamma_y_axis_range()
 
