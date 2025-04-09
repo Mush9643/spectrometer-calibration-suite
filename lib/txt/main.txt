@@ -1985,14 +1985,14 @@ class SpectrumWindow(QMainWindow):
 
         # Обрабатываем специальные гамма-файлы (пурпурный цвет, без графика)
         for _, item, _ in gamma_special_files:
-            item.setBackground(QColor(147, 112, 219))  # Пурпурный цвет
+            item.setBackground(QColor(255, 182, 133))  # Пурпурный цвет
             print(f"Отмечен пурпурным (без графика): {item.text()}")
 
         # Обрабатываем остальные гамма-файлы (пурпурный цвет и загрузка на график)
         for keyword, item, row in gamma_files_to_process:
             print(f"Авто загрузка Gamma для файла: {item.text()} (ключевое слово: {keyword})")
             pos = self.file_list.visualItemRect(item).center()
-            item.setBackground(QColor(147, 112, 219))  # Пурпурный цвет
+            item.setBackground(QColor(255, 182, 133))  # Пурпурный цвет
             self.change_color(pos, 'gamma')  # Вызываем change_color для загрузки на график
             self.check_color_and_load_data(pos)
 
@@ -2096,12 +2096,12 @@ class SpectrumWindow(QMainWindow):
 
         # Проверка на наличие "98_fon_2_gamma" или "98_fon_gamma" в имени файла
         if "98_fon_2_gamma" in file_name or "98_fon_gamma" in file_name:
-            item.setBackground(QColor(147, 112, 219))  # Пурпурный цвет
+            item.setBackground(QColor(255, 182, 133))  # Пурпурный цвет
             return  # Не строим график, просто выходим из метода
 
         # Проверка на наличие "gamma" в имени файла
         if "gamma" in file_name and action_type == 'gamma':
-            item.setBackground(QColor(147, 112, 219))  # Пурпурный цвет
+            item.setBackground(QColor(255, 182, 133))  # Пурпурный цвет
             self.add_or_remove_chart(item.text(), 'gamma', True)  # Загружаем на график Gamma
             return
 
@@ -2113,7 +2113,7 @@ class SpectrumWindow(QMainWindow):
             item.setBackground(QColor(173, 216, 230))  # Голубой для "Загрузить Beta"
             self.add_or_remove_chart(item.text(), 'beta', True)
         elif action_type == 'gamma':
-            item.setBackground(QColor(147, 112, 219))  # Пурпурный для "Загрузить Gamma"
+            item.setBackground(QColor(255, 182, 133))  # Пурпурный для "Загрузить Gamma"
             self.add_or_remove_chart(item.text(), 'gamma', True)
         elif action_type == 'disable':
             item.setBackground(Qt.GlobalColor.white)  # Обесцвечиваем поле для "Отключить"
@@ -2275,7 +2275,7 @@ class SpectrumWindow(QMainWindow):
             self.load_data_for_chart('alfa', item.text())
         elif background_color == QColor(173, 216, 230):  # Голубой цвет для 'Beta'
             self.load_data_for_chart('beta', item.text())
-        elif background_color == QColor(147, 112, 219):  # Пурпурный цвет для 'Gamma'
+        elif background_color == QColor(255, 182, 133):  # Пурпурный цвет для 'Gamma'
             self.load_data_for_chart('gamma', item.text())
 
     def load_data_for_chart(self, chart_type, file_name):

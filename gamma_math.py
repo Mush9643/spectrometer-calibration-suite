@@ -18,7 +18,7 @@ def print_gamma_impulses(main_window):
     Выводит в консоль массивы данных из столбца 'Кол-во импульсов' для всех файлов,
     отмеченных пурпурным цветом (Gamma-файлов).
     """
-    PURPLE_COLOR = QColor(147, 112, 219)
+    PURPLE_COLOR = QColor(255, 182, 133)
     folder_name = main_window.folder_input.text()
     if not folder_name:
         print("Ошибка: Папка не выбрана.")
@@ -65,7 +65,7 @@ def calculate_peaks(main_window):
     отмеченных пурпурным цветом, и вычисляет границы пика для Cs-137 по формуле.
     Также вычисляет S1 и S2 для Cs-137 по формулам из Mathcad.
     """
-    PURPLE_COLOR = QColor(147, 112, 219)
+    PURPLE_COLOR = QColor(255, 182, 133)
     folder_name = main_window.folder_input.text()
     if not folder_name:
         print("Ошибка: Папка не выбрана.")

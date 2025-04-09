@@ -744,7 +744,7 @@ class SpectrumWindow(QMainWindow):
 
         # Вкладка "Menu"
         self.tab0 = QWidget()
-        self.tabs.addTab(self.tab0, "Menu")
+        self.tabs.addTab(self.tab0, "Меню")
         menu_layout = QVBoxLayout()
 
         # Поле для ввода имени папки с кнопкой выбора папки
@@ -769,7 +769,7 @@ class SpectrumWindow(QMainWindow):
         menu_layout.addWidget(self.file_list)
 
         # Кнопка "Авто загрузка"
-        self.auto_load_button = QPushButton("Авто загрузка")
+        self.auto_load_button = QPushButton("Автозагрузка")
         self.auto_load_button.setObjectName("autoLoadButton")  # Добавляем объектное имя для вторичного стиля
         self.auto_load_button.clicked.connect(self.auto_load_files)  # Подключаем метод для авто загрузки
         menu_layout.addWidget(self.auto_load_button)
@@ -1046,7 +1046,7 @@ class SpectrumWindow(QMainWindow):
         # Блок 7: Создание вкладки "Report"
         # =========================================================================
         self.tab4 = QWidget()
-        self.tabs.addTab(self.tab4, "Report")
+        self.tabs.addTab(self.tab4, "Отчёт")
 
         calibration_layout = QVBoxLayout()
 
@@ -1116,12 +1116,8 @@ class SpectrumWindow(QMainWindow):
         # Блок 8: Создание вкладки "Combined Report"
         # =========================================================================
         self.tab3 = QWidget()
-        self.tabs.addTab(self.tab3, "Combined Report")
+        self.tabs.addTab(self.tab3, "Сборочный отчёт")
 
-        # Добавляем заголовок вкладки
-        self.combined_report_title = QLabel("Combined Report")
-        self.combined_report_title.setObjectName("tabTitle")
-        self.combined_report_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Список файлов отчётов
         self.reports_list = QListWidget()
@@ -1165,7 +1161,6 @@ class SpectrumWindow(QMainWindow):
 
         # Основной макет вкладки
         combined_layout = QVBoxLayout()
-        combined_layout.addWidget(self.combined_report_title)  # Добавляем заголовок
         combined_layout.addLayout(status_layout)
         combined_layout.addWidget(self.reports_list)
         combined_layout.addLayout(button_layout)
@@ -1992,14 +1987,14 @@ class SpectrumWindow(QMainWindow):
 
         # Обрабатываем специальные гамма-файлы (пурпурный цвет, без графика)
         for _, item, _ in gamma_special_files:
-            item.setBackground(QColor(147, 112, 219))  # Пурпурный цвет
+            item.setBackground(QColor(255, 182, 133))  # Пурпурный цвет
             print(f"Отмечен пурпурным (без графика): {item.text()}")
 
         # Обрабатываем остальные гамма-файлы (пурпурный цвет и загрузка на график)
         for keyword, item, row in gamma_files_to_process:
             print(f"Авто загрузка Gamma для файла: {item.text()} (ключевое слово: {keyword})")
             pos = self.file_list.visualItemRect(item).center()
-            item.setBackground(QColor(147, 112, 219))  # Пурпурный цвет
+            item.setBackground(QColor(255, 182, 133))  # Пурпурный цвет
             self.change_color(pos, 'gamma')  # Вызываем change_color для загрузки на график
             self.check_color_and_load_data(pos)
 
@@ -2113,12 +2108,12 @@ class SpectrumWindow(QMainWindow):
 
         # Проверка на наличие "98_fon_2_gamma" или "98_fon_gamma" в имени файла
         if "98_fon_2_gamma" in file_name or "98_fon_gamma" in file_name:
-            item.setBackground(QColor(147, 112, 219))  # Пурпурный цвет
+            item.setBackground(QColor(255, 182, 133))  # Пурпурный цвет
             return  # Не строим график, просто выходим из метода
 
         # Проверка на наличие "gamma" в имени файла
         if "gamma" in file_name and action_type == 'gamma':
-            item.setBackground(QColor(147, 112, 219))  # Пурпурный цвет
+            item.setBackground(QColor(255, 182, 133))  # Пурпурный цвет
             self.add_or_remove_chart(item.text(), 'gamma', True)  # Загружаем на график Gamma
             return
 
@@ -2130,7 +2125,7 @@ class SpectrumWindow(QMainWindow):
             item.setBackground(QColor(173, 216, 230))  # Голубой для "Загрузить Beta"
             self.add_or_remove_chart(item.text(), 'beta', True)
         elif action_type == 'gamma':
-            item.setBackground(QColor(147, 112, 219))  # Пурпурный для "Загрузить Gamma"
+            item.setBackground(QColor(255, 182, 133))  # Пурпурный для "Загрузить Gamma"
             self.add_or_remove_chart(item.text(), 'gamma', True)
         elif action_type == 'disable':
             item.setBackground(Qt.GlobalColor.white)  # Обесцвечиваем поле для "Отключить"
@@ -2292,7 +2287,7 @@ class SpectrumWindow(QMainWindow):
             self.load_data_for_chart('alfa', item.text())
         elif background_color == QColor(173, 216, 230):  # Голубой цвет для 'Beta'
             self.load_data_for_chart('beta', item.text())
-        elif background_color == QColor(147, 112, 219):  # Пурпурный цвет для 'Gamma'
+        elif background_color == QColor(255, 182, 133):  # Пурпурный цвет для 'Gamma'
             self.load_data_for_chart('gamma', item.text())
 
     def load_data_for_chart(self, chart_type, file_name):
