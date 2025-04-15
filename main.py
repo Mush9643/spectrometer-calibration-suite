@@ -6,7 +6,7 @@ import numpy as np
 from PyQt6.QtCharts import QChart, QLineSeries, QValueAxis, QChartView, QLogValueAxis, QAbstractSeries, QScatterSeries
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QMessageBox, QDialog, \
     QSplashScreen, QCheckBox, QLineEdit, QTabWidget, QListWidgetItem, QListWidget, QMenu, QHBoxLayout, QFileDialog, \
-    QTableWidgetItem, QTableWidget, QHeaderView, QLabel
+    QTableWidgetItem, QTableWidget, QHeaderView, QLabel, QInputDialog
 from PyQt6.QtGui import QPixmap, QIcon, QPainter, QDesktopServices, QColor, QFont
 from PyQt6.QtCore import Qt, QTimer, QUrl, QRectF, pyqtSignal
 from modbus import ModbusClient  # Импортируем ModbusClient из файла modbus.py
@@ -365,6 +365,14 @@ class SpectrumWindow(QMainWindow):
 
         self.setStyleSheet("""
             /* Основные стили окна */
+            QListWidget::item[additionSelected="true"] {
+                background-color: #C0392B; /* Серый фон для элементов, выбранных для сложения */
+                color: #FFFFFF; /* Чёрный текст */
+            }
+            QListWidget::item:selected[additionSelected="true"] {
+                background-color: #C0392B; /* Сохраняем красный фон при стандартном выделении */
+                color: #FFFFFF;
+            }
             QMainWindow {
                 background-color: #FFFFFF; /* Белый фон */
                 font-family: 'Montserrat', sans-serif; /* Устанавливаем шрифт Montserrat */
@@ -676,6 +684,24 @@ class SpectrumWindow(QMainWindow):
             QPushButton#alfaResetZoomButton:pressed {
                 background-color: #3A3A3A; /* Тёмно-серый при нажатии */
             }
+            
+            QPushButton#spectrumButton[additionActive="true"] {
+                background-color: #4A4A4A; /* Тёмно-серый фон */
+                color: #FFFFFF; /* Белый текст */
+                border: 2px solid #C0392B; /* Красный контур */
+                border-radius: 5px;
+                padding: 8px 16px;
+                font-size: 12px;
+                font-weight: 600; /* Montserrat SemiBold */
+            }
+            QPushButton#spectrumButton[additionActive="true"]:hover {
+                background-color: #5A5A5A; /* Светлее серый при наведении */
+                border: 2px solid #A93226; /* Более тёмный красный контур */
+            }
+            QPushButton#spectrumButton[additionActive="true"]:pressed {
+                background-color: #3A3A3A; /* Темнее серый при нажатии */
+                border: 2px solid #922B21; /* Ещё более тёмный красный контур */
+            }
         """)
 
         # Настройка окна
@@ -779,7 +805,8 @@ class SpectrumWindow(QMainWindow):
         self.spectrum_button.setObjectName("spectrumButton")  # Для стилизации
         self.spectrum_button.clicked.connect(self.open_spectrum_window)  # Подключаем метод открытия окна
         menu_layout.addWidget(self.spectrum_button)
-
+        self.selected_addition_files = []  # Список для хранения файлов, выбранных для сложения
+        self.file_list.itemClicked.connect(self.handle_file_list_click)
         self.tab0.setLayout(menu_layout)
 
         # Загружаем файлы .xls из папки по умолчанию
@@ -1191,9 +1218,143 @@ class SpectrumWindow(QMainWindow):
         self.tabs.setTabEnabled(2, False)  # Beta
         self.tabs.setTabEnabled(3, False)  # Gamma
 
+        # =========================================================================
+        # Блок 10: Добавление кнопки "Сложение спекторов" на вкладке "Menu"
+        # =========================================================================
+        # Кнопка "Сложение спекторов"
+        self.spectrum_addition_button = QPushButton("Сложение спекторов")
+        self.spectrum_addition_button.setObjectName("spectrumButton")  # Используем тот же стиль, что у кнопки "Спектр"
+        self.spectrum_addition_button.setProperty("additionActive", False)  # Свойство для отслеживания состояния
+        self.spectrum_addition_button.clicked.connect(self.toggle_spectrum_addition)  # Подключаем метод переключения
+
+        menu_layout.addWidget(self.spectrum_addition_button)
+
     ##########################################################################
     # Методы всякого разного
     ##########################################################################
+    def toggle_spectrum_addition(self):
+        """
+        Переключает режим сложения спекторов, меняет стиль кнопки и инициирует суммирование при подтверждении.
+        """
+        current_state = self.spectrum_addition_button.property("additionActive")
+        new_state = not current_state
+        self.spectrum_addition_button.setProperty("additionActive", new_state)
+
+        if new_state:
+            # Активируем режим выбора файлов
+            self.spectrum_addition_button.setText("Сложение спекторов (вкл)")
+        else:
+            # Завершаем выбор и выполняем суммирование
+            self.spectrum_addition_button.setText("Сложение спекторов")
+            if self.selected_addition_files:
+                self.sum_spectrum_data()  # Вызываем суммирование, если есть выбранные файлы
+            # Сбрасываем выделение всех элементов
+            for i in range(self.file_list.count()):
+                item = self.file_list.item(i)
+                item.setData(Qt.ItemDataRole.UserRole + 1, False)  # Сбрасываем additionSelected
+                item.setBackground(QColor("#FFFFFF"))  # Возвращаем белый фон
+            self.selected_addition_files.clear()  # Очищаем список выбранных файлов
+
+        # Обновляем стиль кнопки
+        self.spectrum_addition_button.style().unpolish(self.spectrum_addition_button)
+        self.spectrum_addition_button.style().polish(self.spectrum_addition_button)
+        self.spectrum_addition_button.update()
+
+    def handle_file_list_click(self, item):
+        """
+        Обрабатывает левый клик по элементу в file_list. В режиме сложения выделяет или снимает выделение.
+        """
+        if not self.spectrum_addition_button.property("additionActive"):
+            return  # Игнорируем клики, если режим сложения не активен
+
+        # Проверяем текущее состояние выделения
+        is_selected = item.data(Qt.ItemDataRole.UserRole + 1) or False
+        if not is_selected:
+            item.setData(Qt.ItemDataRole.UserRole + 1, True)  # Устанавливаем additionSelected
+            item.setBackground(QColor("#C0392B"))  # Красный фон
+            if item.text() not in self.selected_addition_files:
+                self.selected_addition_files.append(item.text())  # Добавляем в список
+        else:
+            item.setData(Qt.ItemDataRole.UserRole + 1, False)  # Сбрасываем additionSelected
+            item.setBackground(QColor("#FFFFFF"))  # Белый фон
+            if item.text() in self.selected_addition_files:
+                self.selected_addition_files.remove(item.text())  # Удаляем из списка
+
+    def sum_spectrum_data(self):
+        """
+        Суммирует данные столбца 'Кол-во импульсов' из выбранных файлов и сохраняет результат в новый Excel-файл.
+        """
+        from PyQt6.QtWidgets import QInputDialog, QMessageBox
+
+        if not self.selected_addition_files:
+            self.show_warning_message("Нет выбранных файлов для сложения.")
+            return
+
+        folder_name = self.folder_input.text()
+        if not folder_name:
+            self.show_warning_message("Папка не выбрана.")
+            return
+
+        folder_path = os.path.join(os.getcwd(), folder_name)
+        summed_data = None
+
+        # Читаем и суммируем данные
+        for file_name in self.selected_addition_files:
+            file_path = os.path.join(folder_path, file_name)
+            if not os.path.exists(file_path):
+                self.show_warning_message(f"Файл '{file_name}' не найден.")
+                continue
+
+            try:
+                df = pd.read_excel(file_path)
+                if 'Канал' not in df.columns or 'Кол-во импульсов' not in df.columns:
+                    self.show_warning_message(f"Неверный формат данных в файле '{file_name}'.")
+                    continue
+
+                if summed_data is None:
+                    summed_data = df[['Канал', 'Кол-во импульсов']].copy()
+                else:
+                    # Убедимся, что каналы совпадают
+                    if not summed_data['Канал'].equals(df['Канал']):
+                        self.show_warning_message(f"Каналы в файле '{file_name}' не совпадают с предыдущими.")
+                        continue
+                    summed_data['Кол-во импульсов'] += df['Кол-во импульсов']
+
+            except Exception as e:
+                self.show_error_message(f"Ошибка при обработке файла '{file_name}': {str(e)}")
+                return
+
+        if summed_data is None:
+            self.show_warning_message("Нет данных для сохранения.")
+            return
+
+        # Всплывающее окно для ввода имени файла
+        file_name, ok = QInputDialog.getText(self, "Имя файла", "Введите имя для нового Excel-файла (без расширения):",
+                                             text="Summed_Spectrum")
+        if not ok or not file_name.strip():
+            self.show_warning_message("Имя файла не указано. Операция отменена.")
+            return
+
+        # Добавляем расширение .xlsx, если не указано
+        if not file_name.endswith(".xlsx"):
+            file_name += ".xlsx"
+
+        # Проверяем, существует ли файл
+        output_path = os.path.join(folder_path, file_name)
+        if os.path.exists(output_path):
+            self.show_error_message(f"Файл '{file_name}' уже существует. Укажите другое имя.")
+            return
+
+        try:
+            # Сохраняем результат
+            summed_data.to_excel(output_path, index=False)
+            self.show_info_message(f"Файл '{file_name}' успешно сохранён в папке '{folder_name}'.")
+
+            # Обновляем список файлов
+            self.load_xls_files()
+
+        except Exception as e:
+            self.show_error_message(f"Ошибка при сохранении файла: {str(e)}")
 
     def open_spectrum_window(self):
         """Открывает окно с графиком спектра."""
@@ -2063,6 +2224,7 @@ class SpectrumWindow(QMainWindow):
             xls_files = [f for f in os.listdir(folder_path) if f.endswith((".xls", ".xlsx"))]
             for file_name in xls_files:
                 item = QListWidgetItem(file_name)
+                item.setData(Qt.ItemDataRole.UserRole + 1, False)  # Инициализируем additionSelected как False
                 self.file_list.addItem(item)
         else:
             # Если папка не существует, выводим сообщение

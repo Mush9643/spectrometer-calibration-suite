@@ -1,6 +1,6 @@
 import numpy as np
 from PyQt6.QtCharts import QScatterSeries, QLineSeries, QChart, QValueAxis, QChartView
-from PyQt6.QtGui import QPainter, QColor
+from PyQt6.QtGui import QPainter, QColor, QFont
 from PyQt6.QtWidgets import QPushButton, QVBoxLayout, QWidget, QDialog, QLabel, QLineEdit, QFormLayout, QHBoxLayout, \
     QSizePolicy
 from PyQt6.QtCore import Qt, QPointF
@@ -369,7 +369,8 @@ def add_calibration_button(window):
 
     # Устанавливаем растяжку кнопки по горизонтали
     button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-
+    button.setFixedHeight(50)
+    button.setFont(QFont("Montserrat", 14, QFont.Weight.Bold))
     # Получаем основной layout вкладки tab1
     main_layout = window.tab1.layout()
 
