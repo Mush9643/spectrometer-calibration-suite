@@ -7,9 +7,8 @@ from PyQt6.QtCore import Qt, QPointF
 
 # Константы
 ERA226 = [7686.82, 6002.35, 8784.86]  # Значения энергии для пиков Rn
-P90 = [2700, 4385.6, 5687.5, 6192.35, 6337.7, 8044.6]  # Значения энергии для P90
+P90 = [2700, 4385.6, 5687.5, 6192.35, 6337.7, 7936.8]  # Значения энергии для P90
 
-# Существующие функции остаются без изменений
 def print_alfa_data_arrays(parent_window):
     """Выводит в консоль данные второй строки всех сохранённых массивов Alfa."""
     if not hasattr(parent_window, 'alfa_data_arrays') or not parent_window.alfa_data_arrays:

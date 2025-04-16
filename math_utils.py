@@ -9,7 +9,6 @@ from PyQt6.QtCore import Qt, QPointF
 ERA226 = [7686.82, 6002.35, 8784.86]  # Значения энергии для пиков Rn
 P90 = [2700, 4385.6, 5687.5, 6192.35, 6337.7, 7936.8]  # Значения энергии для P90
 
-# Существующие функции остаются без изменений
 def print_alfa_data_arrays(parent_window):
     """Выводит в консоль данные второй строки всех сохранённых массивов Alfa."""
     if not hasattr(parent_window, 'alfa_data_arrays') or not parent_window.alfa_data_arrays:
@@ -37,6 +36,17 @@ def calculate_linear_regression(x, y):
     slope = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x * sum_x)
     intercept = (sum_y - slope * sum_x) / n
     return intercept, slope
+
+
+def calculate_point_to_line_distances(x_values, y_values, slope, intercept):
+    """Вычисляет кратчайшее расстояние от точек до прямой y = mx + k.
+    """
+    distances = []
+    for x, y in zip(x_values, y_values):
+        # Формула: |mx - y + k| / sqrt(m^2 + 1)
+        distance = abs(slope * x - y + intercept) / np.sqrt(slope ** 2 + 1)
+        distances.append(distance)
+    return distances
 
 def highlight_am241_peak(chart, series, peak_points):
     """Отмечает пик Am241 на графике как точку максимального значения."""
@@ -325,8 +335,24 @@ class CalibrationDialog(QDialog):
         chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
         layout.addWidget(chart_view)
 
-        info_layout = QFormLayout()
+        # Вычисление расстояний до прямой
+        distances_text = "Расстояния до прямой:\n"
+        # Rn точки
+        rn_distances = calculate_point_to_line_distances(self.x_values, self.y_values, self.slope, self.intercept)
+        for i, (x, y, dist) in enumerate(zip(self.x_values, self.y_values, rn_distances)):
+            distances_text += f"Rn Пик {i+1} (x={x:.1f}, y={y:.1f}): {dist:.3f}\n"
+        # Am241 точка
+        if self.am241_x is not None:
+            am241_dist = calculate_point_to_line_distances([self.am241_x], [5485.56], self.slope, self.intercept)[0]
+            distances_text += f"Am241 (x={self.am241_x:.1f}, y=5485.56): {am241_dist:.3f}\n"
 
+        # Добавление QLabel для отображения расстояний
+        distances_label = QLabel(distances_text)
+        distances_label.setFont(QFont("Montserrat", 10))
+        distances_label.setStyleSheet("padding: 10px;")
+        layout.addWidget(distances_label)
+
+        info_layout = QFormLayout()
         layout.addLayout(info_layout)
 
         calculate_ra(self.parent_window)
@@ -357,6 +383,8 @@ class CalibrationDialog(QDialog):
             if "Am241" in series_name and peak:
                 return peak.points()[0].x()
         return None
+
+
 
 def add_calibration_button(window):
     """Добавляет кнопку калибровки внизу вкладки Alfa chart, растянутую на всю ширину."""
