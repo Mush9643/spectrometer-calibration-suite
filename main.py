@@ -1232,6 +1232,7 @@ class SpectrumWindow(QMainWindow):
     ##########################################################################
     # Методы всякого разного
     ##########################################################################
+
     def toggle_spectrum_addition(self):
         """
         Переключает режим сложения спекторов, меняет стиль кнопки и инициирует суммирование при подтверждении.
@@ -1419,7 +1420,7 @@ class SpectrumWindow(QMainWindow):
             "НУД ROI 2, № канала (5687.5)",
             "НУД ROI 6, № канала (6192.35)",
             "НУД ROI 4, № канала (6337.7)",
-            "НУД ROI 5, № канала (8044.6)",
+            "НУД ROI 5, № канала (7936.8)",
             "K(Po218)",
             "k1p9",
             "Пик Am241",
@@ -1428,6 +1429,8 @@ class SpectrumWindow(QMainWindow):
             "k1c0",
             "a (Beta)",
             "b (Beta)",
+            "От Am241 до прямой",
+            "Fon",
             "Pn (80 кэВ)",
             "Pn (146 кэВ)",
             "Pn (400 кэВ)",
@@ -1478,6 +1481,7 @@ class SpectrumWindow(QMainWindow):
 
         header_fill = PatternFill(start_color="D7CCC8", end_color="D7CCC8", fill_type="solid")
         data_fill = PatternFill(start_color="E6EAD6", end_color="E6EAD6", fill_type="solid")
+        red_fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")  # Красный фон
         thin_border = Border(
             left=Side(style='thin', color='000000'),
             right=Side(style='thin', color='000000'),
@@ -1486,17 +1490,79 @@ class SpectrumWindow(QMainWindow):
         )
         thick_border = Border(right=Side(style='medium', color='000000'))
 
+        # Применяем заливку заголовков
         for cell in worksheet[1]:
             cell.fill = header_fill
 
+        # Применяем заливку данных и проверяем 12-ю строку (Пик Am241)
         for row in range(2, worksheet.max_row + 1):
             for cell in worksheet[row]:
                 cell.fill = data_fill
+                cell.border = thin_border
 
+        # Проверка 12-й строки (Пик Am241)
+        row_12 = worksheet[12]  # 12-я строка (1-based, заголовок + 11 параметров)
+        for cell in row_12[1:]:  # Пропускаем первый столбец (Параметр)
+            try:
+                value = float(cell.value)  # Пробуем преобразовать в число
+                if value != 0:  # Проверяем, что деление возможно
+                    inverse = 1 / value
+                    if inverse < 0.29:  # Условие: 1 / значение < 0.29
+                        cell.fill = red_fill  # Устанавливаем красный фон
+            except (ValueError, TypeError, ZeroDivisionError):
+                # Если значение не число или деление на 0, оставляем стандартный фон
+                pass
+        # Проверка 16-й строки (k1c0)
+        row_16 = worksheet[16]  # 16-я строка (1-based, заголовок + 15 параметров)
+        for cell in row_16[1:]:  # Пропускаем первый столбец (Параметр)
+            try:
+                value = float(cell.value)  # Пробуем преобразовать в число
+                if value != 0:  # Проверяем, что деление возможно
+                    inverse = 1 / value
+                    if inverse < 0.25:  # Условие: 1 / значение < 0.25
+                        cell.fill = red_fill  # Устанавливаем красный фон
+            except (ValueError, TypeError, ZeroDivisionError):
+                # Если значение не число или деление на 0, оставляем стандартный фон
+                pass
+        # Проверка 13-й строки (НУД β)
+        row_13 = worksheet[13]  # 13-я строка (1-based, заголовок + 12 параметров)
+        for cell in row_13[1:]:  # Пропускаем первый столбец (Параметр)
+            try:
+                value = float(cell.value)  # Пробуем преобразовать в число
+                if not (500 <= value <= 600):  # Условие: значение не в [500, 600]
+                    cell.fill = red_fill  # Устанавливаем красный фон
+            except (ValueError, TypeError):
+                # Если значение не число, оставляем стандартный фон
+                pass
+
+        # Проверка 19-й строки (Fon)
+        row_19 = worksheet[19]  # 19-я строка (1-based, заголовок + 18 параметров)
+        for cell in row_19[1:]:  # Пропускаем первый столбец (Параметр)
+            try:
+                value = float(cell.value)  # Пробуем преобразовать в число
+                if value > 0.1:  # Условие: значение > 0.1
+                    cell.fill = red_fill  # Устанавливаем красный фон
+            except (ValueError, TypeError):
+                # Если значение не число, оставляем стандартный фон
+                pass
+
+        # Проверка 20-й строки (Pn (80 кэВ))
+        row_20 = worksheet[20]  # 20-я строка (1-based, заголовок + 19 параметров)
+        for cell in row_20[1:]:  # Пропускаем первый столбец (Параметр)
+            try:
+                value = float(cell.value)  # Пробуем преобразовать в число
+                if value > 0.2:  # Условие: значение > 0.2
+                    cell.fill = red_fill  # Устанавливаем красный фон
+            except (ValueError, TypeError):
+                # Если значение не число, оставляем стандартный фон
+                pass
+
+        # Устанавливаем границы для всех ячеек
         for row in worksheet.rows:
             for cell in row:
                 cell.border = thin_border
 
+        # Автоматическая ширина столбцов
         for column in worksheet.columns:
             max_length = 0
             column_letter = column[0].column_letter
@@ -1509,6 +1575,7 @@ class SpectrumWindow(QMainWindow):
             adjusted_width = max_length + 2
             worksheet.column_dimensions[column_letter].width = adjusted_width
 
+        # Устанавливаем толстую границу для первого столбца
         for row in range(1, worksheet.max_row + 1):
             cell = worksheet.cell(row=row, column=1)
             new_border = Border(
@@ -1886,7 +1953,7 @@ class SpectrumWindow(QMainWindow):
         # Расстояние от прямой до точки Am241
         if hasattr(self, 'am241_dist') and self.am241_dist is not None:
             relative_dist = (self.am241_dist / 5485.56) * 100
-            report_data.append(["Относительное расстояние Am241", f"{relative_dist:.3f}%"])
+            report_data.append(["От Am241 до прямой", f"{relative_dist:.3f}"])
         else:
             report_data.append(["От Am241 до прямой", "Отсутствует"])
 
@@ -1938,7 +2005,7 @@ class SpectrumWindow(QMainWindow):
 
                 # Если это строка с параметром, содержащим энергию (например, "НУД α, № канала (536.045)"), применяем зелёный фон
                 if c_idx == 1 and any(energy in str(value) for energy in
-                                      ["536.045", "4385.6", "5687.5", "6192.35", "6337.7", "8044.6"]):
+                                      ["536.045", "4385.6", "5687.5", "6192.35", "6337.7", "7936.8"]):
                     for col in range(1, 3):  # Применяем зелёный фон к обеим ячейкам строки
                         ws.cell(row=r_idx, column=col).fill = beige_fill
 
@@ -2193,18 +2260,7 @@ class SpectrumWindow(QMainWindow):
             self.show_warning_message(
                 "Не найдено файлов с именами, содержащими 'фона', 'SrY90', 'Rad', 'Cs137', 'C14', 'Am241' (Beta), 'Rn', 'Am241' (Alfa) или 'gamma' (Gamma)."
             )
-        elif not beta_files_to_process:
-            self.show_warning_message(
-                "Не найдено файлов для Beta с именами, содержащими 'фона', 'SrY90', 'Rad', 'Cs137', 'C14', 'Am241'."
-            )
-        elif not alfa_files_to_process:
-            self.show_warning_message(
-                "Не найдено файлов для Alfa с именами, содержащими 'Rn', 'Am241'."
-            )
-        elif not gamma_files_to_process and not gamma_special_files:
-            self.show_warning_message(
-                "Не найдено файлов для Gamma с именами, содержащими 'gamma'."
-            )
+
         print_gamma_impulses(self)
         peaks = calculate_peaks(self)
         # После успешной обработки файлов включаем вкладки "Alfa", "Beta" и "Gamma"
