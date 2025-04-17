@@ -28,7 +28,6 @@ def calculate_fon_sum(fon_data, nud_b=5, vud_b=200):
     fon_sum = sum(fon_data[i] / fon_0 for i in range(nud_b, vud_b + 1))
     print(f"Вычисленное значение fon_И (сумма от NUD_b={nud_b} до VUD_b={vud_b}): {fon_sum:.3f}")
 
-
     return fon_sum
 
 
@@ -261,7 +260,7 @@ def process_fon_data(parent, fon_data, file_name):
     print(f"Значение с индексом 0 (fon_0): {fon_data[0]}")
     print(f"Количество элементов в массиве фона: {len(fon_data)}")
 
-    calculate_fon_sum(fon_data)
+    parent.fon_sum = calculate_fon_sum(fon_data)
 
     parent.fon_processed = True
     update_calibration_button_state(parent)

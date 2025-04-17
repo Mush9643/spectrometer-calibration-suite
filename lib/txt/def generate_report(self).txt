@@ -1,0 +1,170 @@
+    def generate_report(self):
+        """Метод для создания отчёта: создаёт Excel-файл в папке 'Отчёты' с параметрами, включая массив Pn."""
+        # Проверяем, была ли выполнена калибровка (оставляем как есть для Alfa chart)
+        if not self.calibration_performed:
+            self.show_warning_message("Сначала выполните калибровку на вкладке Alfa chart.")
+            print("Предупреждение: Калибровка не выполнена. Нажмите кнопку 'Калибровка' на вкладке Alfa chart.")
+            return
+
+        # Получаем имя папки из поля ввода
+        folder_name = self.folder_input.text()
+
+        # Создаём путь к папке "Отчёты" в корневой директории приложения
+        reports_dir = os.path.join(os.getcwd(), "Отчёты")
+        if not os.path.exists(reports_dir):
+            os.makedirs(reports_dir)  # Создаём папку, если её нет
+
+        # Формируем имя файла
+        report_filename = f"{folder_name}_Отчёт.xlsx"
+        report_path = os.path.join(reports_dir, report_filename)
+
+        # Собираем данные для отчёта
+        report_data = []
+
+        # Заголовок
+        report_data.append(["Параметр", "Значение"])
+
+        # folder_name
+        report_data.append(["Имя папки", folder_name])
+
+        # aRa и bRa (Alfa)
+        if hasattr(self, 'calibration_coefficients') and self.calibration_coefficients:
+            aRa, bRa = self.calibration_coefficients
+            report_data.append(["a (Alfa)", f"{aRa:.3f}"])
+            report_data.append(["b (Alfa)", f"{bRa:.3f}"])
+        else:
+            report_data.append(["a (Alfa)", "Отсутствует"])
+            report_data.append(["b (Alfa)", "Отсутствует"])
+
+        # Значения P()
+        if hasattr(self, 'p_values') and self.p_values:
+            p_names = ["НУД α, № канала", "ВУД ROI 3, № канала", "НУД ROI 2, № канала",
+                       "НУД ROI 6, № канала", "НУД ROI 4, № канала", "НУД ROI 5, № канала"]
+            p_values_list = list(self.p_values.items())
+            for i in range(6):
+                if i < len(p_values_list):
+                    energy, p_value = p_values_list[i]
+                    report_data.append([f"{p_names[i]} ({energy})", f"{p_value}"])
+                else:
+                    report_data.append([p_names[i], "Данные отсутствуют"])
+        else:
+            for name in ["НУД α, № канала", "ВУД ROI 3, № канала", "НУД ROI 2, № канала",
+                         "НУД ROI 6, № канала", "НУД ROI 4, № канала", "НУД ROI 5, № канала"]:
+                report_data.append([name, "Отсутствует"])
+
+        # K(Po218) (ранее ra)
+        if hasattr(self, 'ra_value') and self.ra_value is not None:
+            report_data.append(["K(Po218)", f"{self.ra_value:.3f}"])
+        else:
+            report_data.append(["K(Po218)", "Отсутствует"])
+
+        # k1p9
+        if hasattr(self, 'k1p9_value') and self.k1p9_value is not None:
+            report_data.append(["k1p9", f"{self.k1p9_value:.3f}"])
+        else:
+            report_data.append(["k1p9", "Отсутствует"])
+
+        # Пик Am241
+        if hasattr(self, 'peak_points') and self.peak_points:
+            for series_name, peak in self.peak_points.items():
+                if "Am241" in series_name and peak and peak.points():
+                    am241_x = peak.points()[0].x()
+                    report_data.append(["Пик Am241", f"{am241_x:.3f}"])
+                    break
+            else:
+                report_data.append(["Пик Am241", "Не найден"])
+        else:
+            report_data.append(["Пик Am241", "Отсутствует"])
+
+        # НУД β и ВУД β
+        report_data.append(["НУД β", f"{NUD_b:.3f}"])
+        report_data.append(["ВУД β", f"{VUD_b:.3f}"])
+
+        # k1c0
+        if hasattr(self, 'k1c0') and self.k1c0 is not None:
+            report_data.append(["k1c0", f"{self.k1c0:.3f}"])
+        else:
+            report_data.append(["k1c0", "Отсутствует"])
+
+        # AB и BB (Beta) переименованы в intercept и slope
+        if hasattr(self, 'beta_calibration_coefficients') and self.beta_calibration_coefficients:
+            intercept, slope = self.beta_calibration_coefficients
+            report_data.append(["a (Beta)", f"{intercept:.3f}"])  # intercept как a
+            report_data.append(["b (Beta)", f"{slope:.3f}"])  # slope как b
+        else:
+            report_data.append(["a (Beta)", "Отсутствует"])
+            report_data.append(["b (Beta)", "Отсутствует"])
+
+        # Добавляем значения Pn для Gamma
+        Ep = [80, 146, 400, 850, 1500, 2515]  # Энергии из gamma_math.py
+        if hasattr(self, 'gamma_pn_values') and self.gamma_pn_values:
+            for energy, pn_value in zip(Ep, self.gamma_pn_values):
+                report_data.append((f"Pn ({energy} кэВ)", f"{pn_value}"))
+        else:
+            for energy in Ep:
+                report_data.append((f"Pn ({energy} кэВ)", "Отсутствует"))
+
+        # Создаём DataFrame
+        df = pd.DataFrame(report_data[1:], columns=report_data[0])
+
+        # Создаём и оформляем Excel-файл
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Отчёт"
+
+        # Стили
+        header_font = Font(bold=True, size=12, color="000000")  # Чёрный шрифт для заголовков
+        header_fill = PatternFill(start_color="ADD8E6", end_color="ADD8E6",
+                                  fill_type="solid")  # Голубой фон для заголовков (Light Blue)
+        value_font = Font(size=11, color="000000")  # Чёрный шрифт для значений
+        beige_fill = PatternFill(start_color="F5F5DC", end_color="F5F5DC",
+                                 fill_type="solid")  # Бежевый фон для строк (Beige)
+        border = Border(left=Side(style="thin"), right=Side(style="thin"),
+                        top=Side(style="thin"), bottom=Side(style="thin"))
+
+        # Записываем данные
+        for r_idx, row in enumerate(df.values, 2):  # Начинаем с 2-й строки, чтобы оставить место для заголовка
+            for c_idx, value in enumerate(row, 1):
+                cell = ws.cell(row=r_idx, column=c_idx, value=value)
+                cell.font = value_font
+                cell.alignment = Alignment(horizontal="center", vertical="center")
+                cell.border = border
+
+                # Применяем бежевый фон для всех строк
+                cell.fill = beige_fill
+
+                # Если это строка с параметром, содержащим энергию (например, "НУД α, № канала (536.045)"), применяем зелёный фон
+                if c_idx == 1 and any(energy in str(value) for energy in
+                                      ["536.045", "4385.6", "5687.5", "6192.35", "6337.7", "8044.6"]):
+                    for col in range(1, 3):  # Применяем зелёный фон к обеим ячейкам строки
+                        ws.cell(row=r_idx, column=col).fill = beige_fill
+
+        # Заголовок
+        for c_idx, header in enumerate(df.columns, 1):
+            cell = ws.cell(row=1, column=c_idx, value=header)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = Alignment(horizontal="center", vertical="center")
+            cell.border = border
+
+        # Устанавливаем ширину колонок вручную, как в образце
+        ws.column_dimensions['A'].width = 30  # Колонка "Параметр"
+        ws.column_dimensions['B'].width = 15  # Колонка "Значение"
+
+        # Сохраняем файл с обработкой ошибки
+        try:
+            wb.save(report_path)
+            # Формируем сообщение с зелёной галочкой
+            success_message = f"Отчёт сохранён в файл: {report_path}"
+            self.show_info_message(success_message)
+            # Выводим в консоль с зелёным цветом
+            print(f"\033[92m✔ Отчёт сохранён в файл: {report_path}\033[0m")
+        except PermissionError:
+            self.show_warning_message(
+                "Невозможно создать новый отчёт, пока открыт Excel-файл со старым отчётом. Закройте файл и попробуйте снова.")
+            print(f"Ошибка: Невозможно сохранить отчёт в файл {report_path}. Возможно, файл уже открыт в Excel.")
+            return
+        except Exception as e:
+            self.show_warning_message(f"Произошла ошибка при сохранении отчёта: {str(e)}")
+            print(f"Ошибка при сохранении отчёта: {str(e)}")
+            return

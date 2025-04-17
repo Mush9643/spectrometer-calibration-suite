@@ -2,9 +2,9 @@ import math
 import os
 import pandas as pd
 import numpy as np
-from PyQt6.QtGui import QColor, QPainter, QIcon
+from PyQt6.QtGui import QColor, QPainter, QIcon, QFont
 from PyQt6.QtCharts import QChart, QChartView, QLineSeries, QValueAxis, QScatterSeries, QLogValueAxis
-from PyQt6.QtWidgets import QDialog, QVBoxLayout, QMessageBox, QLabel
+from PyQt6.QtWidgets import QDialog, QVBoxLayout, QMessageBox, QLabel, QApplication
 from PyQt6.QtCore import Qt
 
 # Массив констант Era226
@@ -231,13 +231,27 @@ def plot_peaks(main_window, peaks):
     print("Пики отображены на графике Gamma.")
 
 
+def calculate_point_to_line_distances(x_values, y_values, slope, intercept):
+    """Вычисляет кратчайшее расстояние от точек до прямой y = mx + k.
+    """
+    distances = []
+    for x, y in zip(x_values, y_values):
+        # Формула: |mx - y + k| / sqrt(m^2 + 1)
+        distance = abs(slope * x - y + intercept) / np.sqrt(slope ** 2 + 1)
+        distances.append(distance)
+    return distances
+
+
 class CalibrationWindow(QDialog):
     def __init__(self, parent=None, peaks=None, rbntu=None):
         super().__init__(parent)
         self.pn_values = None
         self.setWindowTitle("Калибровка Gamma")
         self.setWindowIcon(QIcon("lib\\Pictures\\M-Photoroom.png"))
-        self.setFixedSize(700, 500)
+        self.setGeometry(100, 100, 800, 600)
+
+        # Центрирование окна
+        self.center_on_screen()
 
         try:
             # Создаём график
@@ -260,25 +274,27 @@ class CalibrationWindow(QDialog):
             # Переменные для коэффициентов
             a, b = 0, 0
             cs137_x, am241_x = None, None
+            x_values, y_values = [], []
 
             # Построение калибровочной прямой
             if rbntu and len(rbntu) == 2:
                 x1, x2 = rbntu[0], rbntu[1]
                 y1, y2 = Era226[0], Era226[1]
-                b = (y2 - y1) / (x2 - x1)
-                a = y1 - b * x1
+                if x2 != x1:  # Проверка на деление на ноль
+                    b = (y2 - y1) / (x2 - x1)
+                    a = y1 - b * x1
 
-                calibration_line = QLineSeries()
-                calibration_line.setName("Калибровочная прямая")
-                calibration_line.setPen(QColor(0, 128, 0))
-                t_min, t_max = 0, 400
-                f_t_min = a + b * t_min
-                f_t_max = a + b * t_max
-                calibration_line.append(t_min, f_t_min)
-                calibration_line.append(t_max, f_t_max)
-                self.calibration_chart.addSeries(calibration_line)
-                calibration_line.attachAxis(self.axis_x)
-                calibration_line.attachAxis(self.axis_y)
+                    calibration_line = QLineSeries()
+                    calibration_line.setName("Калибровочная прямая")
+                    calibration_line.setPen(QColor(0, 128, 0))
+                    t_min, t_max = 0, 400
+                    f_t_min = a + b * t_min
+                    f_t_max = a + b * t_max
+                    calibration_line.append(t_min, f_t_min)
+                    calibration_line.append(t_max, f_t_max)
+                    self.calibration_chart.addSeries(calibration_line)
+                    calibration_line.attachAxis(self.axis_x)
+                    calibration_line.attachAxis(self.axis_y)
 
             # Добавляем пики
             if peaks:
@@ -291,12 +307,16 @@ class CalibrationWindow(QDialog):
                         scatter_series.setColor(QColor(255, 0, 0))
                         scatter_series.setBorderColor(QColor(255, 0, 0))
                         cs137_x = shifted_channel
+                        x_values.append(shifted_channel)
+                        y_values.append(energy)
                     elif any(keyword in file_name.lower() for keyword in ["am", "am241", "am_gamma"]):
                         scatter_series.setName("Пик Am-241")
                         energy = Era226[1]
                         scatter_series.setColor(QColor(0, 0, 255))
                         scatter_series.setBorderColor(QColor(0, 0, 255))
                         am241_x = shifted_channel
+                        x_values.append(shifted_channel)
+                        y_values.append(energy)
                     else:
                         continue
 
@@ -331,22 +351,43 @@ class CalibrationWindow(QDialog):
             if self.pn_values is not None:
                 print(f"Вычислен и сохранён массив Pn: {self.pn_values}")
 
-            # Формируем текст для QLabel
+            # Формируем текст для QLabel с коэффициентами
             pn_text = self.pn_values if self.pn_values is not None else "Не вычислен"
             label_text = f"Энергии наших окон компенсационных Pn для Ep = {Ep}: {pn_text}"
             label_text += f"\nКоэффициенты прямой: b = {a:.2f}, a = {b:.4f}"
-            if cs137_x is not None:
-                label_text += f"\nX-координата пика Cs-137: {cs137_x:.2f}"
-            if am241_x is not None:
-                label_text += f"\nX-координата пика Am-241: {am241_x:.2f}"
+
             coefficients_label = QLabel(label_text)
             layout.addWidget(coefficients_label)
+
+            # Вычисляем расстояния до прямой
+            distances_text = "Расстояния до прямой:\n"
+            if x_values and y_values:
+                distances = calculate_point_to_line_distances(x_values, y_values, b, a)
+                for i, (x, y, dist) in enumerate(zip(x_values, y_values, distances)):
+                    point_name = "Cs-137" if y == Era226[0] else "Am-241"
+                    distances_text += f"{point_name} (x={x:.1f}, y={y:.1f}): {dist:.3f}\n"
+            else:
+                distances_text += "Нет точек для вычисления расстояний.\n"
+
+            # Добавление QLabel для отображения расстояний
+            distances_label = QLabel(distances_text)
+            distances_label.setFont(QFont("Arial", 10))
+            distances_label.setStyleSheet("padding: 10px;")
+            layout.addWidget(distances_label)
 
             self.setLayout(layout)
 
         except Exception as e:
             print(f"Ошибка при создании CalibrationWindow: {str(e)}")
             QMessageBox.critical(self, "Ошибка", f"Не удалось создать окно калибровки: {str(e)}")
+
+    def center_on_screen(self):
+        """Центрирует окно на экране."""
+        screen = QApplication.primaryScreen().geometry()
+        size = self.geometry()
+        x = (screen.width() - size.width()) // 2
+        y = (screen.height() - size.height()) // 2
+        self.move(x, y)
 
     def get_pn_values(self):
         return self.pn_values

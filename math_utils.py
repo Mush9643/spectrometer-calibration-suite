@@ -37,7 +37,6 @@ def calculate_linear_regression(x, y):
     intercept = (sum_y - slope * sum_x) / n
     return intercept, slope
 
-
 def calculate_point_to_line_distances(x_values, y_values, slope, intercept):
     """Вычисляет кратчайшее расстояние от точек до прямой y = mx + k.
     """
@@ -345,6 +344,9 @@ class CalibrationDialog(QDialog):
         if self.am241_x is not None:
             am241_dist = calculate_point_to_line_distances([self.am241_x], [5485.56], self.slope, self.intercept)[0]
             distances_text += f"Am241 (x={self.am241_x:.1f}, y=5485.56): {am241_dist:.3f}\n"
+            self.parent_window.am241_dist = am241_dist
+        else:
+            distances_text += "Am241: расстояние не вычислено (x не найден)\n"
 
         # Добавление QLabel для отображения расстояний
         distances_label = QLabel(distances_text)
@@ -383,8 +385,6 @@ class CalibrationDialog(QDialog):
             if "Am241" in series_name and peak:
                 return peak.points()[0].x()
         return None
-
-
 
 def add_calibration_button(window):
     """Добавляет кнопку калибровки внизу вкладки Alfa chart, растянутую на всю ширину."""

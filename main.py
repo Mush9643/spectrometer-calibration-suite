@@ -1883,6 +1883,19 @@ class SpectrumWindow(QMainWindow):
             report_data.append(["a (Beta)", "Отсутствует"])
             report_data.append(["b (Beta)", "Отсутствует"])
 
+        # Расстояние от прямой до точки Am241
+        if hasattr(self, 'am241_dist') and self.am241_dist is not None:
+            relative_dist = (self.am241_dist / 5485.56) * 100
+            report_data.append(["Относительное расстояние Am241", f"{relative_dist:.3f}%"])
+        else:
+            report_data.append(["От Am241 до прямой", "Отсутствует"])
+
+        # fon_sum
+        if hasattr(self, 'fon_sum') and self.fon_sum is not None:
+            report_data.append(["Fon", f"{self.fon_sum:.3f}"])
+        else:
+            report_data.append(["Fon", "Отсутствует"])
+
         # Добавляем значения Pn для Gamma
         Ep = [80, 146, 400, 850, 1500, 2515]  # Энергии из gamma_math.py
         if hasattr(self, 'gamma_pn_values') and self.gamma_pn_values:
@@ -1891,6 +1904,8 @@ class SpectrumWindow(QMainWindow):
         else:
             for energy in Ep:
                 report_data.append((f"Pn ({energy} кэВ)", "Отсутствует"))
+
+
 
         # Создаём DataFrame
         df = pd.DataFrame(report_data[1:], columns=report_data[0])
