@@ -2201,7 +2201,7 @@ class SpectrumWindow(QMainWindow):
             file_name = item.text().lower()  # Приводим к нижнему регистру для проверки
 
             # Проверяем специальные гамма-файлы
-            if "98_fon_2_gamma" in file_name or "98_fon_gamma" in file_name:
+            if "фона" in file_name or "fon" in file_name:
                 gamma_special_files.append((file_name, item, i))
                 continue  # Пропускаем дальнейшую обработку для этих файлов
 
@@ -3187,6 +3187,7 @@ class SpectrumWindow(QMainWindow):
         for series in self.alfa_series_dict.values():
             highlight_am241_peak(self.chart, series, self.peak_points)
             highlight_rn_peaks(self.chart, series, self.peak_points, self)
+
 
     ##########################################################################
     # Методы для работы Gamma
