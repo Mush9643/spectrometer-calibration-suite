@@ -2201,7 +2201,7 @@ class SpectrumWindow(QMainWindow):
             file_name = item.text().lower()  # Приводим к нижнему регистру для проверки
 
             # Проверяем специальные гамма-файлы
-            if "фона" in file_name or "fon" in file_name:
+            if "XXXXXXXXXX" in file_name or "XXXXXXXXXXX" in file_name:
                 gamma_special_files.append((file_name, item, i))
                 continue  # Пропускаем дальнейшую обработку для этих файлов
 
@@ -2230,7 +2230,7 @@ class SpectrumWindow(QMainWindow):
 
         # Обрабатываем специальные гамма-файлы (пурпурный цвет, без графика)
         for _, item, _ in gamma_special_files:
-            item.setBackground(QColor(255, 182, 133))  # Пурпурный цвет
+            item.setBackground(QColor(255, 182, 133))
             print(f"Отмечен пурпурным (без графика): {item.text()}")
 
         # Обрабатываем остальные гамма-файлы (пурпурный цвет и загрузка на график)
@@ -2340,7 +2340,7 @@ class SpectrumWindow(QMainWindow):
             self.first_impulse_values[file_name] = impulse_value  # Сохраняем значение
 
         # Проверка на наличие "98_fon_2_gamma" или "98_fon_gamma" в имени файла
-        if "98_fon_2_gamma" in file_name or "98_fon_gamma" in file_name:
+        if "XXXXXXXXXXXX" in file_name or "XXXXXXXXXXX" in file_name:
             item.setBackground(QColor(255, 182, 133))  # Пурпурный цвет
             return  # Не строим график, просто выходим из метода
 
