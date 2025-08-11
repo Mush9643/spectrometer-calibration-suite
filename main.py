@@ -29,7 +29,7 @@ from gamma_math import print_gamma_impulses, calculate_peaks, plot_peaks, perfor
 from side_window_filler import SideWindow
 from tkinter import filedialog, simpledialog, Tk
 from datetime import datetime
-
+import re
 ##########################################################################
 # Класс Зума
 ##########################################################################
@@ -349,6 +349,106 @@ class SpectrumGraphWindow(QMainWindow):
 ##########################################################################
 # Класс основного окна приложения
 ##########################################################################
+class FormulaDialog(QDialog):
+    """Диалог для отображения и редактирования формулы k1c0 = (A_sr / denominator) ** (-1)."""
+    def __init__(self, current_denominator, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Настройка формулы k1c0")
+        self.setFixedSize(300, 150)
+        self.current_denominator = current_denominator
+        self.init_ui()
+
+    def init_ui(self):
+        layout = QVBoxLayout()
+        formula_label = QLabel()
+        formula_label.setFont(QFont("Montserrat", 12))
+        formula_label.setText(
+            f'k1c0 = (A_sr / <span style="color: #C0392B;">{self.current_denominator}</span>) ** (-1)'
+        )
+        formula_label.setTextFormat(Qt.TextFormat.RichText)
+        layout.addWidget(formula_label)
+
+        input_layout = QHBoxLayout()
+        input_label = QLabel("Новое значение делителя:")
+        input_label.setFont(QFont("Montserrat", 10))
+        self.denominator_input = QLineEdit(str(self.current_denominator))
+        self.denominator_input.setFont(QFont("Montserrat", 10))
+        self.denominator_input.setStyleSheet("""
+            QLineEdit {
+                border: 1px solid #4A4A4A;
+                border-radius: 5px;
+                padding: 5px;
+                background-color: #FFFFFF;
+                color: #000000;
+            }
+        """)
+        input_layout.addWidget(input_label)
+        input_layout.addWidget(self.denominator_input)
+        layout.addLayout(input_layout)
+
+        button_layout = QHBoxLayout()
+        ok_button = QPushButton("OK")
+        ok_button.setFont(QFont("Montserrat", 10, QFont.Weight.Bold))
+        ok_button.setStyleSheet("""
+            QPushButton {
+                background-color: #C0392B;
+                color: #FFFFFF;
+                border: none;
+                border-radius: 5px;
+                padding: 8px 16px;
+            }
+            QPushButton:hover {
+                background-color: #A93226;
+            }
+            QPushButton:pressed {
+                background-color: #922B21;
+            }
+        """)
+        ok_button.clicked.connect(self.accept_input)
+        cancel_button = QPushButton("Отмена")
+        cancel_button.setFont(QFont("Montserrat", 10, QFont.Weight.Bold))
+        cancel_button.setStyleSheet("""
+            QPushButton {
+                background-color: #4A4A4A;
+                color: #FFFFFF;
+                border: none;
+                border-radius: 5px;
+                padding: 8px 16px;
+            }
+            QPushButton:hover {
+                background-color: #5A5A5A;
+            }
+            QPushButton:pressed {
+                background-color: #3A3A3A;
+            }
+        """)
+        cancel_button.clicked.connect(self.reject)
+        button_layout.addStretch()
+        button_layout.addWidget(ok_button)
+        button_layout.addWidget(cancel_button)
+        button_layout.addStretch()
+        layout.addLayout(button_layout)
+
+        self.setLayout(layout)
+
+    def accept_input(self):
+        text = self.denominator_input.text().strip()
+        if not re.match(r'^-?\d*\.?\d+$', text):
+            QMessageBox.warning(self, "Ошибка", "Пожалуйста, введите действительное число.")
+            return
+        try:
+            value = float(text)
+            if value == 0:
+                QMessageBox.warning(self, "Ошибка", "Значение не может быть нулевым.")
+                return
+            self.current_denominator = value
+            self.accept()
+        except ValueError:
+            QMessageBox.warning(self, "Ошибка", "Пожалуйста, введите действительное число.")
+
+    def get_denominator(self):
+        return self.current_denominator
+
 
 class SpectrumWindow(QMainWindow):
 
@@ -360,11 +460,32 @@ class SpectrumWindow(QMainWindow):
         # Блок 1: Инициализация базовых свойств и стилей
         # =========================================================================
         super().__init__()
-
+        self.k1c0_denominator = 314.5
         # Применение стилей с постельными тонами
-
+        self.setStyleSheet("""
+            QPushButton#settingsButton {
+                background-color: transparent;
+                border: none;
+                padding: 2px;
+                color: #4A4A4A;
+                font-size: 16px;
+            }
+            QPushButton#settingsButton:hover {
+                background-color: rgba(200, 16, 46, 0.1);
+            }
+        """)
         self.setStyleSheet("""
             /* Основные стили окна */
+            QPushButton#settingsButton {
+                background-color: transparent; /* Прозрачный фон */
+                border: none;
+                padding: 2px;
+                color: #4A4A4A; /* Тёмно-серый цвет текста */
+                font-size: 16px; /* Размер символа */
+            }
+            QPushButton#settingsButton:hover {
+                background-color: rgba(200, 16, 46, 0.1); /* Лёгкий красный оттенок при наведении */
+            }
             QListWidget::item[additionSelected="true"] {
                 background-color: #C0392B; /* Серый фон для элементов, выбранных для сложения */
                 color: #FFFFFF; /* Чёрный текст */
@@ -774,19 +895,22 @@ class SpectrumWindow(QMainWindow):
         menu_layout = QVBoxLayout()
 
         # Поле для ввода имени папки с кнопкой выбора папки
-        folder_layout = QHBoxLayout()
+        self.folder_layout = QHBoxLayout()
         self.folder_input = QLineEdit("")  # По умолчанию папка "098"
         self.folder_input.setReadOnly(True)  # Запрещаем ручное редактирование
-        folder_layout.addWidget(self.folder_input)
+        self.folder_layout.addWidget(self.folder_input)
+
+        # Добавляем кнопку шестерёнки (новая)
+        self.add_settings_button()
 
         # Кнопка с иконкой папки для выбора папки
         self.folder_button = QPushButton("📁")
         self.folder_button.setObjectName("folderButton")  # Для специфического стиля
         self.folder_button.setToolTip("Выберите папку с файлами")
         self.folder_button.clicked.connect(self.select_folder)  # Подключаем метод выбора папки
-        folder_layout.addWidget(self.folder_button)
+        self.folder_layout.addWidget(self.folder_button)
 
-        menu_layout.addLayout(folder_layout)
+        menu_layout.addLayout(self.folder_layout)
 
         # Список для отображения файлов .xls
         self.file_list = QListWidget()
@@ -1231,7 +1355,31 @@ class SpectrumWindow(QMainWindow):
 
     ##########################################################################
     # Методы всякого разного
-    ##########################################################################
+    #########################################################################
+
+    def add_settings_button(self):
+        """Добавляет кнопку с иконкой шестерёнки левее кнопки папки на вкладке 'Меню'."""
+        self.settings_button = QPushButton("⚙️")
+        self.settings_button.setObjectName("settingsButton")
+        self.settings_button.setToolTip("Настройка формулы k1c0")
+        self.settings_button.setFixedWidth(30)
+        self.settings_button.clicked.connect(self.open_settings_dialog)
+        self.folder_layout.insertWidget(1, self.settings_button)
+
+    def open_settings_dialog(self):
+        """Открывает диалог для редактирования делителя в формуле k1c0."""
+        dialog = FormulaDialog(self.k1c0_denominator, self)
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            new_denominator = dialog.get_denominator()
+            self.k1c0_denominator = new_denominator
+
+            for row in range(self.calibration_table.rowCount()):
+                if self.calibration_table.item(row, 0) and self.calibration_table.item(row, 0).text() == "k1c0":
+                    item = QTableWidgetItem(str(new_denominator))
+                    item.setForeground(QColor("#000000"))
+                    self.calibration_table.setItem(row, 1, item)
+                    break
+
 
     def toggle_spectrum_addition(self):
         """
@@ -2183,6 +2331,7 @@ class SpectrumWindow(QMainWindow):
         Файлы с "gamma" в имени окрашиваются в пурпурный цвет и загружаются на график Gamma,
         кроме файлов "98_fon_2_gamma" и "98_fon_gamma", которые только окрашиваются.
         """
+        self.reset_all_data()
         # Заданная последовательность ключевых слов для Beta (в нижнем регистре)
         beta_keywords = ["фона", "sry90", "rad", "cs137", "c14", "am241"]
         # Заданная последовательность ключевых слов для Alfa (в нижнем регистре)

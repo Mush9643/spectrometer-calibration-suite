@@ -184,7 +184,8 @@ def calculate_activity_c14(parent, c14_data, fon_data, nud_b=5, vud_b=200):
         if A_sr == 0:
             print("Ошибка: A_sr равен 0, вычисление k1c0 невозможно.")
         else:
-            k1c0 = (A_sr / 365) ** (-1)
+            denominator = getattr(parent, 'k1c0_denominator', 314.5)
+            k1c0 = (A_sr / denominator) ** (-1)
             print(f"Значение k1c0: {k1c0:.3f}")
             parent.k1c0 = k1c0
     else:

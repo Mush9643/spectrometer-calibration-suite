@@ -189,45 +189,37 @@ def calculate_peaks(main_window):
 
 
 def plot_peaks(main_window, peaks):
-    """
-    Отображает пики на графике во вкладке Gamma, используя QChart, с учетом текущего масштаба.
-    """
-    if not hasattr(main_window, 'gamma_chart'):
-        print("Ошибка: График Gamma (gamma_chart) не найден в main_window.")
+    if not hasattr(main_window, 'gamma_chart') or not hasattr(main_window, 'gamma_axis_x') or not hasattr(main_window, 'gamma_axis_y'):
+        print("Ошибка: График или оси Gamma не инициализированы.")
         return
-
+    if not peaks:
+        print("Нет пиков для отображения.")
+        return
     # Удаляем старые серии пиков
-    if not hasattr(main_window, 'gamma_peak_series'):
+    if hasattr(main_window, 'gamma_peak_series'):
+        for series in main_window.gamma_peak_series.values():
+            if series in main_window.gamma_chart.series():
+                main_window.gamma_chart.removeSeries(series)
+        main_window.gamma_peak_series.clear()
+    else:
         main_window.gamma_peak_series = {}
-    for series in main_window.gamma_peak_series.values():
-        main_window.gamma_chart.removeSeries(series)
-    main_window.gamma_peak_series.clear()
-
-    # Проверяем текущий масштаб
+    # Проверяем масштаб и добавляем новые пики
     is_log_scale = isinstance(main_window.gamma_axis_y, QLogValueAxis)
     min_y_threshold = 1.0 if is_log_scale else 0.0
-
-    # Добавляем новые пики
     for file_name, (peak_channel, peak_value) in peaks.items():
-        color = QColor(255, 0, 0) if any(
-            keyword in file_name.lower() for keyword in ["cs", "cs137", "cs_gamma"]) else QColor(0, 0, 255)
+        color = QColor(255, 0, 0) if any(keyword in file_name.lower() for keyword in ["cs", "cs137", "cs_gamma"]) else QColor(0, 0, 255)
         scatter_series = QScatterSeries()
         scatter_series.setName(f"Пик {file_name}")
-
-        # Корректируем Y-координату для логарифмического масштаба
         display_value = max(peak_value, min_y_threshold) if is_log_scale else peak_value
         scatter_series.append(peak_channel, display_value)
-
         scatter_series.setMarkerShape(QScatterSeries.MarkerShape.MarkerShapeCircle)
         scatter_series.setMarkerSize(7)
         scatter_series.setColor(color)
         scatter_series.setBorderColor(color)
-
         main_window.gamma_chart.addSeries(scatter_series)
         scatter_series.attachAxis(main_window.gamma_axis_x)
         scatter_series.attachAxis(main_window.gamma_axis_y)
         main_window.gamma_peak_series[file_name] = scatter_series
-
     print("Пики отображены на графике Gamma.")
 
 
