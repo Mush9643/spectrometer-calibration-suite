@@ -120,7 +120,7 @@ class SideWindow(QWidget):
         # Создаем таблицу
         self.side_table = QTableWidget()
         self.side_table.setColumnCount(2)
-        self.side_table.setRowCount(28)
+        self.side_table.setRowCount(33)
         self.side_table.setHorizontalHeaderLabels(["Параметр", "Значение"])
 
         # Данные для таблицы
@@ -144,15 +144,20 @@ class SideWindow(QWidget):
             ("Pn (400 кэВ)", ""),
             ("Pn (850 кэВ)", ""),
             ("Pn (1500 кэВ)", ""),
-            ("Kgeom", "1,225"),
-            ("K альфа Po-218", "0,38"),
-            ("K бета Po-218", "2,1"),
-            ("K альфа Po-216", "0"),
-            ("K бета Po-216", "0"),
-            ("K альфа Po-214", "0,03"),
-            ("K бета Po-214", "1,75"),
-            ("K альфа Po-212", "0,25"),
-            ("K бета Po-212", "1"),
+            ("Kgeom", ""),
+            ("K альфа Po-218", ""),
+            ("K бета Po-218", ""),
+            ("K альфа Po-216", ""),
+            ("K бета Po-216", ""),
+            ("K альфа Po-214", ""),
+            ("K бета Po-214", ""),
+            ("K альфа Po-212", ""),
+            ("K бета Po-212", ""),
+            ("KI_Win_0", ""),
+            ("KI_Win_1", ""),
+            ("KI_Win_2", ""),
+            ("KI_Win_3", ""),
+            ("KI_Win_4", ""),
         ]
 
         # Заполняем таблицу
@@ -298,6 +303,50 @@ class SideWindow(QWidget):
             float_bytes_500D = struct.pack('>HH', registers[13], registers[14])  # 0x500D, 0x500E
             value_500D_float = struct.unpack('>f', float_bytes_500D)[0]
 
+            # Новые float значения
+            float_bytes_5009 = struct.pack('>HH', registers[9], registers[10])  # Kgeom
+            value_5009_float = struct.unpack('>f', float_bytes_5009)[0]
+
+            float_bytes_5014 = struct.pack('>HH', registers[20], registers[21])  # K альфа Po-218
+            value_5014_float = struct.unpack('>f', float_bytes_5014)[0]
+
+            float_bytes_5016 = struct.pack('>HH', registers[22], registers[23])  # K бета Po-218
+            value_5016_float = struct.unpack('>f', float_bytes_5016)[0]
+
+            float_bytes_5019 = struct.pack('>HH', registers[25], registers[26])  # K альфа Po-216
+            value_5019_float = struct.unpack('>f', float_bytes_5019)[0]
+
+            float_bytes_501B = struct.pack('>HH', registers[27], registers[28])  # K бета Po-216
+            value_501B_float = struct.unpack('>f', float_bytes_501B)[0]
+
+            float_bytes_501E = struct.pack('>HH', registers[30], registers[31])  # K альфа Po-214
+            value_501E_float = struct.unpack('>f', float_bytes_501E)[0]
+
+            float_bytes_5020 = struct.pack('>HH', registers[32], registers[33])  # K бета Po-214
+            value_5020_float = struct.unpack('>f', float_bytes_5020)[0]
+
+            float_bytes_5023 = struct.pack('>HH', registers[35], registers[36])  # K альфа Po-212
+            value_5023_float = struct.unpack('>f', float_bytes_5023)[0]
+
+            float_bytes_5025 = struct.pack('>HH', registers[37], registers[38])  # K бета Po-212
+            value_5025_float = struct.unpack('>f', float_bytes_5025)[0]
+
+            # KI_Win_* (все float)
+            float_bytes_5042 = struct.pack('>HH', registers[66], registers[67])  # 0x5042-0x5043
+            value_5042_float = struct.unpack('>f', float_bytes_5042)[0]
+
+            float_bytes_5044 = struct.pack('>HH', registers[68], registers[69])  # 0x5044-0x5045
+            value_5044_float = struct.unpack('>f', float_bytes_5044)[0]
+
+            float_bytes_5046 = struct.pack('>HH', registers[70], registers[71])  # 0x5046-0x5047
+            value_5046_float = struct.unpack('>f', float_bytes_5046)[0]
+
+            float_bytes_5048 = struct.pack('>HH', registers[72], registers[73])  # 0x5048-0x5049
+            value_5048_float = struct.unpack('>f', float_bytes_5048)[0]
+
+            float_bytes_504A = struct.pack('>HH', registers[74], registers[75])  # 0x504A-0x504B
+            value_504A_float = struct.unpack('>f', float_bytes_504A)[0]
+
             # Извлекаем значения uint16 для старых адресов
             value_500F = registers[15]  # 0x500F
             value_5010 = registers[16]  # 0x5010
@@ -336,7 +385,20 @@ class SideWindow(QWidget):
                 16: value_504E,  # 0x504E Pn (400 кэВ)
                 17: value_504F,  # 0x504F Pn (850 кэВ)
                 18: value_5050,  # 0x5050 Pn (1500 кэВ)
-                # Убрана строка 19 (Pn 2515 кэВ), если это было вашим намерением
+                19: value_5009_float,  # Kgeom
+                20: value_5014_float,  # K альфа Po-218
+                21: value_5016_float,  # K бета Po-218
+                22: value_5019_float,  # K альфа Po-216
+                23: value_501B_float,  # K бета Po-216
+                24: value_501E_float,  # K альфа Po-214
+                25: value_5020_float,  # K бета Po-214
+                26: value_5023_float,  # K альфа Po-212
+                27: value_5025_float,  # K бета Po-212
+                28: value_5042_float,  # KI_Win_0
+                29: value_5044_float,  # KI_Win_1
+                30: value_5046_float,  # KI_Win_2
+                31: value_5048_float,  # KI_Win_3
+                32: value_504A_float,  # KI_Win_4
             }
 
             # Заполняем таблицу
@@ -359,10 +421,7 @@ class SideWindow(QWidget):
     def update_from_report(self):
         """Обновляет значения в столбце 'Значения' на основе данных из вкладки Report."""
         try:
-            # Получаем таблицу из вкладки Report
             report_table = self.main_window.calibration_table
-
-            # Создаём словарь параметров и значений из вкладки Report
             report_values = {}
             for row in range(report_table.rowCount()):
                 param_item = report_table.item(row, 0)
@@ -372,16 +431,38 @@ class SideWindow(QWidget):
                     value = value_item.text()
                     report_values[param] = value
 
-            # Обновляем значения в таблице side_table
+            # Словарь дефолтных значений для новых строк
+            default_values = {
+                "Kgeom": "1.225",
+                "K альфа Po-218": "0.38",
+                "K бета Po-218": "2.1",
+                "K альфа Po-216": "0",
+                "K бета Po-216": "0",
+                "K альфа Po-214": "0.03",
+                "K бета Po-214": "1.75",
+                "K альфа Po-212": "0.25",
+                "K бета Po-212": "1",
+                "KI_Win_0": "0.004153",
+                "KI_Win_1": "0.313511",
+                "KI_Win_2": "1.2",
+                "KI_Win_3": "3.334215",
+                "KI_Win_4": "0.159251"
+            }
+
             for row in range(self.side_table.rowCount()):
                 param_item = self.side_table.item(row, 0)
                 if param_item:
                     param = param_item.text()
-                    if param in report_values:
-                        # Если параметр найден в таблице Report, обновляем значение
+                    if param in report_values and report_values[param].strip():
+                        # Берём значение из Report
                         new_value = report_values[param]
-                        value_item = QTableWidgetItem(new_value)
-                        self.side_table.setItem(row, 1, value_item)
+                    elif param in default_values:
+                        # Если нет в Report или пусто — берём дефолт
+                        new_value = default_values[param]
+                    else:
+                        continue  # Не меняем
+                    value_item = QTableWidgetItem(new_value)
+                    self.side_table.setItem(row, 1, value_item)
 
         except Exception as e:
             print(f"Ошибка при обновлении значений из вкладки Report: {str(e)}")
@@ -413,10 +494,24 @@ class SideWindow(QWidget):
                 16: 0x504E,  # Pn (400 кэВ), uint16 (1 регистр)
                 17: 0x504F,  # Pn (850 кэВ), uint16 (1 регистр)
                 18: 0x5050,  # Pn (1500 кэВ), uint16 (1 регистр)
-                # Убрана строка 19, как вы указали
+                19: 0x5009,  # Kgeom
+                20: 0x5014,  # K альфа Po-218
+                21: 0x5016,  # K бета Po-218
+                22: 0x5019,  # K альфа Po-216
+                23: 0x501B,  # K бета Po-216
+                24: 0x501E,  # K альфа Po-214
+                25: 0x5020,  # K бета Po-214
+                26: 0x5023,  # K альфа Po-212
+                27: 0x5025,  # K бета Po-212
+                28: 0x5042,  # KI_Win_0
+                29: 0x5044,  # KI_Win_1
+                30: 0x5046,  # KI_Win_2
+                31: 0x5048,  # KI_Win_3
+                32: 0x504A,  # KI_Win_4
             }
 
-            float_rows = {0, 1, 2, 3, 4, 5}  # Строки с float значениями (2 регистра)
+            float_rows = {0, 1, 2, 3, 4, 5, 19, 20, 21, 22, 23, 24, 25, 26, 27,
+                          28, 29, 30, 31, 32}
 
             # Собираем данные для записи
             for row in range(self.side_table.rowCount()):
