@@ -15,7 +15,7 @@ class SideWindow(QWidget):
         self.setWindowTitle("Дополнительное окно")
         self.setWindowIcon(QIcon("lib\\Pictures\\M-Photoroom.png"))
 
-        # Получаем размеры главного окна
+         # Получаем размеры главного окна
         main_x = main_geometry.x()
         main_y = main_geometry.y()
         main_width = main_geometry.width()
@@ -120,7 +120,7 @@ class SideWindow(QWidget):
         # Создаем таблицу
         self.side_table = QTableWidget()
         self.side_table.setColumnCount(2)
-        self.side_table.setRowCount(20)
+        self.side_table.setRowCount(28)
         self.side_table.setHorizontalHeaderLabels(["Параметр", "Значение"])
 
         # Данные для таблицы
@@ -144,7 +144,15 @@ class SideWindow(QWidget):
             ("Pn (400 кэВ)", ""),
             ("Pn (850 кэВ)", ""),
             ("Pn (1500 кэВ)", ""),
-            ("Pn (2515 кэВ)", ""),
+            ("Kgeom", "1,225"),
+            ("K альфа Po-218", "0,38"),
+            ("K бета Po-218", "2,1"),
+            ("K альфа Po-216", "0"),
+            ("K бета Po-216", "0"),
+            ("K альфа Po-214", "0,03"),
+            ("K бета Po-214", "1,75"),
+            ("K альфа Po-212", "0,25"),
+            ("K бета Po-212", "1"),
         ]
 
         # Заполняем таблицу
@@ -175,6 +183,10 @@ class SideWindow(QWidget):
         update_button.setObjectName("updateButton")
         update_button.clicked.connect(self.update_from_report)
 
+        print_button = QPushButton("Чтение 0x5042-0x5049")
+        print_button.setObjectName("printButton")  # Можно стилизовать аналогично другим кнопкам
+        print_button.clicked.connect(self.read_and_print_floats)
+
         # Компоновка кнопок
         top_button_layout = QHBoxLayout()
         top_button_layout.addStretch()
@@ -185,6 +197,7 @@ class SideWindow(QWidget):
         bottom_button_layout = QHBoxLayout()
         bottom_button_layout.addStretch()
         bottom_button_layout.addWidget(update_button)
+        bottom_button_layout.addWidget(print_button)
         bottom_button_layout.addStretch()
 
         side_layout.addLayout(top_button_layout)
@@ -249,18 +262,17 @@ class SideWindow(QWidget):
     def fill_values(self):
         """Заполняет таблицу значениями, записывая значения из регистров в соответствующие строки."""
         try:
-            # Читаем значения из регистров
             if not self.modbus.client.connect():
                 raise ConnectionError("Не удалось подключиться к устройству")
 
-            # Читаем все регистры от 0x5000 до 0x5022 (35 регистров)
+            # Читаем все регистры от 0x5000 до 0x5050
             registers = self.modbus.read_spectrum(
                 start_register=0x5000,
-                num_registers=35,  # От 0x5000 до 0x5022 (0x5022 - 0x5000 + 1 = 35)
+                num_registers=81,  # От 0x5000 до 0x5050 (0x5050 - 0x5000 + 1 = 81)
                 slave_address=1
             )
-            if len(registers) != 35:
-                raise ValueError(f"Ожидалось 35 значений из регистров 0x5000-0x5022, получено {len(registers)}")
+            if len(registers) != 81:
+                raise ValueError(f"Ожидалось 81 значений из регистров 0x5000-0x5050, получено {len(registers)}")
 
             # Преобразуем регистры 0x5000-0x5001 в float (строка 12)
             float_bytes_5000 = struct.pack('>HH', registers[0], registers[1])  # 0x5000, 0x5001
@@ -286,15 +298,22 @@ class SideWindow(QWidget):
             float_bytes_500D = struct.pack('>HH', registers[13], registers[14])  # 0x500D, 0x500E
             value_500D_float = struct.unpack('>f', float_bytes_500D)[0]
 
-            # Извлекаем значения (uint16) по индексам
-            value_500F = registers[15]  # 0x500F (индекс 15: 0x500F - 0x5000 = 15)
-            value_5010 = registers[16]  # 0x5010 (индекс 16: 0x5010 - 0x5000 = 16)
-            value_5011 = registers[17]  # 0x5011 (индекс 17: 0x5011 - 0x5000 = 17)
-            value_5012 = registers[18]  # 0x5012 (индекс 18: 0x5012 - 0x5000 = 18)
-            value_5013 = registers[19]  # 0x5013 (индекс 19: 0x5013 - 0x5000 = 19)
-            value_5018 = registers[24]  # 0x5018 (индекс 24: 0x5018 - 0x5000 = 24)
-            value_501D = registers[29]  # 0x501D (индекс 29: 0x501D - 0x5000 = 29)
-            value_5022 = registers[34]  # 0x5022 (индекс 34: 0x5022 - 0x5000 = 34)
+            # Извлекаем значения uint16 для старых адресов
+            value_500F = registers[15]  # 0x500F
+            value_5010 = registers[16]  # 0x5010
+            value_5011 = registers[17]  # 0x5011
+            value_5012 = registers[18]  # 0x5012
+            value_5013 = registers[19]  # 0x5013
+            value_5018 = registers[24]  # 0x5018
+            value_501D = registers[29]  # 0x501D
+            value_5022 = registers[34]  # 0x5022
+
+            # Извлекаем значения uint16 для новых адресов Pn (0x504C–0x5050)
+            value_504C = registers[76]  # 0x504C - 0x5000 = 76
+            value_504D = registers[77]  # 0x504D - 0x5000 = 77
+            value_504E = registers[78]  # 0x504E - 0x5000 = 78
+            value_504F = registers[79]  # 0x504F - 0x5000 = 79
+            value_5050 = registers[80]  # 0x5050 - 0x5000 = 80
 
             # Сопоставление строк и значений
             row_values = {
@@ -312,22 +331,23 @@ class SideWindow(QWidget):
                 11: value_5018,  # 0x5018 (uint16, строка 5)
                 12: value_501D,  # 0x501D (uint16, строка 6)
                 13: value_5022,  # 0x5022 (uint16, строка 7)
-
-
+                14: value_504C,  # 0x504C Pn (80 кэВ)
+                15: value_504D,  # 0x504D Pn (146 кэВ)
+                16: value_504E,  # 0x504E Pn (400 кэВ)
+                17: value_504F,  # 0x504F Pn (850 кэВ)
+                18: value_5050,  # 0x5050 Pn (1500 кэВ)
+                # Убрана строка 19 (Pn 2515 кэВ), если это было вашим намерением
             }
 
             # Заполняем таблицу
             for row in range(self.side_table.rowCount()):
                 if row in row_values:
                     # Форматируем float с двумя знаками после запятой
-                    if row in (0, 1, 8, 11, 12, 13):  # Для значений float
+                    if row in (0, 1, 2, 3, 4, 5):  # Для значений float
                         item = QTableWidgetItem(f"{row_values[row]:.2f}")
                     else:
                         item = QTableWidgetItem(str(row_values[row]))
-
-
-
-                self.side_table.setItem(row, 1, item)  # Столбец 'Значение' (индекс 1)
+                    self.side_table.setItem(row, 1, item)  # Столбец 'Значение' (индекс 1)
 
         except Exception as e:
             print(f"Ошибка при чтении регистров: {str(e)}")
@@ -388,12 +408,12 @@ class SideWindow(QWidget):
                 11: 0x5018,  # НУД ROI 6, uint16 (1 регистр)
                 12: 0x501D,  # НУД ROI 4, uint16 (1 регистр)
                 13: 0x5022,  # НУД ROI 5, uint16 (1 регистр)
-                14: 0x5014,  # Pn (80 кэВ), uint16 (1 регистр)
-                15: 0x5015,  # Pn (146 кэВ), uint16 (1 регистр)
-                16: 0x5016,  # Pn (400 кэВ), uint16 (1 регистр)
-                17: 0x5017,  # Pn (850 кэВ), uint16 (1 регистр)
-                18: 0x5019,  # Pn (1500 кэВ), uint16 (1 регистр)
-                19: 0x501A,  # Pn (2515 кэВ), uint16 (1 регистр)
+                14: 0x504C,  # Pn (80 кэВ), uint16 (1 регистр)
+                15: 0x504D,  # Pn (146 кэВ), uint16 (1 регистр)
+                16: 0x504E,  # Pn (400 кэВ), uint16 (1 регистр)
+                17: 0x504F,  # Pn (850 кэВ), uint16 (1 регистр)
+                18: 0x5050,  # Pn (1500 кэВ), uint16 (1 регистр)
+                # Убрана строка 19, как вы указали
             }
 
             float_rows = {0, 1, 2, 3, 4, 5}  # Строки с float значениями (2 регистра)
@@ -408,13 +428,10 @@ class SideWindow(QWidget):
                 try:
                     # Проверяем, является ли значение числом
                     if row in float_rows:
-                        # Для float значений
                         value = float(value_str)
-                        # Преобразуем float в два uint16 регистра
                         float_bytes = struct.pack('>f', value)
                         reg1, reg2 = struct.unpack('>HH', float_bytes)
                         address = register_mapping[row]
-                        # Используем 0x10 для записи двух регистров
                         response = self.modbus.client.write_registers(
                             address=address,
                             values=[reg1, reg2],
@@ -425,7 +442,6 @@ class SideWindow(QWidget):
                         print(f"Записано в регистр {hex(address)}: {reg1}")
                         print(f"Записано в регистр {hex(address + 1)}: {reg2}")
                     else:
-                        # Для uint16 используем write_registers вместо write_register
                         value = int(float(value_str))
                         if not 0 <= value <= 65535:
                             raise ValueError(f"Значение {value} вне диапазона uint16 (0-65535)")
@@ -446,5 +462,48 @@ class SideWindow(QWidget):
 
         except Exception as e:
             print(f"Ошибка при записи данных: {str(e)}")
+        finally:
+            self.modbus.client.close()
+
+    def read_and_print_floats(self):
+        """Читает регистры 0x5042–0x5050, интерпретирует как 5 float и 5 uint16, выводит в консоль."""
+        try:
+            if not self.modbus.client.connect():
+                raise ConnectionError("Не удалось подключиться к устройству")
+
+            # Читаем 15 регистров от 0x5042 до 0x5050
+            registers = self.modbus.read_spectrum(
+                start_register=0x5042,
+                num_registers=15,
+                slave_address=1
+            )
+            if len(registers) != 15:
+                raise ValueError(f"Ожидалось 15 регистров, получено {len(registers)}")
+
+            # Преобразуем первые 10 регистров (0x5042–0x504B) в float (по 2 регистра на float)
+            floats = []
+            for i in range(0, 10,
+                           2):  # Шаги по 2 регистра: 0x5042-0x5043, 0x5044-0x5045, 0x5046-0x5047, 0x5048-0x5049, 0x504A-0x504B
+                reg1 = registers[i]
+                reg2 = registers[i + 1]
+                float_bytes = struct.pack('>HH', reg1, reg2)
+                float_value = struct.unpack('>f', float_bytes)[0]
+                floats.append(float_value)
+
+            # Выводим float значения
+            float_addresses = [0x5042, 0x5044, 0x5046, 0x5048, 0x504A]  # Стартовые адреса пар
+            for addr, value in zip(float_addresses, floats):
+                print(f"Адрес {hex(addr)}-{hex(addr + 1)} (float): {value:.2f}")
+
+            # Преобразуем оставшиеся 5 регистров (0x504C–0x5050) как uint16
+            uint16_values = registers[10:]  # С индекса 10 (0x504C - 0x5042 = 10) до конца
+            uint16_addresses = [0x504C, 0x504D, 0x504E, 0x504F, 0x5050]
+
+            # Выводим uint16 значения
+            for addr, value in zip(uint16_addresses, uint16_values):
+                print(f"Адрес {hex(addr)} (uint16): {value}")
+
+        except Exception as e:
+            print(f"Ошибка при чтении регистров 0x5042-0x5050: {str(e)}")
         finally:
             self.modbus.client.close()
